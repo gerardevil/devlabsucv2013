@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body { padding-top: 60px; /* 60px to make the container go all the way
+      to the bottom of the topbar */ }
+    </style>
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
+      </script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <style>
+    </style>
+  </head>
+  <body>
+    <div class="container">
+    	<div class="navbar-fixed-top">
+    		<div class="navbar-inner">
+    			<div class="container">
+    				<div class="container-fluid pull-left"> 
+    					<label>
+    						Profesor: Nombre Apellido
+    					</label>
+    					<label>
+    						Nombre de Centro
+    					</label>
+    				</div>
+    				<div class="container-fluid pull-right">
+    					<div class="btn-group">
+    						<button class="btn dropdown-toggle btn-primary" data-toggle="dropdown">
+    							Opciones
+    							<span class="caret"></span>
+    						</button>
+    						<ul class="dropdown-menu">
+    							<li>
+    								<a href="#">Cambiar Rol</a>
+    							</li>
+    							<li class="divider">
+    							</li>
+    							<li>
+    								<a data-toggle="modal" href="#MyModal">
+                                    Cerrar sesión
+                                    </a>
+    							</li>
+    						</ul>
+    					</div>
+    					<!-- /btn-group -->
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    	<!-- El contenido va aqui -->
+		<div class="container" style="margin-top: 50px">
+    		<div class="container-fluid">
+    			<div class="span2">
+    				<ul class="nav nav-pills nav-stacked">
+    					<li>
+    						<a href="Principal_Prof.html"><i class="icon-home"></i> Principal</a>
+    					</li>
+    					<li>
+    						<a href="LlenarProp_Prof.html"><i class="icon-pencil" id="Crear"></i> Editar Propuesta</a>
+    					</li>
+    					<li class="active">
+    						<a href="Perfil_Prof.html"><i class="icon-user"></i> Informacion de perfil</a>
+    					</li>
+    				</ul>
+    			</div>
+    			<div class="span 10" style="margin-left:100px; width:70%">
+					<label>
+						Nombre Profesor
+					</label>
+					<label>
+						Apellido Profesor
+					</label>
+					<label>
+						Cédula
+					</label>
+					<label>
+						Fecha de Nacimiento
+					</label>
+					<label>
+						Dirección
+					</label>
+					<label>
+						Teléfono
+					</label>
+					<label>
+						Dedicación
+					</label>
+					<br>
+					<a class="btn btn-primary" href="EditarPerfil_Prof.html">Editar Perfil</a>
+					<br>
+					<br>
+					<br>
+					<br>
+				</div>
+    		</div>
+    		<br>
+    	</div>
+    	<!-- -->
+    	<div id="MyModal" class="modal hide fade">
+    		<div class="modal-header">
+    			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+    				×
+    			</button>
+    			<h3>
+    				Cerrar sesión
+    			</h3>
+    		</div>
+    		<div class="modal-body">
+    			<p>
+    				¿Está seguro que desea salir de la aplicación?
+    			</p>
+    		</div>
+    		<div class="modal-footer">
+    			<a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+    			<a button="" class="btn btn-primary">Salir</a>
+    		</div>
+    	</div>
+    	<br>
+    	<br>
+    	<br>
+    	<br>
+    	<div class="container pull-right" id="foot">
+    		<div class="container-fluid pull-right">
+    			<img class="pull-right" src="https://s3.amazonaws.com/media.jetstrap.com/6IhcFMLwTv296AqG9f0S_ucv-logo2.jpg">
+    			<img class="pull-right" src="https://s3.amazonaws.com/media.jetstrap.com/LTAMySZLQFCG3O53gIan_Facultadciencias.png">
+    			<img class="pull-right" src="https://s3.amazonaws.com/media.jetstrap.com/lg1fOYfQk6pR8uqKWZGF_logo-computacion.png">
+    		</div>
+    		<div class="container-fluid pull-left">
+    			<a href="http://www.ucv.ve">Universidad Central de Venezuela</a>
+    			<br>
+    			<a href="http://www.ciens.ucv.ve/ciencias/">Facultad de Ciencias</a>
+    			<br>
+    			<a href="http://www.ciens.ucv.ve/escueladecomputacion/">Escuela de Computación</a>
+    		</div>
+    	</div>
+    </div>
+
+    <style>
+      
+        body {
+          padding-top: 60px;
+          padding-bottom: 40px;
+        }  
+      
+       #foot{
+            border-bottom:2px solid #4380D3;
+            border-top:2px solid #4380D3;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+    </script>
+    <script src="assets/js/bootstrap.js">
+    </script>
+    <script>
+
+    </script>
+  </body>
+</html>
