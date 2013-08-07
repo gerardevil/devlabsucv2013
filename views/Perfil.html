@@ -1,0 +1,41 @@
+{% extends "Plantilla.html "%}
+
+{% block op_barra %}
+{% endblock %}
+
+{% block contenido_vista %}
+	<label>
+		{% block nombre %}
+		{% endblock %}
+	</label>
+	<label>
+		{% block apellido %}
+		{% endblock %}
+	</label>
+	<label>
+		{% block cedula %}
+		{% endblock %}
+	</label>
+	<label>
+		{% block fecha_nac %}
+		{% endblock %}
+	</label>
+	<label>
+		{% block direccion %}
+		{% endblock %}
+	</label>
+	<label>
+		{% block telefono %}
+		{% endblock %}
+	</label>
+	<label>
+		{% block dedicacion %}
+		{% endblock%}
+	</label>
+	<br>
+	<a class="btn btn-primary" href="EditarPerfil_Coord.html">Editar Perfil</a>
+	<br>
+	<br>
+	<br>
+	<br>
+{% endblock %}
