@@ -4,22 +4,18 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-	('Gerardo Linares', 'gerardevil@gmail.com'),
-    # ('Your Name', 'your_email@example.com'),
-)
+ADMINS = (('Gerardo Linares', 'gerardevil@gmail.com'), ('Jesus Gomez', 'jesus.igp009@gmail.com'), ('Junior Pe_a', 'example@domain.com'))
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dbprogramacion',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'dbprogramacion',             
         'USER': 'devlabsadmin',
         'PASSWORD': 'devlabs2013',
-        'HOST': 'devlabsdb.webfactional.com',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'HOST': 'devlabsdb.webfactional.com', 
+        'PORT': ''
     }
 }
 
@@ -71,9 +67,6 @@ STATIC_URL = "/assets/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
 	os.path.join(os.getcwd(), "views/assets"),
 	#os.path.join(os.getcwd(), "views/assets/css"),
 )
@@ -102,8 +95,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #Non default middleware: [Backend Team]
+    'django.middleware.csrf.CsrfViewMiddleware',
 )
 
 ROOT_URLCONF = 'configuracion.urls'
@@ -115,7 +109,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	os.path.join(os.getcwd(), 'views').replace('\\','/'),
+	os.path.join(os.getcwd(), 'views').replace('\\', '/'),
 )
 
 INSTALLED_APPS = (
@@ -125,11 +119,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-	'principal'
+    'django.contrib.admin',
+    'django.contrib.admindocs',
+	
+    #Non Django App: Team Apps
+    'principal'
 )
 
 # A sample logging configuration. The only tangible logging
