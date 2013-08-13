@@ -13,19 +13,23 @@
     			Sistema Automatizado de Planificación Docente
     		</h5>
     		<br>
+
+            <form action="login" method="GET">
     		<div class="control-group">
     			<div class="controls">
-    				<input placeholder="Usuario" type="text">
+    				<input placeholder="Usuario" type="text" name="user">
     				<br>
     			</div>
     			<div class="controls">
-    				<input placeholder="Contraseña" type="password">
+    				<input placeholder="Contraseña" type="password" name="password">
     			</div>
     		</div>
     		<button type="submit" class="btn btn-primary">
     			Iniciar sesión
     		</button>
-    		<br>
+    		</form>
+
+            <br>
     		<br>
     	</div>
 {% endblock %}
