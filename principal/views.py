@@ -4,8 +4,9 @@ from principal.models import Usuario, Rol, UsuarioRol, Materia, Centro
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-import os
 from django.core import serializers
+import os
+
 
 
 def inicio(request):
@@ -32,7 +33,8 @@ def login(request):
 	else:
 		return render_to_response("Home.html",{'err':1})
 		
-		
+# CRUD Materia Begin:
+
 def listarMaterias(request):
 	materias = Materia.objects.all()
 	json = serializers.serialize('json',materias)
@@ -65,3 +67,5 @@ def eliminarMateria(request):
 	materia = Materia.objects.get(pk=request.GET['id'])
 	materia.delete()
 	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')
+
+# CRUD Materia End.
