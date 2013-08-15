@@ -1,10 +1,12 @@
 # Imports for Objects bellow
-from principal.models import Usuario, Rol, UsuarioRol
+from principal.models import Usuario, Rol, UsuarioRol, Materia, Centro
 # Imports for validation or any other thing bellow
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 import os
+from django.utils import simplejson
+from django.core import serializers
 
 
 def inicio(request):
@@ -30,4 +32,37 @@ def login(request):
 					#return render_to_response(<frontend_error_view>)
 	else:
 		return HttpResponse('<h2>Invalid parameters</h2>')
+		
+		
+def listarMaterias(request):
+	materias = Materia.objects.all()
+	json = serializers.serialize('json',materias)
+	return HttpResponse(json, content_type="application/json")
+	
+def obtenerMateria(request):
+	materia = Materia.objects.get(pk=request.GET['id'])
+	json = serializers.serialize('json',[materia])
+	return HttpResponse(json, content_type="application/json")
+	
+def guardarMateria(request):
 
+	if 'centro' in request.GET:
+		centro = Centro.objects.get(pk=request.GET['centro'])
+	else:
+		centro=None
+	materia = Materia(materia_id=request.GET['id'],
+					  nombre = request.GET['nombre'],
+					  tipo_materia = request.GET['tipo'],
+					  unidades_credito_teoria = request.GET['uct'],
+					  unidades_credito_practica = request.GET['ucp'],
+					  unidades_credito_laboratorio = request.GET['ucl'],
+					  estatus = request.GET['estatus'],
+					  semestre=request.GET['semestre'],
+					  centro=centro)
+	materia.save()
+	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')
+	
+def eliminarMateria(request):
+	materia = Materia.objects.get(pk=request.GET['id'])
+	materia.delete()
+	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')

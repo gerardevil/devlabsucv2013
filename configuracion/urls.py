@@ -7,5 +7,9 @@ urlpatterns = patterns('',
 	url(r'^$', 'principal.views.inicio', name='home'), 
 	url(r'^login$', 'principal.views.login', name='login'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls))
+    url(r'^admin/', include(admin.site.urls)),
+	url(r'^listarMaterias$', 'principal.views.listarMaterias', name='listarMaterias'),
+	url(r'^obtenerMateria$', 'principal.views.obtenerMateria', name='obtenerMateria'),
+	url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
+	url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria')
 )
