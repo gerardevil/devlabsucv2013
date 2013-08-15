@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 import os
-from django.utils import simplejson
 from django.core import serializers
 
 
