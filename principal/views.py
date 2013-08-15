@@ -1,4 +1,5 @@
 # Imports for Objects bellow
+from django.db.models.loading import get_app, get_models, get_model
 from principal.models import Usuario, Rol, UsuarioRol, Materia, Centro
 # Imports for validation or any other thing bellow
 from django.http import HttpResponse
@@ -69,3 +70,23 @@ def eliminarMateria(request):
 	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')
 
 # CRUD Materia End.
+
+def admins(request):
+    #return render(request,'Principal_Admin.html')
+    return render_to_response('Principal_Admin.html',{'opc':1})
+
+def listarm(request):
+    clases_modelos = []
+    apps = get_app('principal')
+    for model in get_models(apps):
+        mn = model._meta.verbose_name
+
+        clases_modelos.append({'nombre': mn,'nombre_se': mn.replace(' ','')})
+
+    return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2})
+
+def datos(request,modelo):
+    clase_modelo = get_model('principal',str(modelo).replace(' ',''))
+    lista = clase_modelo.objects.all()
+    return render_to_response('Principal_Admin.html',{'modelo':modelo,'opc':3,'lista':lista})
+#    return HttpResponse(modelo)

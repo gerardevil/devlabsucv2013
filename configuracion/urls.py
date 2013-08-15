@@ -11,5 +11,8 @@ urlpatterns = patterns('',
 	url(r'^listarMaterias$', 'principal.views.listarMaterias', name='listarMaterias'),
 	url(r'^obtenerMateria$', 'principal.views.obtenerMateria', name='obtenerMateria'),
 	url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
-	url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria')
+	url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
+    url(r'^admins$', 'principal.views.admins', name='administrador'),
+    url(r'^admins/modelos$', 'principal.views.listarm', name='listado_modelos'),
+    url(r'^admins/modelos/(?P<modelo>[^/]+)$', 'principal.views.datos', name='listar_modelo'),
 )
