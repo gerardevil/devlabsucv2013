@@ -59,11 +59,13 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = '/home/devlabsdb/webapps/static/'
+#STATIC_ROOT = '/home/devlabsdb/webapps/static/'
+STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
+STATIC_URL = '/assets/'
 
 DEVLABS_ROOT = '/home/devlabsdb/webapps/programaciondocente/devlabsucv2013/'
 
@@ -71,6 +73,7 @@ DEVLABS_ROOT = '/home/devlabsdb/webapps/programaciondocente/devlabsucv2013/'
 
 STATICFILES_DIRS = (
 	os.path.join(DEVLABS_ROOT, "views/assets").replace('\\', '/'),
+	os.path.join(os.getcwd(), "views/assets").replace('\\', '/'),
 	#os.path.join(DEVLABS_ROOT, "views/assets/css").replace('\\', '/'),
 	#os.path.join(DEVLABS_ROOT, "views/assets/js").replace('\\', '/'),
 )
