@@ -1,0 +1,39 @@
+{% extends "Plantilla.html" %}
+
+{% block op_barra %}
+<li {% if opc == 1 %} class="active" {% endif %}>
+    <a href="/admins"><i class="icon-home"></i> Principal</a>
+</li>
+<li {% if opc > 1 %} class="active" {% endif %}>
+    <a href="/admins/modelos"><i class="icon-pencil" id="Crear"></i> Datos</a>
+</li>
+
+{% endblock %}
+
+{% block contenido_vista %}
+<div class="container">
+    {% if opc == 1%}
+    {% endif %}
+    {% if opc == 2%}
+        {% for m in modelos %}
+        <a href="/admins/modelos/{{m.nombre}}"><b>{{m.nombre | title }}</b><a><br/>
+        <br/>
+        {% endfor %}
+    {% endif %}
+    {% if opc == 3%}
+        <h2>{{ modelo|title }}</h2>
+        <br>
+        <a href="/admins/modelos/{{modelo}}/crear">Agregar {{modelo|title}}</a>
+        <br>
+        <br>
+
+            {% for elem in lista %}
+            elem.id
+            <br>
+            {% endfor %}
+
+    {% endif %}
+</div>
+{% endblock %}
+		
+

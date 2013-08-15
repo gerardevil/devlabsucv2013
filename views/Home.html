@@ -29,6 +29,29 @@
     		</button>
     		</form>
 
+            {% if err == 1 %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>¡Error!</h4>
+                    Proporcione usuario y contraseña.
+                </div>
+            {% else %}
+            {% if err == 2 %}
+            <div class="alert alert-error">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h4>¡Error!</h4>
+                El usuario no existe.
+            </div>
+            {% else %}
+            {% if err == 3 %}
+            <div class="alert alert-error">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h4>¡Error!</h4>
+                Contraseña inválida.
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endif %}
             <br>
     		<br>
     	</div>
