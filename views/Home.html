@@ -1,8 +1,9 @@
 {% extends "Base.html" %}
+{% load staticfiles %}
 {% block todo_cont %}
     <div class="container">
     	<div class="container" id="head">
-    		<img src="{{ STATIC_URL }}/assets/logos/mural.jpg" style="border-radius:15px;">
+    		<img src="{% static "assets/logos/mural.jpg" %}" style="border-radius:15px;">
     	</div>
     	<br>
     	<div class="container-fluid" id="loginbox">
