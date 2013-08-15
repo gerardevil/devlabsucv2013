@@ -59,13 +59,13 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-#STATIC_ROOT = '/home/devlabsdb/webapps/static/'
-STATIC_ROOT = ''
+STATIC_ROOT = '/home/devlabsdb/webapps/static/'
+#STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-#STATIC_URL = '/static/'
-STATIC_URL = '/assets/'
+STATIC_URL = '/static/'
+#STATIC_URL = '/assets/'
 
 DEVLABS_ROOT = '/home/devlabsdb/webapps/programaciondocente/devlabsucv2013/'
 
@@ -73,7 +73,7 @@ DEVLABS_ROOT = '/home/devlabsdb/webapps/programaciondocente/devlabsucv2013/'
 
 STATICFILES_DIRS = (
 	os.path.join(DEVLABS_ROOT, "views/assets").replace('\\', '/'),
-	os.path.join(os.getcwd(), "views/assets").replace('\\', '/'),
+	#os.path.join(os.getcwd(), "views/assets").replace('\\', '/'),
 	#os.path.join(DEVLABS_ROOT, "views/assets/css").replace('\\', '/'),
 	#os.path.join(DEVLABS_ROOT, "views/assets/js").replace('\\', '/'),
 )
@@ -117,7 +117,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 	os.path.join(DEVLABS_ROOT, 'views').replace('\\', '/'),
-	os.path.join(os.getcwd(), 'views').replace('\\', '/'),
+	#os.path.join(os.getcwd(), 'views').replace('\\', '/'),
 )
 
 INSTALLED_APPS = (
