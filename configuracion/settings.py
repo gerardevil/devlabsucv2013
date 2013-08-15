@@ -114,6 +114,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 	os.path.join(DEVLABS_ROOT, 'views').replace('\\', '/'),
+	os.path.join(os.getcwd(), 'views').replace('\\', '/'),
 )
 
 INSTALLED_APPS = (
