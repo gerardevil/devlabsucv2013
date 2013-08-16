@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core import serializers
-from principal.forms import UsuarioForm
+from principal.forms import UsuarioForm , LoginForm
 import os
 
 
@@ -14,27 +14,26 @@ import os
 def inicio(request):
     return render_to_response('Home.html')
 
-# Login v0 by using GET, must be by using CSRF by POST
+# Login V2 using POST featured by rafa xD
 def login(request):
-	user_ext = request.GET['user']
-	password_ext = request.GET['password']
 	
-	if user_ext and password_ext:
+	login_form =  LoginForm(request.POST)
+	if login_form.is_valid():
+		user_ext = request.POST['user']
+		password_ext = request.POST['password']
+		
 		try:
 			password = Usuario.objects.get(usuario_id=int(user_ext)).clave
 		except Exception, e:
-            #return HttpResponse('<h2>User not found</h2>')
-			return render_to_response("Home.html",{'err':2})
+			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
 		else:
 				if password_ext == password:
 					return render_to_response('Principal_Prof.html')
-                    #return render_to_response(<frontend_error_view>)
 				else:
-                    #return HttpResponse('<h2>Invalid password</h2>')
-					return render_to_response("Home.html",{'err':3})
+					return render_to_response('Login.html' ,{'err':2,'login_form' : login_form},context_instance=RequestContext(request))							
 	else:
-		return render_to_response("Home.html",{'err':1})
-		
+		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
+				
 # CRUD Materia Begin:
 
 def listarMaterias(request):
