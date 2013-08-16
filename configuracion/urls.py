@@ -15,4 +15,9 @@ urlpatterns = patterns('',
     url(r'^admins$', 'principal.views.admins', name='administrador'),
     url(r'^admins/modelos$', 'principal.views.listarm', name='listado_modelos'),
     url(r'^admins/modelos/(?P<modelo>[^/]+)$', 'principal.views.datos', name='listar_modelo'),
+    # url(r'^listarUsuarios/$', 'principal.views.listarUsuarios', name='listarUsuarios'),
+    url(r'^admins/modelos/usuario/crear/$', 'principal.views.insertarUsuario', name='insertarUsuario'),
+    url(r'^admins/modelos/usuario/borrar/(?P<usuario_id>\d+)$', 'principal.views.borrarUsuario', name='borrarUsuario'),
+    url(r'^admins/modelos/usuario/editar/(?P<usuario_id>\d+)$', 'principal.views.editarUsuario', name='editarUsuario'),
+
 )

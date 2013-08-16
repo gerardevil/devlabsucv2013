@@ -21,9 +21,9 @@
 		<td> {{ u.nombre }} </td>
 		<td> {{ u.correo }} </td>
 		<td> {{ u.centro.centro_id }} </td>
-		<td> <a href="{% url 'usuario-edit' u.usuario_id %}">Editar</a> 
+		<td> <a href="{% url 'editarUsuario' u.usuario_id %}">Editar</a> 
 			|
-			 <a href="{% url 'usuario-delete' u.usuario_id %}">Borrar</a> 
+			 <a href="{% url 'borrarUsuario' u.usuario_id %}">Borrar</a> 
 		</td>
 		</tr>
 

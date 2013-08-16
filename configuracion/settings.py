@@ -67,7 +67,7 @@ STATIC_ROOT = '/home/devlabsdb/webapps/static/'
 STATIC_URL = '/static/'
 #STATIC_URL = '/assets/'
 
-DEVLABS_ROOT = '/home/devlabsdb/webapps/programaciondocente/devlabsucv2013/'
+DEVLABS_ROOT = 'C:\Users\Rafael Machado\Desktop\devlabsucv2013'
 
 # Additional locations of static files
 
