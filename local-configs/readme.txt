@@ -1,6 +1,6 @@
 El siguiente directorio contiene :
 
-1.- settings.py - archivo de configuraciones para correr el prohecto con servidor local. manage.py runserver.
+1.- settings.py - archivo de configuraciones para correr el proyecto con servidor local. manage.py runserver.
 
 2.- view-example.html - una vista de ejemplo mostrando como deber ser ahora el acceso a datos locales, desde el proyecto como localhost.
 
