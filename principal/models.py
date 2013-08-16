@@ -89,6 +89,29 @@ class TipoDocente(models.Model):
     def __unicode__(self):
         return u'tipo_docente_id: %d | nombre: %s ' % (self.tipo_docente_id, self.nombre)
 
+class SesionActiva(models.Model):
+#ALTER TABLE `sesionactiva` CHANGE `id` `id` INT( 11 ) NOT NULL AUTO_INCREMENT;
+    id = models.IntegerField(primary_key=True)
+    usuario = models.IntegerField(null=False)
+
+    class Meta:
+        db_table = 'sesion_activa'
+
+    def __unicode__(self):
+        return u'id: %d | usuario: %s ' % (self.id, self.usuario)
+
+    def save(self, user): 
+        try:
+            foo = SesionActiva.objects.get(usuario = int(user))
+        except Exception, e:
+                try:
+                    self.id = (SesionActiva.objects.order_by('-id')[0].id )+ 1
+                except IndexError, e:
+                    self.id=1         
+                self.usuario = user            
+                super(SesionActiva, self).save()
+
+                
 ##########################################
 # Models wich do have foreing key bellow #
 ##########################################

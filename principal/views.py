@@ -14,11 +14,11 @@ import os
 def inicio(request):
     return render_to_response('Home.html')
 
-# Login V2 using POST featured by rafa xD
+# Login V3 session control
 def login(request):
 	
 	login_form =  LoginForm(request.POST)
-	if login_form.is_valid():
+	if request.POST and  login_form.is_valid():
 		user_ext = request.POST['user']
 		password_ext = request.POST['password']
 		
@@ -28,12 +28,20 @@ def login(request):
 			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
 		else:
 				if password_ext == password:
-					return render_to_response('Principal_Prof.html')
+				
+					SesionActiva().save(int(user_ext))	
+					return HttpResponseRedirect('/profile')
+
 				else:
 					return render_to_response('Login.html' ,{'err':2,'login_form' : login_form},context_instance=RequestContext(request))							
 	else:
 		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
-				
+
+#@is_loged
+def profile(request):
+	return render_to_response('Principal_Prof.html')	
+
+	
 # CRUD Materia Begin:
 
 def listarMaterias(request):
