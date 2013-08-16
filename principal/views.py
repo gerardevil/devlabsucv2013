@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core import serializers
+from principal.forms import UsuarioForm
 import os
 
 
@@ -90,3 +91,34 @@ def datos(request,modelo):
     lista = clase_modelo.objects.all()
     return render_to_response('Principal_Admin.html',{'modelo':modelo,'opc':3,'lista':lista})
 #    return HttpResponse(modelo)
+
+#CRUD Usuario
+def insertarUsuario(request):
+	user_form = UsuarioForm(request.POST)
+	if user_form.is_valid():
+		user_form.save()
+		return render_to_response('listarUsuarios.html')
+	return render_to_response('insertarUsuario.html' ,{'user_form' : user_form},context_instance=RequestContext(request))
+
+def listarUsuarios(request):
+	usuarios = Usuario.objects.all()
+	return render_to_response('listarUsuarios.html', {'usuarios' : usuarios})
+
+def borrarUsuario(request, usuario_id):
+	p = Usuario.objects.get(pk=usuario_id)
+	p.delete()
+	return render_to_response('listarUsuarios.html')
+
+def editarUsuario(request,usuario_id):
+	usuario = Usuario.objects.get(pk=usuario_id)
+	user_form = UsuarioForm()
+	if request.method == 'POST':
+		user_form = UsuarioForm(request.POST,instance=usuario)
+		if user_form.is_valid():
+			user_form.save()
+			return render_to_response('listarUsuarios.html')
+	else:
+		user_form = UsuarioForm(instance=usuario)
+	return render_to_response('insertarUsuario.html' ,{'user_form' : user_form},context_instance=RequestContext(request))
+
+#End CRUD Usuario
