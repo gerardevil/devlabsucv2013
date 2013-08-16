@@ -139,6 +139,9 @@ def insertarAula(request):
         return render_to_response('listarAulas.html')
     return render_to_response('insertarAula.html' ,{'aula_form' : aula_form},context_instance=RequestContext(request))
 
+def listarAulas(request):
+	return render_to_response('listarAulas.html', {'aulas' : Aula.objects.all()})
+
 def editarAula(request,aula_id):
     aula = Aula.objects.get(pk=aula_id)
     aula_form = AulaForm()
@@ -146,7 +149,16 @@ def editarAula(request,aula_id):
         aula_form = UsuarioForm(request.POST,instance=aula)
         if aula_form.is_valid():
             aula_form.save()
-            return render_to_response('listarAula.html')
+            return render_to_response('listarAulas.html')
     else:
         aula_form = AulaForm(instance=aula)
     return render_to_response('insertarAula.html' ,{'aula_form' : aula_form},context_instance=RequestContext(request))
+
+def borrarAula(request, aula_id):
+	aula = Aula.objects.get(pk=aula_id)
+	aula.delete()
+	return render_to_response('listarAulas.html',{'aulas': Aula.objects.all()})
+
+#END CRUD Aula
+
+

@@ -2,5 +2,45 @@
 
 {% block contenido_vista %}
 
+{% if aulas%}
+	<table>
+		<thead>
+			<tr>Aulas</tr>
+		</thead>
+		<tr>
+			<td>Id</td>
+			<td>Tipo</td>
+			<td>Capacidad</td>
+			<td>Estatus</td>
+		</tr>	
+	{% for a in aulas %}
+	<tr>
+		<td>{{ a.aula_id }}</td> 
+		<td> 
+			{% if a.tipo_aula == 'int' %} Interna {% else %}
+			{% if a.tipo_aula == 'lab' %} Laboratorio {% else %}
+			{% if a.tipo_aula == 'ext' %} Externa 
+			{% endif %}	{% endif %} {% endif %}
+		</td>
+		<td> {{ a.capacidad }} </td>		
+		<td> 
+			{% if a.estatus_aula  == 'A' %} Activa {% else %}
+			{% if a.estatus_aula == 'I' %} Inactiva 
+			{%endif%} {% endif %}
+		</td>		
+
+		<td> <a href="{% url 'editarAula' a.aula_id %}">Editar</a> 
+			|
+			 <a href="{% url 'borrarAula' a.aula_id %}">Borrar</a> 
+		</td>
+		</tr>
+
+	</tr>
+	{% endfor %}
+	</table>
+{% else %}
+	No hay Aulas Registradas en el sistema.
+{% endif %}
 
 {% endblock %}
+
