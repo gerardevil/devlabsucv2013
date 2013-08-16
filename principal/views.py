@@ -2,7 +2,7 @@
 from django.db.models.loading import get_app, get_models, get_model
 from principal.models import Usuario, Rol, UsuarioRol, Materia, Centro
 # Imports for validation or any other thing bellow
-from django.http import HttpResponse
+from django.http import HttpResponse ,HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core import serializers
