@@ -1,6 +1,7 @@
-# Imports for Objects bellow
+# Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
 from principal.models import Usuario, Rol, UsuarioRol, Materia, Centro
+from principal.manager import aula
 # Imports for validation or any other thing bellow
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -140,7 +141,8 @@ def insertarAula(request):
     return render_to_response('insertarAula.html' ,{'aula_form' : aula_form},context_instance=RequestContext(request))
 
 def listarAulas(request):
-	return render_to_response('listarAulas.html', {'aulas' : Aula.objects.all()})
+	a = aula.ManagerAula()
+	return render_to_response('listarAulas.html',{'aulas': a.listarAulas()})
 
 def editarAula(request,aula_id):
     aula = Aula.objects.get(pk=aula_id)
