@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core import serializers
-from principal.forms import UsuarioForm , LoginForm
+from principal.forms import *
 import os
 
 
@@ -121,3 +121,24 @@ def editarUsuario(request,usuario_id):
 	return render_to_response('insertarUsuario.html' ,{'user_form' : user_form},context_instance=RequestContext(request))
 
 #End CRUD Usuario
+
+#CRUD Aula
+
+def insertarAula(request):
+    aula_form = AulaForm(request.POST)
+    if aula_form.is_valid():
+        aula_form.save()
+        return render_to_response('listarAulas.html')
+    return render_to_response('insertarAula.html' ,{'aula_form' : aula_form},context_instance=RequestContext(request))
+
+def editarAula(request,aula_id):
+    aula = Aula.objects.get(pk=aula_id)
+    aula_form = AulaForm()
+    if request.method == 'POST':
+        aula_form = UsuarioForm(request.POST,instance=aula)
+        if aula_form.is_valid():
+            aula_form.save()
+            return render_to_response('listarAula.html')
+    else:
+        aula_form = AulaForm(instance=aula)
+    return render_to_response('insertarAula.html' ,{'aula_form' : aula_form},context_instance=RequestContext(request))

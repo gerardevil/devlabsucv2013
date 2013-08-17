@@ -1,6 +1,6 @@
 #encoding:utf-8
 from django import forms
-from principal.models import Usuario
+from principal.models import *
 
 
 class LoginForm(forms.Form):
@@ -10,3 +10,7 @@ class LoginForm(forms.Form):
 class UsuarioForm(forms.ModelForm):
 	class Meta:
 		model = Usuario
+
+class AulaForm(forms.ModelForm):
+    class Meta:
+        model = Aula

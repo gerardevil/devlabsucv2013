@@ -20,4 +20,7 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/usuario/borrar/(?P<usuario_id>\d+)$', 'principal.views.borrarUsuario', name='borrarUsuario'),
     url(r'^admins/modelos/usuario/editar/(?P<usuario_id>\d+)$', 'principal.views.editarUsuario', name='editarUsuario'),
 
+    url(r'^admins/modelos/aula/crear/$', 'principal.views.insertarAula', name='insertarAula'),
+    url(r'^admins/modelos/aula/editar/(?P<aula_id>\d+)$', 'principal.views.editarAula', name='editarAula'),
+
 )
