@@ -1,7 +1,7 @@
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
 from principal.models import Usuario, Rol, UsuarioRol, Materia, Centro
-from principal.manager import aula
+from principal.manager import entity
 # Imports for validation or any other thing bellow
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -10,7 +10,10 @@ from django.core import serializers
 from principal.forms import *
 import os
 
+from django.contrib.contenttypes.models import ContentType 
 
+
+m = entity.Manager()
 
 def inicio(request):
     return render_to_response('Home.html')
@@ -85,82 +88,43 @@ def admins(request):
     return render_to_response('Principal_Admin.html',{'opc':1})
 
 def listarm(request):
-    clases_modelos = []
-    apps = get_app('principal')
-    for model in get_models(apps):
-        mn = model._meta.verbose_name
+	'''Metodo que lista todos los modelos'''
+	clases_modelos = []
+	apps = get_app('principal')
+	for model in get_models(apps):
+		mn = model._meta.verbose_name
+		clases_modelos.append({'nombre': mn,'nombre_se': mn.replace(' ','')})
+	return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2})
 
-        clases_modelos.append({'nombre': mn,'nombre_se': mn.replace(' ','')})
-
-    return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2})
-
-def datos(request,modelo):
-    clase_modelo = get_model('principal',str(modelo).replace(' ',''))
-    lista = clase_modelo.objects.all()
-    return render_to_response('Principal_Admin.html',{'modelo':modelo,'opc':3,'lista':lista})
-#    return HttpResponse(modelo)
-
-#CRUD Usuario
-def insertarUsuario(request):
-	user_form = UsuarioForm(request.POST)
-	if user_form.is_valid():
-		user_form.save()
+# CRUD Generico
+def insertar(request,modelo):
+	'''Metodo generico para insertar'''
+	form = m.generarFormulario(request,modelo,None,0)
+	if form.is_valid():
+		form.save()
 		return render_to_response('listarUsuarios.html')
-	return render_to_response('insertarUsuario.html' ,{'user_form' : user_form},context_instance=RequestContext(request))
+	return render_to_response('Insertar.html' ,{'form' : form},context_instance=RequestContext(request))
 
-def listarUsuarios(request):
-	usuarios = Usuario.objects.all()
-	return render_to_response('listarUsuarios.html', {'usuarios' : usuarios})
+def listar(request,modelo):
+	'''Metodo que lista todos los objetos de un modelo'''
+	return render_to_response('Principal_Admin.html',{'lista': m.listar(str(modelo)), 'opc': 3, 'modelo' : modelo})
 
-def borrarUsuario(request, usuario_id):
-	p = Usuario.objects.get(pk=usuario_id)
-	p.delete()
-	return render_to_response('listarUsuarios.html')
+def borrar(request, modelo, key):
+	'''Metodo generico para borrar'''
+	m.borrar(modelo,key)
+	return render_to_response('Principal_Admin.html',{'lista': m.listar(str(modelo)), 'opc': 3, 'modelo' : modelo})
 
-def editarUsuario(request,usuario_id):
-	usuario = Usuario.objects.get(pk=usuario_id)
-	user_form = UsuarioForm()
+def editar(request,modelo,key):
+	'''Metodo generico para editar'''
+	model = get_model('principal',modelo)
+	o = model.objects.get(pk=key)
+	form = None
 	if request.method == 'POST':
-		user_form = UsuarioForm(request.POST,instance=usuario)
-		if user_form.is_valid():
-			user_form.save()
-			return render_to_response('listarUsuarios.html')
+		form = m.generarFormulario(request, modelo, o, 1)
+		if form.is_valid():
+			form.save()
+			return render_to_response('Principal_Admin.html',{'lista': m.listar(str(modelo)), 'opc': 3, 'modelo' : modelo})
 	else:
-		user_form = UsuarioForm(instance=usuario)
-	return render_to_response('insertarUsuario.html' ,{'user_form' : user_form},context_instance=RequestContext(request))
-
-#End CRUD Usuario
-
-#CRUD Aula
-
-def insertarAula(request):
-    aula_form = AulaForm(request.POST)
-    if aula_form.is_valid():
-        aula_form.save()
-        return render_to_response('listarAulas.html')
-    return render_to_response('insertarAula.html' ,{'aula_form' : aula_form},context_instance=RequestContext(request))
-
-def listarAulas(request):
-	a = aula.ManagerAula()
-	return render_to_response('listarAulas.html',{'aulas': a.listarAulas()})
-
-def editarAula(request,aula_id):
-    aula = Aula.objects.get(pk=aula_id)
-    aula_form = AulaForm()
-    if request.method == 'POST':
-        aula_form = UsuarioForm(request.POST,instance=aula)
-        if aula_form.is_valid():
-            aula_form.save()
-            return render_to_response('listarAulas.html')
-    else:
-        aula_form = AulaForm(instance=aula)
-    return render_to_response('insertarAula.html' ,{'aula_form' : aula_form},context_instance=RequestContext(request))
-
-def borrarAula(request, aula_id):
-	aula = Aula.objects.get(pk=aula_id)
-	aula.delete()
-	return render_to_response('listarAulas.html',{'aulas': Aula.objects.all()})
-
-#END CRUD Aula
-
+		form = m.generarFormulario(request, modelo, o, 2)
+	return render_to_response('Insertar.html' ,{'form' : form},context_instance=RequestContext(request))
 
