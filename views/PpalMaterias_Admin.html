@@ -1,0 +1,96 @@
+{% extends "Plantilla.html" %}
+
+{% block op_barra %}
+	<li class="active">
+		<a href="#"><i class="icon-home"></i> Principal</a>
+	</li>
+	<li>
+		<a href="Perfil_JefeDep.html"><i class="icon-user"></i> Información de perfil</a>
+	</li>
+{% endblock %}
+
+{% block contenido_vista %}
+	<table class="table table-hover">
+		<!--<caption> -->
+			<!--<b>Listado de Materias</b> -->
+		<!--</caption> -->
+		<thead>
+			<tr>
+				<th id="color">
+					Materias
+				</th>
+				<th id="color">
+					Acciones
+					<!-- Creador -->
+				</th>
+				<th>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for materia in listaMaterias %}
+			<tr>
+			  <td><strong>{{materia.nombre}}</strong></td>
+			  <td> 				
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-trash" id="eliminarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-edit" id="modificarMateria"></i>
+				</button></td>
+			</tr>
+
+			{% endfor %}
+<!--  		<tr>
+			<td>
+				Materia 1 
+			</td>
+			<td>
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-trash" id="eliminarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-edit" id="modificarMateria"></i>
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Materia 2 
+			</td>
+			<td>
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-trash" id="eliminarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-edit" id="modificarMateria"></i>
+				</button>
+			</td>
+		</tr>
+-->
+		</tbody>
+
+	</table>
+	<div id="indices" class="pagination pagination-right" style="aling:center">
+		<ul>
+			<li>
+				<a href="#">Prev</a>
+			</li>
+			<li>
+				<a href="#">1</a>
+			</li>
+			<li>
+				<a href="#">2</a>
+			</li>
+			<li>
+				<a href="#">3</a>
+			</li>
+			<li>
+				<a href="#">Next</a>
+			</li>
+		</ul>
+	</div>
+	<button class="btn btn-primary" href="#">
+		Agregar Materia
+	</button>
+{% endblock %}	

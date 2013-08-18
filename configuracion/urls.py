@@ -22,7 +22,12 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/editar/(?P<key>\d+)$', 'principal.views.editar', name='editar'),
     #url(r'^admins/modelos/aula/crear/$', 'principal.views.insertarAula', name='insertarAula'),
     #url(r'^listarAulas/$', 'principal.views.listarAulas', name='listarAulass'),
-    url(r'^admins/modelos/aula/editar/(?P<aula_id>\d+)$', 'principal.views.editarAula', name='editarAula'),
+    #url(r'^admins/modelos/aula/editar/(?P<aula_id>\d+)$', 'principal.views.editarAula', name='editarAula'),
     #url(r'^admins/modelos/aula/borrar/(?P<aula_id>\d+)$', 'principal.views.borrarAula', name='borrarAula'),
+    url(r'^admins/modelos/aula/borrar/(?P<aula_id>\d+)$', 'principal.views.borrarAula', name='borrarAula'),
+	url(r'^ppalCrudMaterias$', 'principal.views.ppalCrudMaterias', name='ppalCrudMaterias'),
+	url(r'^crearMateria$', 'principal.views.crearMateria', name='crearMateria'),
+	url(r'^modificarMateria$', 'principal.views.modificarMateria', name='modificiarMateria'),
+
 
 )

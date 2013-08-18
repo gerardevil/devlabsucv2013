@@ -47,7 +47,18 @@ def profile(request):
 
 	
 # CRUD Materia Begin:
+def ppalCrudMaterias(request):
+	materias = Materia.objects.all().order_by('nombre')
+	return render_to_response('PpalMaterias_Admin.html', {'listaMaterias':materias})
 
+def crearMateria(request):
+	centros = Centro.objects.all().order_by('nombre')
+	return render_to_response('CrearMateria_Admin.html', {'listaCentros':centros})
+
+def modificarMateria(request):
+	return render_to_response('ModificarMateria_Admin.html')
+
+################################################################
 def listarMaterias(request):
 	materias = Materia.objects.all()
 	json = serializers.serialize('json',materias)
