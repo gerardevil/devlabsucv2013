@@ -63,13 +63,12 @@ def modificarMateria(request):
 def listarMaterias(request):
 	materias = Materia.objects.all()
 	#json = serializers.serialize('json',materias)
-	temp = [m.toJson(False) for m in materias]
+	temp = [m.toJson() for m in materias]
 	return HttpResponse(json.dumps(temp), content_type="application/json")
 	
 def obtenerMateria(request):
 	materia = Materia.objects.get(pk=request.GET['id'])
-	json = serializers.serialize('json',[materia])
-	return HttpResponse(json, content_type="application/json")
+	return HttpResponse(json.dumps(materia.toJson(False)), content_type="application/json")
 	
 def guardarMateria(request):
 
