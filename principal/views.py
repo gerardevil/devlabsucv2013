@@ -9,6 +9,7 @@ from django.template.context import RequestContext
 from django.core import serializers
 from principal.forms import *
 import os
+import json
 
 from django.contrib.contenttypes.models import ContentType 
 
@@ -61,8 +62,9 @@ def modificarMateria(request):
 ################################################################
 def listarMaterias(request):
 	materias = Materia.objects.all()
-	json = serializers.serialize('json',materias)
-	return HttpResponse(json, content_type="application/json")
+	#json = serializers.serialize('json',materias)
+	temp = [m.toJson(False) for m in materias]
+	return HttpResponse(json.dumps(temp), content_type="application/json")
 	
 def obtenerMateria(request):
 	materia = Materia.objects.get(pk=request.GET['id'])

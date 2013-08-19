@@ -20,16 +20,22 @@ class Aula(models.Model):
 
 
 class Centro(models.Model):
-    centro_id = models.CharField(max_length=10L, unique=True)
-    nombre = models.CharField(max_length=100L)
-    area = models.CharField(max_length=100L)
+	centro_id = models.CharField(max_length=10L, unique=True)
+	nombre = models.CharField(max_length=100L)
+	area = models.CharField(max_length=100L)
 
-    class Meta:
-        db_table = 'centro'
+	class Meta:
+		db_table = 'centro'
 
-    def __unicode__(self):
-        return u'centro_id: %s | nombre: %s | area: %s' % (self.centro_id, self.nombre, self.area)
+	def __unicode__(self):
+		return u'centro_id: %s | nombre: %s | area: %s' % (self.centro_id, self.nombre, self.area)
 
+	def toJson(self,minify=True):
+		retorno = {'centro_id':self.centro_id,
+				'nombre':self.nombre,
+				'area':self.area
+				}
+		return retorno
 
 class PeriodoAcademico(models.Model):
     anho_lectivo = models.IntegerField()
@@ -154,23 +160,42 @@ class Usuario(models.Model):
 
 
 class Materia(models.Model):
-    materia_id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100L)
-    tipo_materia = models.CharField(max_length=100L)
-    unidades_credito_teoria = models.IntegerField()
-    unidades_credito_practica = models.IntegerField()
-    unidades_credito_laboratorio = models.IntegerField()
-    estatus = models.CharField(max_length=3L)
-    semestre = models.IntegerField(null=True, blank=True)
+	materia_id = models.IntegerField(primary_key=True)
+	nombre = models.CharField(max_length=100L)
+	tipo_materia = models.CharField(max_length=100L)
+	unidades_credito_teoria = models.IntegerField()
+	unidades_credito_practica = models.IntegerField()
+	unidades_credito_laboratorio = models.IntegerField()
+	estatus = models.CharField(max_length=3L)
+	semestre = models.IntegerField(null=True, blank=True)
 
-    centro = models.ForeignKey(Centro, null=True, blank=True)
+	centro = models.ForeignKey(Centro, null=True, blank=True)
 
-    class Meta:
-        db_table = 'materia'
+	class Meta:
+		db_table = 'materia'
 
-    def __unicode__(self):
-        return u'materia_id: %d | nombre: %s | tipo_materia: %s | semestre: %d' % (self.materia_id, self.nombre, self.tipo_materia, self.semestre)
+	def __unicode__(self):
+		return u'materia_id: %d | nombre: %s | tipo_materia: %s | semestre: %d' % (self.materia_id, self.nombre, self.tipo_materia, self.semestre)
 
+	def toJson(self,minify=True):
+		retorno = {'materia_id':self.materia_id,
+				'nombre':self.nombre,
+				'tipo_materia':self.tipo_materia
+				}
+		if not minify:
+			retorno.update(
+				{'unidades_credito_teoria':self.unidades_credito_teoria,
+				'unidades_credito_practica':self.unidades_credito_practica,
+				'unidades_credito_laboratorio':self.unidades_credito_laboratorio,
+				'estatus':self.estatus,
+				'semestre':self.semestre})
+				
+			if self.centro != None:
+				retorno.update({'centro':self.centro.toJson(minify)})
+			else:
+				retorno.update({'centro':self.centro})
+
+		return retorno
 
 class HorarioMateria(models.Model):
     dia_semana = models.CharField(max_length=50L)
