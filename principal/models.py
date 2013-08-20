@@ -7,17 +7,24 @@ from django.db import models
 
 
 class Aula(models.Model):
-    aula_id = models.CharField(max_length=10L, primary_key=True)
-    tipo_aula = models.CharField(max_length=3L)
-    capacidad = models.IntegerField()
-    estatus_aula = models.CharField(max_length=3L)
+	aula_id = models.CharField(max_length=10L, primary_key=True)
+	tipo_aula = models.CharField(max_length=3L)
+	capacidad = models.IntegerField()
+	estatus_aula = models.CharField(max_length=3L)
 
-    class Meta:
-        db_table = 'aula'
+	class Meta:
+		db_table = 'aula'
 
-    def __unicode__(self):
-        return u'aula_id: %s | tipo_aula: %s | capacidad: %d | estatus_aula: %s' % (self.aula_id, self.tipo_aula, self.capacidad, self.estatus_aula)
+	def __unicode__(self):
+		return u'aula_id: %s | tipo_aula: %s | capacidad: %d | estatus_aula: %s' % (self.aula_id, self.tipo_aula, self.capacidad, self.estatus_aula)
 
+	def toJson(self,minify=True):
+		retorno = {'aula_id':self.aula_id,
+				'tipo_aula':self.tipo_aula,
+				'capacidad':self.capacidad,
+				'estatus_aula':self.estatus_aula
+				}
+		return retorno
 
 class Centro(models.Model):
 	centro_id = models.CharField(max_length=10L, unique=True)
@@ -38,63 +45,93 @@ class Centro(models.Model):
 		return retorno
 
 class PeriodoAcademico(models.Model):
-    anho_lectivo = models.IntegerField()
-    semestre = models.IntegerField()
-    fecha_inicio = models.DateField()
-    fecha_fin = models.DateField()
+	anho_lectivo = models.IntegerField()
+	semestre = models.IntegerField()
+	fecha_inicio = models.DateField()
+	fecha_fin = models.DateField()
 
-    class Meta:
-        db_table = 'periodo_academico'
+	class Meta:
+		db_table = 'periodo_academico'
 
-    def __unicode__(self):
-        return u'anho_lectivo: %d | semestre: %d | inicio: %s | fin: %s' % (self.anho_lectivo, self.semestre, str(self.fecha_inicio), str(self.fecha_fin))
+	def __unicode__(self):
+		return u'anho_lectivo: %d | semestre: %d | inicio: %s | fin: %s' % (self.anho_lectivo, self.semestre, str(self.fecha_inicio), str(self.fecha_fin))
 
+	def toJson(self,minify=True):
+		retorno = {'anho_lectivo':self.anho_lectivo,
+				'semestre':self.semestre,
+				'fecha_inicio':self.fecha_inicio,
+				'fecha_fin':self.fecha_fin
+				}
+		return retorno
 
 class PropiedadesSistema(models.Model):
-    propiedades_sistema_id = models.CharField(max_length=45L, unique=True)
-    nombre = models.CharField(max_length=45L)
-    valor = models.CharField(max_length=45L)
+	propiedades_sistema_id = models.CharField(max_length=45L, unique=True)
+	nombre = models.CharField(max_length=45L)
+	valor = models.CharField(max_length=45L)
 
-    class Meta:
-        db_table = 'propiedades_sistema'
+	class Meta:
+		db_table = 'propiedades_sistema'
 
-    def __unicode__(self):
-        return u'System_prop_id: %s | nombre: %s | valor: %s' % (self.propiedades_sistema_id, self.nombre, self.valor)
+	def __unicode__(self):
+		return u'System_prop_id: %s | nombre: %s | valor: %s' % (self.propiedades_sistema_id, self.nombre, self.valor)
 
+	def toJson(self,minify=True):
+		retorno = {'propiedades_sistema_id':self.propiedades_sistema_id,
+				'nombre':self.nombre,
+				'valor':self.valor
+				}
+		return retorno
 
 class Rol(models.Model):
-    rol_id = models.CharField(max_length=6L, primary_key=True)
-    nombre = models.CharField(max_length=100L)
-    descripcion = models.CharField(max_length=500L, blank=True)
+	rol_id = models.CharField(max_length=6L, primary_key=True)
+	nombre = models.CharField(max_length=100L)
+	descripcion = models.CharField(max_length=500L, blank=True)
 
-    class Meta:
-        db_table = 'rol'
+	class Meta:
+		db_table = 'rol'
 
-    def __unicode__(self):
-        return u'rol_id: %s | nombre: %s | descripcion: %s' % (self.rol_id, self.nombre, self.descripcion)
+	def __unicode__(self):
+		return u'rol_id: %s | nombre: %s | descripcion: %s' % (self.rol_id, self.nombre, self.descripcion)
 
+	def toJson(self,minify=True):
+		retorno = {'rol_id':self.rol_id,
+				'nombre':self.nombre,
+				'descripcion':self.descripcion
+				}
+		return retorno
 
 class TipoContrato(models.Model):
-    tipo_contrato_id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=45L)
+	tipo_contrato_id = models.IntegerField(primary_key=True)
+	nombre = models.CharField(max_length=45L)
 
-    class Meta:
-        db_table = 'tipo_contrato'
+	class Meta:
+		db_table = 'tipo_contrato'
 
-    def __unicode__(self):
-        return u'tipo_contrato_id: %d | nombre: %s' % (self.tipo_contrato_id, self.nombre)
+	def __unicode__(self):
+		return u'tipo_contrato_id: %d | nombre: %s' % (self.tipo_contrato_id, self.nombre)
 
+	def toJson(self,minify=True):
+		retorno = {'tipo_contrato_id':self.tipo_contrato_id,
+				'nombre':self.nombre
+				}
+		return retorno
 
 class TipoDocente(models.Model):
-    tipo_docente_id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100L)
+	tipo_docente_id = models.IntegerField(primary_key=True)
+	nombre = models.CharField(max_length=100L)
 
-    class Meta:
-        db_table = 'tipo_docente'
+	class Meta:
+		db_table = 'tipo_docente'
 
-    def __unicode__(self):
-        return u'tipo_docente_id: %d | nombre: %s ' % (self.tipo_docente_id, self.nombre)
+	def __unicode__(self):
+		return u'tipo_docente_id: %d | nombre: %s ' % (self.tipo_docente_id, self.nombre)
 
+	def toJson(self,minify=True):
+		retorno = {'tipo_docente_id':self.tipo_docente_id,
+				'nombre':self.nombre
+				}
+		return retorno
+		
 class SesionActiva(models.Model):
 #ALTER TABLE `sesionactiva` CHANGE `id` `id` INT( 11 ) NOT NULL AUTO_INCREMENT;
     id = models.IntegerField(primary_key=True)
@@ -124,41 +161,80 @@ class SesionActiva(models.Model):
 
 
 class JerarquiaDocente(models.Model):
-    jerarquia_docente_id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100L)
-    tipo_docente = models.ForeignKey('TipoDocente')
+	jerarquia_docente_id = models.IntegerField(primary_key=True)
+	nombre = models.CharField(max_length=100L)
+	tipo_docente = models.ForeignKey('TipoDocente')
 
-    class Meta:
-        db_table = 'jerarquia_docente'
+	class Meta:
+		db_table = 'jerarquia_docente'
 
-    def __unicode__(self):
-        return u'jerarquia_docente_id: %d | nombre: %s | tipo_docente: %s' % (self.jerarquia_docente_id, self.nombre, str(self.tipo_docente))
+	def __unicode__(self):
+		return u'jerarquia_docente_id: %d | nombre: %s | tipo_docente: %s' % (self.jerarquia_docente_id, self.nombre, str(self.tipo_docente))
 
+	def toJson(self,minify=True):
+		retorno = {'jerarquia_docente_id':self.jerarquia_docente_id,
+				'nombre':self.nombre,
+				'tipo_docente':self.tipo_docente
+				}
+		return retorno
 
 class Usuario(models.Model):
-    usuario_id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100L)
-    correo = models.CharField(max_length=100L)
-    telefono_celular = models.CharField(max_length=20L, blank=True)
-    telefono_oficina = models.CharField(max_length=20L, blank=True)
-    telefono_casa = models.CharField(max_length=20L, blank=True)
-    fecha_ingreso = models.DateField(null=True, blank=True)
-    direccion = models.CharField(max_length=500L, blank=True)
-    dedicacion = models.CharField(max_length=3L, blank=True)
-    estatus = models.CharField(max_length=3L)
-    clave = models.CharField(max_length=20L)
+	usuario_id = models.IntegerField(primary_key=True)
+	nombre = models.CharField(max_length=100L)
+	correo = models.CharField(max_length=100L)
+	telefono_celular = models.CharField(max_length=20L, blank=True)
+	telefono_oficina = models.CharField(max_length=20L, blank=True)
+	telefono_casa = models.CharField(max_length=20L, blank=True)
+	fecha_ingreso = models.DateField(null=True, blank=True)
+	direccion = models.CharField(max_length=500L, blank=True)
+	dedicacion = models.CharField(max_length=3L, blank=True)
+	estatus = models.CharField(max_length=3L)
+	clave = models.CharField(max_length=20L)
 
-    jerarquia_docente = models.ForeignKey(JerarquiaDocente, null=True, blank=True)
-    tipo_contrato = models.ForeignKey(TipoContrato, null=True, blank=True)
-    centro = models.ForeignKey(Centro)
+	jerarquia_docente = models.ForeignKey(JerarquiaDocente, null=True, blank=True)
+	tipo_contrato = models.ForeignKey(TipoContrato, null=True, blank=True)
+	centro = models.ForeignKey(Centro)
 
-    class Meta:
-        db_table = 'usuario'
+	class Meta:
+		db_table = 'usuario'
 
-    def __unicode__(self):
-        return u'usuario_id: %s | nombre: %s | clave: %s | dedicacion: %s' % (self.usuario_id, self.nombre, self.clave, self.dedicacion)
+	def __unicode__(self):
+		return u'usuario_id: %s | nombre: %s | clave: %s | dedicacion: %s' % (self.usuario_id, self.nombre, self.clave, self.dedicacion)
 
+	def toJson(self,minify=True):
+		retorno = {'usuario_id':self.usuario_id,
+				'nombre':self.nombre,
+				'correo':self.correo
+				}
+		if not minify:
+			retorno.update(
+				{'telefono_celular':self.telefono_celular,
+				'telefono_oficina':self.telefono_oficina,
+				'telefono_casa':self.telefono_casa,
+				'fecha_ingreso':self.fecha_ingreso,
+				'direccion':self.direccion,
+				'dedicacion':self.dedicacion,
+				'estatus':self.estatus,
+				'clave':self.clave})
+				
+			if self.jerarquia_docente != None:
+				retorno.update({'jerarquia_docente':self.jerarquia_docente.toJson(minify)})
+			else:
+				retorno.update({'jerarquia_docente':self.jerarquia_docente})
+				
+			if self.tipo_contrato != None:
+				retorno.update({'tipo_contrato':self.tipo_contrato.toJson(minify)})
+			else:
+				retorno.update({'tipo_contrato':self.tipo_contrato})
+				
+			if self.centro != None:
+				retorno.update({'centro':self.centro.toJson(minify)})
+			else:
+				retorno.update({'centro':self.centro})
 
+		return retorno
+
+		
 class Materia(models.Model):
 	materia_id = models.IntegerField(primary_key=True)
 	nombre = models.CharField(max_length=100L)
@@ -197,35 +273,64 @@ class Materia(models.Model):
 
 		return retorno
 
+		
 class HorarioMateria(models.Model):
-    dia_semana = models.CharField(max_length=50L)
-    hora_inicio = models.TextField()
-    hora_fin = models.TextField()
-    materia = models.ForeignKey('Materia')
+	dia_semana = models.CharField(max_length=50L)
+	hora_inicio = models.TextField()
+	hora_fin = models.TextField()
+	materia = models.ForeignKey('Materia')
 
-    class Meta:
-        db_table = 'horario_materia'
+	class Meta:
+		db_table = 'horario_materia'
 
-    def __unicode__(self):
-        return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, self.hora_inicio, self.hora_fin)
+	def __unicode__(self):
+		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, self.hora_inicio, self.hora_fin)
 
+	def toJson(self,minify=True):
+		retorno = {'dia_semana':self.dia_semana,
+				'hora_inicio':self.hora_inicio,
+				'hora_fin':self.hora_fin
+				}
+		if not minify:
+		
+			if self.materia != None:
+				retorno.update({'materia':self.materia.toJson(minify)})
+			else:
+				retorno.update({'materia':self.materia})
 
+		return retorno
+
+		
 class Programacion(models.Model):
-    programacion_id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100L)
-    descripcion = models.CharField(max_length=100L, blank=True)
-    fecha = models.DateTimeField()
-    estatus = models.CharField(max_length=3L)
-    ruta_pdf = models.CharField(max_length=100L, blank=True)
-    ano_lectivo = models.ForeignKey(PeriodoAcademico, db_column='ano_lectivo', related_name='programacion_tiene_ano')
-    semestre = models.ForeignKey(PeriodoAcademico, db_column='semestre', related_name='programacion_tiene_semestre')
+	programacion_id = models.IntegerField(primary_key=True)
+	nombre = models.CharField(max_length=100L)
+	descripcion = models.CharField(max_length=100L, blank=True)
+	fecha = models.DateTimeField()
+	estatus = models.CharField(max_length=3L)
+	ruta_pdf = models.CharField(max_length=100L, blank=True)
+	ano_lectivo = models.ForeignKey(PeriodoAcademico, db_column='ano_lectivo', related_name='programacion_tiene_ano')
+	semestre = models.ForeignKey(PeriodoAcademico, db_column='semestre', related_name='programacion_tiene_semestre')
 
-    class Meta:
-        db_table = 'programacion'
+	class Meta:
+		db_table = 'programacion'
 
-    def __unicode__(self):
-        return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, self.hora_inicio, self.hora_fin)
+	def __unicode__(self):
+		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, self.hora_inicio, self.hora_fin)
 
+	def toJson(self,minify=True):
+		retorno = {'programacion_id':self.programacion_id,
+				'nombre':self.nombre,
+				'descripcion':self.descripcion
+				}
+		if not minify:
+			retorno.update(
+				{'fecha':self.fecha,
+				'estatus':self.estatus,
+				'ruta_pdf':self.ruta_pdf,
+				'ano_lectivo':self.ano_lectivo,
+				'semestre':self.semestre})
+
+		return retorno
 
 class ProgramacionDetalle(models.Model):
     programacion_detalle_id = models.IntegerField(primary_key=True)
