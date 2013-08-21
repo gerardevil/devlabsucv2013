@@ -15,7 +15,7 @@ class Manager:
 		return claseModelo.objects.all()
 
 	def generarFormulario(self,request,modelo,inst,case):
-		model = get_model('principal',modelo)
+		model = get_model('principal',str(modelo).replace(' ',''))
 		type_id = ContentType.objects.get_for_model(model).id
 		form_class = get_object_form(type_id)
 		if case == 0:
@@ -27,7 +27,7 @@ class Manager:
 		return form
 
 	def borrar(self, modelo, key):
-		model = get_model('principal',modelo)
+		model = get_model('principal',str(modelo).replace(' ',''))
 		o = model.objects.get(pk=key)
 		#Verificar si el objeto existe
 		o.delete()

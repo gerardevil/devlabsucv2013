@@ -13,10 +13,11 @@ urlpatterns = patterns('',
 	url(r'^obtenerMateria$', 'principal.views.obtenerMateria', name='obtenerMateria'),
 	url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
 	url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
+
     url(r'^admins$', 'principal.views.admins', name='administrador'),
     url(r'^admins/modelos$', 'principal.views.listarm', name='listado_modelos'), #Lista de todos los modelos
+
     url(r'^admins/modelos/(?P<modelo>[^/]+)$', 'principal.views.listar', name='listar_modelo'), #Lista de todos los objetos del modelo
-    #url(r'^listarUsuarios/$', 'principal.views.listarUsuarios', name='listarUsuarios'),
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear/$', 'principal.views.insertar', name='insertar'),
     url(r'^admins/modelos/(?P<modelo>[^/]+)/borrar/(?P<key>\d+)$', 'principal.views.borrar', name='borrar'),
     url(r'^admins/modelos/(?P<modelo>[^/]+)/editar/(?P<key>\d+)$', 'principal.views.editar', name='editar'),
@@ -28,6 +29,7 @@ urlpatterns = patterns('',
 	url(r'^ppalCrudMaterias$', 'principal.views.ppalCrudMaterias', name='ppalCrudMaterias'),
 	url(r'^crearMateria$', 'principal.views.crearMateria', name='crearMateria'),
 	url(r'^modificarMateria$', 'principal.views.modificarMateria', name='modificiarMateria'),
+
 
 
 )
