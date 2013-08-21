@@ -32,4 +32,9 @@ class Manager:
 		#Verificar si el objeto existe
 		o.delete()
 		return None
-
+		
+	def leer(self, modelo, key):
+		model = get_model('principal',str(modelo).replace(' ',''))
+		o = model.objects.get(pk=key)
+		#Verificar si el objeto existe
+		return o

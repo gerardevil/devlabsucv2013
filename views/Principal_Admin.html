@@ -28,9 +28,16 @@
         <br>
 
             {% for elem in lista %}
-                {{elem}}
+                <a href="/admins/modelos/{{modelo}}/editar/{{elem.pk}}">{{elem}}</a>  <a href="/admins/modelos/{{modelo}}/borrar/{{elem.pk}}"> Borrar </a>
             <br>
             {% endfor %}
+
+    {% endif %}
+    {% if opc == 4%}
+    <h2>{{ modelo|title }}</h2>
+    <br>
+    {{objeto}}
+    <br>
 
     {% endif %}
 </div>

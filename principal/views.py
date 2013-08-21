@@ -140,3 +140,8 @@ def editar(request,modelo,key):
 		form = m.generarFormulario(request, modelo, o, 2)
 	return render_to_response('Insertar.html' ,{'form' : form},context_instance=RequestContext(request))
 
+def leer(request,modelo,key):
+    '''Metodo generico para leer'''
+    objeto = m.leer(modelo,key)
+    return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4},context_instance=RequestContext(request))
+
