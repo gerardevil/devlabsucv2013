@@ -138,7 +138,7 @@ def editar(request,modelo,key):
 			return HttpResponseRedirect('/admins/modelos/'+modelo)
 	else:
 		form = m.generarFormulario(request, modelo, o, 2)
-	return render_to_response('Insertar.html' ,{'form' : form},context_instance=RequestContext(request))
+	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
 
 def leer(request,modelo,key):
     '''Metodo generico para leer'''
