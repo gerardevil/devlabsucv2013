@@ -5,7 +5,7 @@ from principal.manager import entity
 
 # Imports for validation or any other thing bellow
 from django.http import HttpResponse ,HttpResponseRedirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core import serializers
@@ -36,13 +36,17 @@ def loginUser(request):
 				return HttpResponseRedirect('/profile')
 			else:
 				return render_to_response('Login.html' ,{'err':2,'login_form' : login_form},context_instance=RequestContext(request))
-				
+
 		else:
 			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
 	else:	
 		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
 
-#@is_loged
+def logoutUser(request):
+	logout(request)
+	return HttpResponseRedirect('/')
+
+#@login_required
 def profile(request):
 	return render_to_response('Principal_Prof.html')	
 
