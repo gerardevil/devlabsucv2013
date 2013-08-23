@@ -9,4 +9,5 @@ El siguiente directorio contiene :
     Crear un directorio static en la carpeta views y colocar el directorio assets en dicha carpeta.
 
 [ WARNING ]
-Cabe destacar que al momento de realizar 'git push' desde su repositorio local, debe primero verificar que las configuraciones setting.py sean las establecidas para el servidor remoto, al igual que el metodo de acceso a los recursos estaticos.
+- Recuerde que antes de correo el proyecto en el servidor local debe hacer uso del comando 'manage.py syncdb' para mantener su Base de Datos local actualizada.
+- Cabe destacar que al momento de realizar 'git push' desde su repositorio local, debe primero verificar que las configuraciones setting.py sean las establecidas para el servidor remoto, al igual que el metodo de acceso a los recursos estaticos.
