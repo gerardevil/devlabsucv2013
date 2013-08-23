@@ -27,15 +27,15 @@ class Aula(models.Model):
 		return retorno
 
 class Centro(models.Model):
-	centro_id = models.CharField(max_length=10L, unique=True)
-	nombre = models.CharField(max_length=100L)
+	centro_id = models.IntegerField(max_length=10L, unique=True)
+	nombre = models.CharField(max_length=100L,unique=True)
 	area = models.CharField(max_length=100L)
 
 	class Meta:
 		db_table = 'centro'
 
 	def __unicode__(self):
-		return u'centro_id: %s | nombre: %s | area: %s' % (self.centro_id, self.nombre, self.area)
+		return u'centro_id: %d | nombre: %s | area: %s' % (self.centro_id, self.nombre, self.area)
 
 	def toJson(self,minify=True):
 		retorno = {'centro_id':self.centro_id,
@@ -179,9 +179,11 @@ class JerarquiaDocente(models.Model):
 		return retorno
 
 class Usuario(models.Model):
-	usuario_id = models.IntegerField(primary_key=True)
-	nombre = models.CharField(max_length=100L)
-	correo = models.CharField(max_length=100L)
+	
+	''' 
+	Using Django User model : Nombre, Apellido, Clave are on the  Django User model
+	'''
+	usuario_id = models.OneToOneField(User)
 	telefono_celular = models.CharField(max_length=20L, blank=True)
 	telefono_oficina = models.CharField(max_length=20L, blank=True)
 	telefono_casa = models.CharField(max_length=20L, blank=True)
@@ -189,8 +191,6 @@ class Usuario(models.Model):
 	direccion = models.CharField(max_length=500L, blank=True)
 	dedicacion = models.CharField(max_length=3L, blank=True)
 	estatus = models.CharField(max_length=3L)
-	clave = models.CharField(max_length=20L)
-
 	jerarquia_docente = models.ForeignKey(JerarquiaDocente, null=True, blank=True)
 	tipo_contrato = models.ForeignKey(TipoContrato, null=True, blank=True)
 	centro = models.ForeignKey(Centro)
@@ -199,13 +199,15 @@ class Usuario(models.Model):
 		db_table = 'usuario'
 
 	def __unicode__(self):
-		return u'usuario_id: %s | nombre: %s | clave: %s | dedicacion: %s' % (self.usuario_id, self.nombre, self.clave, self.dedicacion)
+		return u'usuario: %s | nombre: %s | apellido: %s | clave: %s | dedicacion: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.usuario_id.password, self.dedicacion)
 
 	def toJson(self,minify=True):
-		retorno = {'usuario_id':self.usuario_id,
-				'nombre':self.nombre,
-				'correo':self.correo
-				}
+		retorno = {'usuario_id':self.usuario_id.username,
+				'nombre':self.usuario_id.first_name,
+				'apellido':self.usuario_id.last_name,
+				'password':self.usuario_id.password,
+				'correo_Electronico':self.usuario_id.email}
+
 		if not minify:
 			retorno.update(
 				{'telefono_celular':self.telefono_celular,
@@ -214,25 +216,11 @@ class Usuario(models.Model):
 				'fecha_ingreso':self.fecha_ingreso,
 				'direccion':self.direccion,
 				'dedicacion':self.dedicacion,
-				'estatus':self.estatus,
-				'clave':self.clave})
-				
-			if self.jerarquia_docente != None:
-				retorno.update({'jerarquia_docente':self.jerarquia_docente.toJson(minify)})
-			else:
-				retorno.update({'jerarquia_docente':self.jerarquia_docente})
-				
-			if self.tipo_contrato != None:
-				retorno.update({'tipo_contrato':self.tipo_contrato.toJson(minify)})
-			else:
-				retorno.update({'tipo_contrato':self.tipo_contrato})
-				
-			if self.centro != None:
-				retorno.update({'centro':self.centro.toJson(minify)})
-			else:
-				retorno.update({'centro':self.centro})
-
+				'estatus':self.estatus, 'jerarquia_docente': self.jerarquia_docente.jerarquia_docente_id, 'tipo_contrato': self.tipo_contrato.tipo_contrato_id, 'centro': self.centro.pk})
 		return retorno
+
+	def get_pk(self,id):
+		return self.usuario_id.username
 
 		
 class Materia(models.Model):

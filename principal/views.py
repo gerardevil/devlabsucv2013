@@ -33,10 +33,7 @@ def login(request):
 			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
 		else:
 				if password_ext == password:
-				
-					SesionActiva().save(int(user_ext))	
 					return HttpResponseRedirect('/profile')
-
 				else:
 					return render_to_response('Login.html' ,{'err':2,'login_form' : login_form},context_instance=RequestContext(request))							
 	else:
@@ -59,7 +56,6 @@ def crearMateria(request):
 def modificarMateria(request):
 	return render_to_response('ModificarMateria_Admin.html')
 
-################################################################
 def listarMaterias(request):
 	materias = Materia.objects.all()
 	#json = serializers.serialize('json',materias)
@@ -130,16 +126,18 @@ def editar(request,modelo,key):
 	'''Metodo generico para editar'''
 	model = get_model('principal',str(modelo).replace(' ',''))
 	o = model.objects.get(pk=key)
-	form = None
 	if request.method == 'POST':
 		form = m.generarFormulario(request, modelo, o, 1)
 		if form.is_valid():
-			form.save()
+			if modelo=='usuario':
+				form.save(o.usuario_id.username)
+			else:
+				form.save()
 			return HttpResponseRedirect('/admins/modelos/'+modelo)
 	else:
 		form = m.generarFormulario(request, modelo, o, 2)
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
-
+	
 def leer(request,modelo,key):
     '''Metodo generico para leer'''
     objeto = m.leer(modelo,key)

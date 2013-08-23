@@ -1,9 +1,9 @@
-from django.db.models.loading import get_app, get_models, get_model
-from principal.models import *
-from django.contrib.contenttypes.models import ContentType 
 from principal.forms import *
+from principal.models import *
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from django.db.models.loading import get_app, get_models, get_model
+from django.contrib.contenttypes.models import ContentType 
 
 class Manager:
 
@@ -17,19 +17,29 @@ class Manager:
 	def generarFormulario(self,request,modelo,inst,case):
 		model = get_model('principal',str(modelo).replace(' ',''))
 		type_id = ContentType.objects.get_for_model(model).id
-		form_class = get_object_form(type_id)
-		if case == 0:
-			form = form_class(request.POST, None)
-		if case == 1:
-			form = form_class(request.POST, instance=inst)
-		if case == 2:
-			form = form_class(instance=inst)
-		return form
+		if modelo == 'usuario':
+			if case == 0: 
+				return CustomUserForm(True,request.POST)
+			elif case == 1:
+				return CustomUserForm(False,request.POST,inst.toJson(False))
+			elif case == 2:
+				return CustomUserForm(False, inst.toJson(False))
+		else:
+			form_class = get_object_form(type_id)
+			if case == 0:
+				return form_class(request.POST, None)
+			elif case == 1:
+				return form_class(request.POST, instance=inst)
+			elif case == 2:
+				return form_class(instance=inst)
+		return None
 
 	def borrar(self, modelo, key):
 		model = get_model('principal',str(modelo).replace(' ',''))
 		o = model.objects.get(pk=key)
-		#Verificar si el objeto existe
+		if modelo == 'usuario':
+			user = User.objects.get(pk = o.usuario_id.pk)
+			user.delete()
 		o.delete()
 		return None
 		
