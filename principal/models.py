@@ -332,106 +332,186 @@ class Programacion(models.Model):
 
 		return retorno
 
+		
 class ProgramacionDetalle(models.Model):
-    programacion_detalle_id = models.IntegerField(primary_key=True)
-    carga = models.CharField(max_length=3L, blank=True)
-    seccion = models.CharField(max_length=45L, blank=True)
-    programacion = models.ForeignKey(Programacion)
-    materia = models.ForeignKey(Materia)
-    cedula = models.ForeignKey('Usuario', db_column='cedula')
+	programacion_detalle_id = models.IntegerField(primary_key=True)
+	carga = models.CharField(max_length=3L, blank=True)
+	seccion = models.CharField(max_length=45L, blank=True)
+	programacion = models.ForeignKey(Programacion)
+	materia = models.ForeignKey(Materia)
+	cedula = models.ForeignKey('Usuario', db_column='cedula')
 
-    class Meta:
-        db_table = 'programacion_detalle'
+	class Meta:
+		db_table = 'programacion_detalle'
 
-    def __unicode__(self):
-        return u'programacion: %s | materia: %s | cedula: %s' % (str(self.programacion), str(self.materia), str(self.cedula))
+	def __unicode__(self):
+		return u'programacion: %s | materia: %s | cedula: %s' % (str(self.programacion), str(self.materia), str(self.cedula))
 
+	def toJson(self,minify=True):
+		retorno = {'programacion_detalle_id':self.programacion_detalle_id,
+				'carga':self.carga,
+				'seccion':self.seccion,
+				'programacion':self.programacion.toJson(minify),
+				'materia':self.materia.toJson(minify),
+				'cedula':self.cedula.toJson(minify)}
+
+		return retorno
 
 class HorarioProgramado(models.Model):
-    dia_semana = models.CharField(max_length=50L)
-    hora_inicio = models.TextField()
-    hora_fin = models.TextField()
-    aula = models.ForeignKey(Aula, null=True, blank=True)
-    programacion_detalle = models.ForeignKey('ProgramacionDetalle')
+	dia_semana = models.CharField(max_length=50L)
+	hora_inicio = models.TextField()
+	hora_fin = models.TextField()
+	aula = models.ForeignKey(Aula, null=True, blank=True)
+	programacion_detalle = models.ForeignKey('ProgramacionDetalle')
 
-    class Meta:
-        db_table = 'horario_programado'
+	class Meta:
+		db_table = 'horario_programado'
 
-    def __unicode__(self):
-        return u'programacion_detalle: %s | aula: %s | dia: %s | inicio: %s | fin: %s ' % (str(self.programacion_detalle), str(self.aula), self.dia_semana, self.hora_inicio, self.hora_fin)
+	def __unicode__(self):
+		return u'programacion_detalle: %s | aula: %s | dia: %s | inicio: %s | fin: %s ' % (str(self.programacion_detalle), str(self.aula), self.dia_semana, self.hora_inicio, self.hora_fin)
 
+	def toJson(self,minify=True):
+		retorno = {'dia_semana':self.dia_semana,
+				'hora_inicio':self.hora_inicio,
+				'hora_fin':self.hora_fin
+				}
+		if not minify:
+			retorno.update(
+				{'aula':self.aula.toJson(minify),
+				'programacion_detalle':self.programacion_detalle.toJson(minify)})
+
+		return retorno
 
 class MateriaOfertada(models.Model):
-    nro_estudiantes_estimados = models.IntegerField()
-    nro_secciones_teoria = models.IntegerField()
-    nro_secciones_practica = models.IntegerField(null=True, blank=True)
-    nro_secciones_laboratorio = models.IntegerField(null=True, blank=True)
-    nro_preparadores1 = models.IntegerField(null=True, blank=True)
-    nro_preparadores2 = models.IntegerField(null=True, blank=True)
-    nro_estudiantes_inscritos = models.IntegerField(null=True, blank=True)
-    anho_periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='anho_periodo_academico', related_name='materiaofertada_tiene_anho')
-    semestre_periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='semestre_periodo_academico', related_name='materiaofertada_tiene_semestre')
-    materia = models.ForeignKey(Materia)
+	nro_estudiantes_estimados = models.IntegerField()
+	nro_secciones_teoria = models.IntegerField()
+	nro_secciones_practica = models.IntegerField(null=True, blank=True)
+	nro_secciones_laboratorio = models.IntegerField(null=True, blank=True)
+	nro_preparadores1 = models.IntegerField(null=True, blank=True)
+	nro_preparadores2 = models.IntegerField(null=True, blank=True)
+	nro_estudiantes_inscritos = models.IntegerField(null=True, blank=True)
+	anho_periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='anho_periodo_academico', related_name='materiaofertada_tiene_anho')
+	semestre_periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='semestre_periodo_academico', related_name='materiaofertada_tiene_semestre')
+	materia = models.ForeignKey(Materia)
 
-    class Meta:
-        db_table = 'materia_ofertada'
+	class Meta:
+		db_table = 'materia_ofertada'
 
-    def __unicode__(self):
-        return u'materia: %s | periodo_academico: %s | anho_periodo_academico: %s' % (str(self. materia), str(self.PeriodoAcademico), str(self.anho_periodo_academico))
+	def __unicode__(self):
+		return u'materia: %s | periodo_academico: %s | anho_periodo_academico: %s' % (str(self. materia), str(self.PeriodoAcademico), str(self.anho_periodo_academico))
 
+	def toJson(self,minify=True):
+		retorno = {'anho_periodo_academico':self.anho_periodo_academico.toJson(minify),
+				'semestre_periodo_academico':self.semestre_periodo_academico.toJson(minify),
+				'materia':self.materia.toJson(minify)
+				}
+		if not minify:
+			retorno.update(
+				{'nro_estudiantes_estimados':self.nro_estudiantes_estimados,
+				'nro_secciones_teoria':self.nro_secciones_teoria,
+				'nro_secciones_practica':self.nro_secciones_practica,
+				'nro_secciones_laboratorio':self.nro_secciones_laboratorio,
+				'nro_preparadores1':self.nro_preparadores1,
+				'nro_preparadores2':self.nro_preparadores2,
+				'nro_estudiantes_inscritos':self.nro_estudiantes_inscritos})
+
+		return retorno
 
 class MateriaSolicitada(models.Model):
-    materia_solicitada_id = models.IntegerField(primary_key=True)
-    estatus = models.CharField(max_length=3L)
-    usuario = models.ForeignKey('Usuario')
-    ano_lectivo = models.ForeignKey(MateriaOfertada, db_column='ano_lectivo', related_name='materiasolicitada_tiene_ano')
-    semestre = models.ForeignKey(MateriaOfertada, db_column='semestre', related_name='materiasolicitada_tiene_semestre')
-    materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
+	materia_solicitada_id = models.IntegerField(primary_key=True)
+	estatus = models.CharField(max_length=3L)
+	usuario = models.ForeignKey('Usuario')
+	ano_lectivo = models.ForeignKey(MateriaOfertada, db_column='ano_lectivo', related_name='materiasolicitada_tiene_ano')
+	semestre = models.ForeignKey(MateriaOfertada, db_column='semestre', related_name='materiasolicitada_tiene_semestre')
+	materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
 
-    class Meta:
-        db_table = 'materia_solicitada'
+	class Meta:
+		db_table = 'materia_solicitada'
 
-    def __unicode__(self):
-        return u'materia: %d | usuario: %s | anho_lectivo: %s | semestre: %s' % (str(self.materia), str(self.usuario), str(self.ano_lectivo), str(self.semestre))
+	def __unicode__(self):
+		return u'materia: %d | usuario: %s | anho_lectivo: %s | semestre: %s' % (str(self.materia), str(self.usuario), str(self.ano_lectivo), str(self.semestre))
 
+	def toJson(self,minify=True):
+		retorno = {'materia_solicitada_id':self.materia_solicitada_id,
+				'materia':self.materia.toJson(minify)
+				}
+		if not minify:
+			retorno.update(
+				{'estatus':self.estatus,
+				'usuario':self.usuario.toJson(minify),
+				'ano_lectivo':self.ano_lectivo.toJson(minify),
+				'semestre':self.semestre.toJson(minify)})
+
+		return retorno
 
 class HorarioSolicitado(models.Model):
-    dia_semana = models.CharField(max_length=50L)
-    hora_inicio = models.TextField()
-    hora_fin = models.TextField()
+	dia_semana = models.CharField(max_length=50L)
+	hora_inicio = models.TextField()
+	hora_fin = models.TextField()
 
-    horario_solicitado = models.ForeignKey('MateriaSolicitada')
-    aula = models.ForeignKey(Aula, null=True, blank=True)
+	horario_solicitado = models.ForeignKey('MateriaSolicitada')
+	aula = models.ForeignKey(Aula, null=True, blank=True)
 
-    class Meta:
-        db_table = 'horario_solicitado'
+	class Meta:
+		db_table = 'horario_solicitado'
 
-    def __unicode__(self):
-        return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, self.hora_inicio, self.hora_fin, str(self.horario_solicitado), str(self.aula))
+	def __unicode__(self):
+		return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, self.hora_inicio, self.hora_fin, str(self.horario_solicitado), str(self.aula))
 
+	def toJson(self,minify=True):
+		retorno = {'dia_semana':self.dia_semana,
+				'hora_inicio':self.hora_inicio,
+				'hora_fin':self.hora_fin
+				}
+		if not minify:
+			retorno.update(
+				{'horario_solicitado':self.horario_solicitado.toJson(minify),
+				'aula':self.aula.toJson(minify)})
 
+		return retorno
+		
 class Notificacion(models.Model):
-    notificacion_id = models.IntegerField(primary_key=True)
-    fecha = models.DateTimeField()
-    asunto = models.CharField(max_length=100L)
-    contenido = models.TextField()
-    estatus = models.CharField(max_length=3L)
-    usuario_emisor = models.ForeignKey('Usuario', related_name='notificacion_tiene_emisor')
-    usuario_receptor = models.ForeignKey('Usuario', related_name='notificacion_tiene_receptor')
+	notificacion_id = models.IntegerField(primary_key=True)
+	fecha = models.DateTimeField()
+	asunto = models.CharField(max_length=100L)
+	contenido = models.TextField()
+	estatus = models.CharField(max_length=3L)
+	usuario_emisor = models.ForeignKey('Usuario', related_name='notificacion_tiene_emisor')
+	usuario_receptor = models.ForeignKey('Usuario', related_name='notificacion_tiene_receptor')
 
-    class Meta:
-        db_table = 'notificacion'
+	class Meta:
+		db_table = 'notificacion'
 
-    def __unicode__(self):
-        return u'usuario_emisor: %s | usuario_receptor: %s | estatus: %s | fecha: %s' % (str(self.usuario_emisor), str(self.usuario_receptor), self.estatus, str(self.fecha))
+	def __unicode__(self):
+		return u'usuario_emisor: %s | usuario_receptor: %s | estatus: %s | fecha: %s' % (str(self.usuario_emisor), str(self.usuario_receptor), self.estatus, str(self.fecha))
 
+	def toJson(self,minify=True):
+		retorno = {'notificacion_id':self.notificacion_id,
+				'fecha':self.fecha,
+				'asunto':self.asunto
+				}
+		if not minify:
+			retorno.update(
+				{'contenido':self.contenido,
+				'estatus':self.estatus,
+				'usuario_emisor':self.usuario_emisor.toJson(minify),
+				'usuario_receptor':self.usuario_receptor.toJson(minify)})
+
+		return retorno
 
 class UsuarioRol(models.Model):
-    rol = models.ForeignKey(Rol)
-    cedula = models.ForeignKey(Usuario, db_column='cedula')
+	rol = models.ForeignKey(Rol)
+	cedula = models.ForeignKey(Usuario, db_column='cedula')
 
-    class Meta:
-        db_table = 'usuario_rol'
+	class Meta:
+		db_table = 'usuario_rol'
 
-    def __unicode__(self):
-        return u'usuario: %s | rol: %s' % (str(self.cedula), str(self.rol))
+	def __unicode__(self):
+		return u'usuario: %s | rol: %s' % (str(self.cedula), str(self.rol))
+
+	def toJson(self,minify=True):
+		retorno = {'rol':self.rol.toJson(minify),
+				'cedula':self.cedula.toJson(minify)
+				}
+
+		return retorno
