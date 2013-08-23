@@ -1,9 +1,11 @@
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
-from principal.models import Usuario, Rol, UsuarioRol, Materia, Centro
+from principal.models import *
 from principal.manager import entity
+
 # Imports for validation or any other thing bellow
 from django.http import HttpResponse ,HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core import serializers
@@ -17,26 +19,27 @@ from django.contrib.contenttypes.models import ContentType
 m = entity.Manager()
 
 def inicio(request):
-    return render_to_response('Home.html')
+	return render_to_response('Home.html')
 
-# Login V3 session control
-def login(request):
-	
+# Login V4 using Django contrib.auth method.
+def loginUser(request):	
 	login_form =  LoginForm(request.POST)
+
 	if request.POST and  login_form.is_valid():
-		user_ext = request.POST['user']
-		password_ext = request.POST['password']
-		
-		try:
-			password = Usuario.objects.get(usuario_id=int(user_ext)).clave
-		except Exception, e:
-			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
+		username = request.POST['user']
+		password = request.POST['password']
+		if User.objects.filter(username=username).exists() :
+
+			user = authenticate(username=username, password=password)
+			if user is not None:
+				login(request, user)
+				return HttpResponseRedirect('/profile')
+			else:
+				return render_to_response('Login.html' ,{'err':2,'login_form' : login_form},context_instance=RequestContext(request))
+				
 		else:
-				if password_ext == password:
-					return HttpResponseRedirect('/profile')
-				else:
-					return render_to_response('Login.html' ,{'err':2,'login_form' : login_form},context_instance=RequestContext(request))							
-	else:
+			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
+	else:	
 		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
 
 #@is_loged
@@ -92,8 +95,7 @@ def eliminarMateria(request):
 # CRUD Materia End.
 
 def admins(request):
-    #return render(request,'Principal_Admin.html')
-    return render_to_response('Principal_Admin.html',{'opc':1})
+	return render_to_response('Principal_Admin.html',{'opc':1})
 
 def listarm(request):
 	'''Metodo que lista todos los modelos'''
@@ -139,7 +141,7 @@ def editar(request,modelo,key):
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
 	
 def leer(request,modelo,key):
-    '''Metodo generico para leer'''
-    objeto = m.leer(modelo,key)
-    return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4},context_instance=RequestContext(request))
+	'''Metodo generico para leer'''
+	objeto = m.leer(modelo,key)
+	return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4},context_instance=RequestContext(request))
 

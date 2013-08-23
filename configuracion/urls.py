@@ -5,7 +5,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
 
 	url(r'^$', 'principal.views.inicio', name='home'), 
-	url(r'^login$', 'principal.views.login', name='login'),
+	url(r'^login$', 'principal.views.loginUser', name='login'),
     url(r'^profile$', 'principal.views.profile', name='profile'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),

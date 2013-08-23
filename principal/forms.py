@@ -44,13 +44,14 @@ class CustomUserForm(forms.Form):
 		try:
 			user = User.objects.get(username=str(pastPk))
 		except Exception, e:
-			user = User(username=data['usuario_id'], first_name=data['nombre'], last_name=data['apellido'],email=data['correo_Electronico'], password=data['password'])
+			user = User(username=data['usuario_id'], first_name=data['nombre'], last_name=data['apellido'],email=data['correo_Electronico'])
+			user.set_password(data['password'])# hashing into sha256 
 		else:
-			user.username = str(data['usuario_id'])
-			user.password = data['password']
+			user.username = str(data['usuario_id'])			
 			user.email= data['correo_Electronico']
 			user.first_name= data['nombre']
 			user.last_name= data['apellido']
+			user.set_password(data['password']) # hasing into sha256
 		
 		user.save()
 		
