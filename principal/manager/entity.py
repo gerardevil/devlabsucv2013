@@ -1,3 +1,5 @@
+#entity.py
+
 from principal.forms import *
 from principal.models import *
 from django.shortcuts import render_to_response

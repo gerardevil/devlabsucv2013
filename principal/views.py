@@ -1,27 +1,29 @@
+#views.py
+
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
-from principal.models import *
+from principal.manager.decorators import *
 from principal.manager import entity
+from principal.models import *
 
 # Imports for validation or any other thing bellow
-from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render_to_response
+from django.contrib.contenttypes.models import ContentType 
+from django.http import HttpResponse ,HttpResponseRedirect
 from django.template.context import RequestContext
+from django.shortcuts import render_to_response
 from django.core import serializers
 from principal.forms import *
-import os
 import json
+import os
 
-from django.contrib.contenttypes.models import ContentType 
-
-
+#Entity manager class' Unique instance of 
 m = entity.Manager()
 
 def inicio(request):
 	return render_to_response('Home.html')
 
-# Login V4 using Django contrib.auth method.
+# Login view
 def loginUser(request):	
 	login_form =  LoginForm(request.POST)
 
@@ -42,11 +44,11 @@ def loginUser(request):
 	else:	
 		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
 
+# Logout view
 def logoutUser(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
-#@login_required
 def profile(request):
 	return render_to_response('Principal_Prof.html')	
 
@@ -98,6 +100,8 @@ def eliminarMateria(request):
 
 # CRUD Materia End.
 
+# Admin principal views :
+
 def admins(request):
 	return render_to_response('Principal_Admin.html',{'opc':1})
 
@@ -110,7 +114,8 @@ def listarm(request):
 		clases_modelos.append({'nombre': mn,'nombre_se': mn.replace(' ','')})
 	return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2})
 
-# CRUD Generico
+# CRUD Generico Begin
+@validateInputCrudData
 def insertar(request,modelo):
 	'''Metodo generico para insertar'''
 	form = m.generarFormulario(request,modelo,None,0)
@@ -119,15 +124,18 @@ def insertar(request,modelo):
 		return HttpResponseRedirect('/admins/modelos/'+modelo)
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
 
+@validateInputCrudData
 def listar(request,modelo):
 	'''Metodo que lista todos los objetos de un modelo'''
 	return render_to_response('Principal_Admin.html',{'lista': m.listar(str(modelo)), 'opc': 3, 'modelo' : modelo})
 
+@validateInputCrudData
 def borrar(request, modelo, key):
 	'''Metodo generico para borrar'''
 	m.borrar(modelo,key)
 	return HttpResponseRedirect('/admins/modelos/'+modelo)
 
+@validateInputCrudData
 def editar(request,modelo,key):
 	'''Metodo generico para editar'''
 	model = get_model('principal',str(modelo).replace(' ',''))
@@ -143,9 +151,11 @@ def editar(request,modelo,key):
 	else:
 		form = m.generarFormulario(request, modelo, o, 2)
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
-	
+
+@validateInputCrudData	
 def leer(request,modelo,key):
 	'''Metodo generico para leer'''
 	objeto = m.leer(modelo,key)
 	return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4},context_instance=RequestContext(request))
 
+#END CRUD Generico

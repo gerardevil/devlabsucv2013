@@ -1,7 +1,9 @@
 #encoding:utf-8
+#forms.py
+
 from django import forms
 from principal.models import *
-from principal.manager.validators import validateUniqueUser
+from principal.manager.formValidators import validateUniqueUser
 from django.db.models.loading import get_app, get_models, get_model
 from django.contrib.contenttypes.models import ContentType 
 
