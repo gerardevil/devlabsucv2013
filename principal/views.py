@@ -10,6 +10,7 @@ from principal.models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.core import serializers
@@ -35,7 +36,11 @@ def loginUser(request):
 			user = authenticate(username=username, password=password)
 			if user is not None:
 				login(request, user)
-				return HttpResponseRedirect('/profile')
+
+				if request.GET and 'next' in request.GET:
+					return HttpResponseRedirect(request.GET['next']) 
+				else:
+					return HttpResponseRedirect('/profile')
 			else:
 				return render_to_response('Login.html' ,{'err':2,'login_form' : login_form},context_instance=RequestContext(request))
 
@@ -45,10 +50,12 @@ def loginUser(request):
 		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
 
 # Logout view
+@login_required
 def logoutUser(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
+@login_required
 def profile(request):
 	return render_to_response('Principal_Prof.html')	
 
@@ -102,9 +109,11 @@ def eliminarMateria(request):
 
 # Admin principal views :
 
+@login_required
 def admins(request):
 	return render_to_response('Principal_Admin.html',{'opc':1})
 
+@login_required
 def listarm(request):
 	'''Metodo que lista todos los modelos'''
 	clases_modelos = []
@@ -115,6 +124,8 @@ def listarm(request):
 	return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2})
 
 # CRUD Generico Begin
+
+@login_required
 @validateInputCrudData
 def insertar(request,modelo):
 	'''Metodo generico para insertar'''
@@ -124,17 +135,20 @@ def insertar(request,modelo):
 		return HttpResponseRedirect('/admins/modelos/'+modelo)
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
 
+@login_required
 @validateInputCrudData
 def listar(request,modelo):
 	'''Metodo que lista todos los objetos de un modelo'''
 	return render_to_response('Principal_Admin.html',{'lista': m.listar(str(modelo)), 'opc': 3, 'modelo' : modelo})
 
+@login_required
 @validateInputCrudData
 def borrar(request, modelo, key):
 	'''Metodo generico para borrar'''
 	m.borrar(modelo,key)
 	return HttpResponseRedirect('/admins/modelos/'+modelo)
 
+@login_required
 @validateInputCrudData
 def editar(request,modelo,key):
 	'''Metodo generico para editar'''
@@ -152,6 +166,7 @@ def editar(request,modelo,key):
 		form = m.generarFormulario(request, modelo, o, 2)
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
 
+@login_required
 @validateInputCrudData	
 def leer(request,modelo,key):
 	'''Metodo generico para leer'''

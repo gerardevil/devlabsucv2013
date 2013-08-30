@@ -22,6 +22,12 @@ DATABASES = {
 #Profile definitios for get_profile( ) function usage
 AUTH_PROFILE_MODULE = 'principal.Usuario'
 
+#Login URL for login_required usage
+LOGIN_URL = '/login'
+
+#Logout URL for login_required usage
+LOGIN_OUT = '/logout'
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
