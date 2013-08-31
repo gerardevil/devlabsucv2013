@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from configuracion import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -28,3 +29,9 @@ urlpatterns = patterns('',
     url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
     url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
 )
+
+if settings.DEBUG:
+    urlpatterns == patterns('',
+        url(r'^views/assets/(?P<path>.*)$','django.views.static.serve', {'documents_root':settings.STATIC_ROOT, 'show_indexes' : True}),
+
+        )
