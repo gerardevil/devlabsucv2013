@@ -4,5 +4,9 @@
 # --link    Create a symbolic link to each file instead of copying.
 # --noinput Do NOT prompt the user for input of any kind.
 #
-python manage.py collectstatic -link
+echo "Actualizando repositporio local"
+git pull
+echo "Sincronizando Archivos estaticos"
+python2.7 ../manage.py collectstatic -link
+echo "Todo bien (:  [Deplot Finised]"
 exit 0
