@@ -66,11 +66,14 @@ MEDIA_URL = ''
 
 '''
 STATIC_ROOT is only used if a call to 
-the collectstatic manangement command is performed
+the 'manage.py collectstatic' manangement command is performed
+
+[Only used for deploy process on server]
+
 '''
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-STATIC_ROOT = os.path.join(BASE_DIR,'..','static').replace('\\','/') 
+STATIC_ROOT = os.path.join(BASE_DIR,'..', '..', '..', 'static').replace('\\','/')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
