@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block contenido_vista %}
-<div class="container">
+<!--<div class="container">-->
     {% if opc == 1%}
     {% endif %}
     {% if opc == 2%}
@@ -20,18 +20,62 @@
         <br/>
         {% endfor %}
     {% endif %}
-    {% if opc == 3%}
-        <h2>{{ modelo|title }}</h2>
-        <br>
-        <a href="/admins/modelos/{{modelo}}/crear">Agregar {{modelo|title}}</a>
-        <br>
-        <br>
+    {% if opc == 3%}		
+		<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>
+					{{ modelo|title }}
+				</th>
+				<th>
+					Acciones
+					<!-- Creador -->
+				</th>
+				<th>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for elem in lista %}
+			<tr>
+			  <td><strong>{{elem.toString}}</strong></td>
+			  <td> 				
+				<a href="/admins/modelos/{{modelo}}/borrar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-trash"></i>
+				</a>
+				<a href="/admins/modelos/{{modelo}}/editar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
+					<i class="icon-edit"></i>
+				</a></td>
+			</tr>
 
-            {% for elem in lista %}
-                <a href="/admins/modelos/{{modelo}}/editar/{{elem.pk}}">{{elem}}</a>  <a href="/admins/modelos/{{modelo}}/borrar/{{elem.pk}}"> Borrar </a>
-            <br>
-            {% endfor %}
+			{% endfor %}
 
+		</tbody>
+
+	</table>
+	<div id="indices" class="pagination pagination-right" style="aling:center">
+		<ul>
+			<li>
+				<a href="#">Prev</a>
+			</li>
+			<li>
+				<a href="#">1</a>
+			</li>
+			<li>
+				<a href="#">2</a>
+			</li>
+			<li>
+				<a href="#">3</a>
+			</li>
+			<li>
+				<a href="#">Next</a>
+			</li>
+		</ul>
+	</div>
+	<a class="btn btn-primary" href="/admins/modelos/{{modelo}}/crear">
+		Agregar {{ modelo|title }}
+	</a>
+			
     {% endif %}
     {% if opc == 4%}
     <h2>{{ modelo|title }}</h2>
@@ -40,7 +84,7 @@
     <br>
 
     {% endif %}
-</div>
+<!--</div>-->
 {% endblock %}
 		
 

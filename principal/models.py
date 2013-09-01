@@ -239,6 +239,9 @@ class Materia(models.Model):
 				retorno.update({'centro':self.centro})
 
 		return retorno
+		
+	def toString(self):
+		return self.nombre
 
 		
 class HorarioMateria(models.Model):
