@@ -1,6 +1,0 @@
-
-
-#  Exclude .pyc files on repository #
-#####################################
-
-*.pyc
