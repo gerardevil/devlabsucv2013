@@ -30,8 +30,11 @@ urlpatterns = patterns('',
     url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
 )
 
-if settings.DEBUG:
-    urlpatterns == patterns('',
-        url(r'^views/assets/(?P<path>.*)$','django.views.static.serve', {'documents_root':settings.STATIC_ROOT, 'show_indexes' : True}),
+'''
+Allow development static files 
+'''
 
-        )
+if settings.DEBUG:
+    urlpatterns += patterns('',
+             (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
+         )
