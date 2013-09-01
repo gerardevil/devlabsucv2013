@@ -7,6 +7,6 @@
 echo "Actualizando repositporio local"
 git pull
 echo "Sincronizando Archivos estaticos"
-python2.7 ../manage.py collectstatic -link
+python2.7 ../../manage.py collectstatic -link
 echo "Todo bien (:  [Deplot Finised]"
 exit 0
