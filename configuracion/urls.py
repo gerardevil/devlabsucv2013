@@ -36,5 +36,5 @@ Allow development static files
 
 if settings.DEBUG:
     urlpatterns += patterns('',
-             (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
+             (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATICFILES_DIRS, 'show_indexes':True}),
          )

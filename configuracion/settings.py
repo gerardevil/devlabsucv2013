@@ -79,10 +79,10 @@ STATIC_URL = '/static/'
 # Additional locations of static files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, '..', 'static', 'js').replace('\\','/'),
-    os.path.join(BASE_DIR, '..', 'static', 'css').replace('\\','/'),
-    os.path.join(BASE_DIR, '..', 'static', 'img').replace('\\','/'),
-    os.path.join(BASE_DIR, '..', 'static', 'logos').replace('\\','/'),
+    ('js', os.path.join(BASE_DIR, '..', 'static', 'js').replace('\\','/')),
+    ('css', os.path.join(BASE_DIR, '..', 'static', 'css').replace('\\','/')),
+    ('img', os.path.join(BASE_DIR, '..', 'static', 'img').replace('\\','/')),
+    ('logos', os.path.join(BASE_DIR, '..', 'static', 'logos').replace('\\','/')),
 )
 
 # List of finder classes that know how to find static files in
