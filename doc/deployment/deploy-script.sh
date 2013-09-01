@@ -3,10 +3,16 @@
 #
 # --link    Create a symbolic link to each file instead of copying.
 # --noinput Do NOT prompt the user for input of any kind.
-#
-echo "Actualizando repositporio local"
+
+echo "###################################"
+echo "# Actualizando repositporio local #"
+echo "###################################"
 git pull
-echo "Sincronizando Archivos estaticos"
+echo "####################################"
+echo "# Sincronizando Archivos estaticos #"
+echo "####################################"
 python2.7 ../../manage.py collectstatic -link
-echo "Todo bien (:  [Deplot Finised]"
+echo "######################################"
+echo "# Todo bien (:  [Deployment Finised] #"
+echo "######################################"
 exit 0
