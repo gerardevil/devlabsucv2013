@@ -26,6 +26,9 @@ class Aula(models.Model):
 				'estatus_aula':self.estatus_aula
 				}
 		return retorno
+	
+	def toString(self):
+		return self.tipo_aula + ' ' + self.aula_id
 
 class Centro(models.Model):
 	centro_id = models.IntegerField(max_length=10L, unique=True)
@@ -44,6 +47,9 @@ class Centro(models.Model):
 				'area':self.area
 				}
 		return retorno
+	
+	def toString(self):
+		return self.nombre
 
 class PeriodoAcademico(models.Model):
 	anho_lectivo = models.IntegerField()
@@ -65,6 +71,9 @@ class PeriodoAcademico(models.Model):
 				}
 		return retorno
 
+	def toString(self):
+		return 'Semestre ' + str(self.semestre) + '-' + str(self.anho_lectivo)
+		
 class PropiedadesSistema(models.Model):
 	propiedades_sistema_id = models.CharField(max_length=45L, unique=True)
 	nombre = models.CharField(max_length=45L)
@@ -83,6 +92,9 @@ class PropiedadesSistema(models.Model):
 				}
 		return retorno
 
+	def toString(self):
+		return self.nombre
+		
 class Rol(models.Model):
 	rol_id = models.CharField(max_length=6L, primary_key=True)
 	nombre = models.CharField(max_length=100L)
@@ -100,6 +112,9 @@ class Rol(models.Model):
 				'descripcion':self.descripcion
 				}
 		return retorno
+		
+	def toString(self):
+		return self.nombre
 
 class TipoContrato(models.Model):
 	tipo_contrato_id = models.IntegerField(primary_key=True)
@@ -116,6 +131,9 @@ class TipoContrato(models.Model):
 				'nombre':self.nombre
 				}
 		return retorno
+		
+	def toString(self):
+		return self.nombre
 
 class TipoDocente(models.Model):
 	tipo_docente_id = models.IntegerField(primary_key=True)
@@ -132,6 +150,9 @@ class TipoDocente(models.Model):
 				'nombre':self.nombre
 				}
 		return retorno
+		
+	def toString(self):
+		return self.nombre
 		
                 
 ##########################################
@@ -156,6 +177,9 @@ class JerarquiaDocente(models.Model):
 				'tipo_docente':self.tipo_docente
 				}
 		return retorno
+		
+	def toString(self):
+		return self.nombre
 
 class Usuario(models.Model):
 	
@@ -200,6 +224,9 @@ class Usuario(models.Model):
 
 	def get_pk(self,id):
 		return self.usuario_id.username
+		
+	def toString(self):
+		return self.usuario_id.first_name + ' ' + self.usuario_id.last_name 
 
 		
 class Materia(models.Model):
@@ -270,6 +297,8 @@ class HorarioMateria(models.Model):
 
 		return retorno
 
+	def toString(self):
+		return self.materia.nombre + ' ' + self.dia_semana
 		
 class Programacion(models.Model):
 	programacion_id = models.IntegerField(primary_key=True)
@@ -302,6 +331,8 @@ class Programacion(models.Model):
 
 		return retorno
 
+	def toString(self):
+		return self.nombre
 		
 class ProgramacionDetalle(models.Model):
 	programacion_detalle_id = models.IntegerField(primary_key=True)
@@ -327,6 +358,9 @@ class ProgramacionDetalle(models.Model):
 
 		return retorno
 
+	def toString(self):
+		return self.programacion.nombre + ' - ' + self.materia.nombre + ' - ' + self.cedula.toString()
+		
 class HorarioProgramado(models.Model):
 	dia_semana = models.CharField(max_length=50L)
 	hora_inicio = models.TextField()
@@ -352,6 +386,9 @@ class HorarioProgramado(models.Model):
 
 		return retorno
 
+	def toString(self):
+		return self.programacion_detalle.toString() + ' ' + self.dia_semana
+		
 class MateriaOfertada(models.Model):
 	nro_estudiantes_estimados = models.IntegerField()
 	nro_secciones_teoria = models.IntegerField()
@@ -387,6 +424,9 @@ class MateriaOfertada(models.Model):
 
 		return retorno
 
+	def toString(self):
+		return self.materia.nombre + ' ' + self.semestre_periodo_academico.toString()
+		
 class MateriaSolicitada(models.Model):
 	materia_solicitada_id = models.IntegerField(primary_key=True)
 	estatus = models.CharField(max_length=3L)
@@ -414,6 +454,9 @@ class MateriaSolicitada(models.Model):
 
 		return retorno
 
+	def toString(self):
+		return self.materia.nombre + ' ' + self.semestre.toString()
+		
 class HorarioSolicitado(models.Model):
 	dia_semana = models.CharField(max_length=50L)
 	hora_inicio = models.TextField()
@@ -439,6 +482,9 @@ class HorarioSolicitado(models.Model):
 				'aula':self.aula.toJson(minify)})
 
 		return retorno
+		
+	def toString(self):
+		return self.horario_solicitado.toString() + ' ' + self.dia_semana
 		
 class Notificacion(models.Model):
 	notificacion_id = models.IntegerField(primary_key=True)
@@ -468,6 +514,9 @@ class Notificacion(models.Model):
 				'usuario_receptor':self.usuario_receptor.toJson(minify)})
 
 		return retorno
+	
+	def toString(self):
+		return self.fecha + ' ' + self.asunto
 
 class UsuarioRol(models.Model):
 	rol = models.ForeignKey(Rol)
@@ -485,3 +534,6 @@ class UsuarioRol(models.Model):
 				}
 
 		return retorno
+		
+	def toString(self):
+		return self.cedula.toString() + ' ' + self.rol.nombre
