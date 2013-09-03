@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
+from principal.manager.converters import convertDatetimeToString
 
 ##########################################
 # Models wich have no foreing key bellow #
@@ -66,7 +67,7 @@ class PeriodoAcademico(models.Model):
 		db_table = 'periodo_academico'
 
 	def __unicode__(self):
-		return u'periodo_lectivo: %d | semestre: %d | inicio: %s | fin: %s' % (self.periodo_lectivo, self.semestre, self.fecha_inicio.strtime('%d/%m/%y'), self.fecha_fin.strtime('%d/%m/%y'))
+		return u'periodo_lectivo: %d | semestre: %d | inicio: %s | fin: %s' % (self.periodo_lectivo, self.semestre, convertDatetimeToString(self.fecha_inicio), convertDatetimeToString(self.fecha_fin))
 
 	def toJson(self,minify=True):
 		retorno = {'periodo_lectivo':self.periodo_lectivo,
@@ -297,7 +298,7 @@ class HorarioMateria(models.Model):
 		db_table = 'horario_materia'
 
 	def __unicode__(self):
-		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, self.hora_inicio, self.hora_fin)
+		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin))
 
 	def toJson(self,minify=True):
 		retorno = {'dia_semana':self.dia_semana,
@@ -331,7 +332,7 @@ class Programacion(models.Model):
 		db_table = 'programacion'
 
 	def __unicode__(self):
-		return u'nombre: %s (%d-%d) | fecha_creacion: %s | estatus: %s | internal_path : %s' % 	(self.nombre, self.periodo_lectivo.periodo_lectivo,self.periodo_lectivo.semestre, self.fecha.strtime('%d/%m/%y'),self.estatus, self.ruta_pdf)
+		return u'nombre: %s (%d-%d) | fecha_creacion: %s | estatus: %s | internal_path : %s' % 	(self.nombre, self.periodo_lectivo.periodo_lectivo,self.periodo_lectivo.semestre, convertDatetimeToString(self.fecha),self.estatus, self.ruta_pdf)
 
 	def toJson(self,minify=True):
 		retorno = {'nombre':self.nombre,
@@ -390,7 +391,7 @@ class HorarioProgramado(models.Model):
 		db_table = 'horario_programado'
 
 	def __unicode__(self):
-		return u'programacion_detalle: %s | aula: %s | dia: %s | inicio: %s | fin: %s ' % (str(self.programacion_detalle), str(self.aula), self.dia_semana, self.hora_inicio, self.hora_fin)
+		return u'programacion_detalle: %s | aula: %s | dia: %s | inicio: %s | fin: %s ' % (str(self.programacion_detalle), str(self.aula), self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin))
 
 	def toJson(self,minify=True):
 		retorno = {'dia_semana':self.dia_semana,
@@ -479,7 +480,6 @@ class HorarioSolicitado(models.Model):
 	dia_semana = models.CharField(max_length = 9,choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
 	hora_inicio = models.TimeField()
 	hora_fin = models.TimeField()
-
 	horario_solicitado = models.ForeignKey('MateriaSolicitada')
 	aula = models.ForeignKey(Aula, null=True, blank=True)
 
@@ -487,7 +487,7 @@ class HorarioSolicitado(models.Model):
 		db_table = 'horario_solicitado'
 
 	def __unicode__(self):
-		return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, self.hora_inicio, self.hora_fin, str(self.horario_solicitado), str(self.aula))
+		return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin), str(self.horario_solicitado), str(self.aula))
 
 	def toJson(self,minify=True):
 		retorno = {'dia_semana':self.dia_semana,
@@ -519,7 +519,7 @@ class Notificacion(models.Model):
 		db_table = 'notificacion'
 
 	def __unicode__(self):
-		return u'usuario_emisor: %s | usuario_receptor: %s | estatus: %s | fecha: %s' % (str(self.usuario_emisor), str(self.usuario_receptor), self.estatus, str(self.fecha))
+		return u'usuario_emisor: %s | usuario_receptor: %s | estatus: %s | fecha: %s' % (str(self.usuario_emisor), str(self.usuario_receptor), self.estatus, convertDatetimeToString(self.fecha))
 
 	def toJson(self,minify=True):
 		retorno = {'notificacion_id':self.notificacion_id,
@@ -536,7 +536,7 @@ class Notificacion(models.Model):
 		return retorno
 	
 	def toString(self):
-		return ' %s/%s/%s  %s [ %s ] ' % (self.fecha.day, self.fecha.month, self.fecha.year, self.asunto , (lambda s : 'En transito' if not s else s )(self.estatus))
+		return ' %s  %s [ %s ] ' % (convertDatetimeToString(self.fecha), self.asunto , (lambda s : 'En transito' if not s else s )(self.estatus))
 
 	def get_pk(self):
 		return self.pk
