@@ -7,6 +7,7 @@ urlpatterns = patterns('',
 
 	url(r'^$', 'principal.views.inicio', name='home'), 
 	url(r'^login$', 'principal.views.loginUser', name='login'),
+    url(r'^logout$', 'principal.views.logoutUser', name='logout'),
     url(r'^profile$', 'principal.views.profile', name='profile'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
@@ -20,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/(?P<key>\d+)$', 'principal.views.leer', name='leer'), #Muestra todos los atributos de un objeto
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear$', 'principal.views.insertar', name='leer'), # Permite insertar un Objeto
 
-     #Matria's views
+    #Materia's views
     url(r'^ppalCrudMaterias$', 'principal.views.ppalCrudMaterias', name='ppalCrudMaterias'),
     url(r'^crearMateria$', 'principal.views.crearMateria', name='crearMateria'),
     url(r'^modificarMateria$', 'principal.views.modificarMateria', name='modificiarMateria'),

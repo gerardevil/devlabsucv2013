@@ -53,7 +53,7 @@ def loginUser(request):
 @login_required
 def logoutUser(request):
 	logout(request)
-	return HttpResponseRedirect('/')
+	return render_to_response('Home.html')
 
 @login_required
 def profile(request):
