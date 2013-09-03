@@ -26,7 +26,7 @@ class CustomUserForm(forms.Form):
 	telefono_casa = forms.CharField(required=False, max_length=20L,label = 'Telefono Casa')	
 	fecha_ingreso = forms.DateField(error_messages={'required': 'Campo Obligatorio','invalid':'Formato de Fecha aceptado: Dia/Mes/Año'},input_formats = ['%d/%m/%Y'])	
 	direccion = forms.CharField(required=False,max_length=500L)
-	dedicacion = forms.CharField(error_messages={'required': 'Campo Obligatorio'}, max_length=3L)
+	dedicacion = forms.ChoiceField(error_messages={'required': 'Campo Obligatorio'}, choices = (('6 hrs','6 Horas'), ('8 hrs','8 Horas'), ('12 hrs','12 Horas'), ('20 hrs','20 Horas'), ('40 hrs','40 Horas'),('DE','Dedicacion Exclusiva')))
 	estatus = forms.ChoiceField(error_messages={'required': 'Campo Obligatorio'}, choices=[('A','Activo'),('I','Inactivo'),('ED','Emergencia Docente')])
 	jerarquia_docente = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=JerarquiaDocente.objects.all())
 	tipo_contrato = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=TipoContrato.objects.all())
@@ -84,10 +84,4 @@ def get_object_form( type_id,  excludes=None):
 		class Meta:
 			model = model_class
 			#excludes = excludes
-	return _ObjectForm
-	
-
-
-
-	
-
+	return _ObjectForms

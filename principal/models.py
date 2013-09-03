@@ -8,16 +8,16 @@ from django.contrib.auth.models import User
 
 
 class Aula(models.Model):
-	aula_id = models.CharField(max_length=10L, primary_key=True)
-	tipo_aula = models.CharField(max_length=3L)
-	capacidad = models.IntegerField()
-	estatus_aula = models.CharField(max_length=3L)
+	aula_id = models.CharField(max_length=10L,unique=True)
+	tipo_aula = models.CharField(max_length=1L ,choices = (('I','Interna'), ('E','Externa'), ('L','Laboratorio')))
+	capacidad = models.PositiveIntegerField()
+	estatus_aula = models.CharField(max_length=1L, choices = (('A','Activa'), ('I','Inactiva')))
 
 	class Meta:
 		db_table = 'aula'
 
 	def __unicode__(self):
-		return u'aula_id: %s | tipo_aula: %s | capacidad: %d | estatus_aula: %s' % (self.aula_id, self.tipo_aula, self.capacidad, self.estatus_aula)
+		return u'aula: %s | tipo_aula: %s | capacidad: %d | estatus_aula: %s' % (self.aula_id, self.tipo_aula, self.capacidad, self.estatus_aula)
 
 	def toJson(self,minify=True):
 		retorno = {'aula_id':self.aula_id,
@@ -28,10 +28,12 @@ class Aula(models.Model):
 		return retorno
 	
 	def toString(self):
-		return self.tipo_aula + ' ' + self.aula_id
+		return self.tipo_aula + '      ' + self.aula_id
+
+	def get_pk(self):
+		return self.pk
 
 class Centro(models.Model):
-	centro_id = models.IntegerField(max_length=10L, unique=True)
 	nombre = models.CharField(max_length=100L,unique=True)
 	area = models.CharField(max_length=100L)
 
@@ -39,10 +41,10 @@ class Centro(models.Model):
 		db_table = 'centro'
 
 	def __unicode__(self):
-		return u'centro_id: %d | nombre: %s | area: %s' % (self.centro_id, self.nombre, self.area)
+		return u'nombre: %s | area: %s' % (self.nombre, self.area)
 
 	def toJson(self,minify=True):
-		retorno = {'centro_id':self.centro_id,
+		retorno = {
 				'nombre':self.nombre,
 				'area':self.area
 				}
@@ -51,9 +53,12 @@ class Centro(models.Model):
 	def toString(self):
 		return self.nombre
 
+	def get_pk(self):
+		return self.pk
+
 class PeriodoAcademico(models.Model):
-	anho_lectivo = models.IntegerField()
-	semestre = models.IntegerField()
+	periodo_lectivo = models.PositiveIntegerField()
+	semestre = models.PositiveIntegerField()
 	fecha_inicio = models.DateField()
 	fecha_fin = models.DateField()
 
@@ -61,10 +66,10 @@ class PeriodoAcademico(models.Model):
 		db_table = 'periodo_academico'
 
 	def __unicode__(self):
-		return u'anho_lectivo: %d | semestre: %d | inicio: %s | fin: %s' % (self.anho_lectivo, self.semestre, str(self.fecha_inicio), str(self.fecha_fin))
+		return u'periodo_lectivo: %d | semestre: %d | inicio: %s | fin: %s' % (self.periodo_lectivo, self.semestre, self.fecha_inicio.strtime('%d/%m/%y'), self.fecha_fin.strtime('%d/%m/%y'))
 
 	def toJson(self,minify=True):
-		retorno = {'anho_lectivo':self.anho_lectivo,
+		retorno = {'periodo_lectivo':self.periodo_lectivo,
 				'semestre':self.semestre,
 				'fecha_inicio':self.fecha_inicio,
 				'fecha_fin':self.fecha_fin
@@ -72,12 +77,15 @@ class PeriodoAcademico(models.Model):
 		return retorno
 
 	def toString(self):
-		return 'Semestre ' + str(self.semestre) + '-' + str(self.anho_lectivo)
+		return 'Semestre ' + str(self.semestre) + '-' + str(self.periodo_lectivo)
+	
+	def get_pk(self):
+		return self.pk
 		
 class PropiedadesSistema(models.Model):
-	propiedades_sistema_id = models.CharField(max_length=45L, unique=True)
-	nombre = models.CharField(max_length=45L)
-	valor = models.CharField(max_length=45L)
+	propiedades_sistema_id = models.CharField(max_length=45, unique=True,blank=True)
+	nombre = models.CharField(max_length=45)
+	valor = models.CharField(max_length=45)
 
 	class Meta:
 		db_table = 'propiedades_sistema'
@@ -94,11 +102,14 @@ class PropiedadesSistema(models.Model):
 
 	def toString(self):
 		return self.nombre
+
+	def get_pk(self):
+		return self.pk
 		
 class Rol(models.Model):
-	rol_id = models.CharField(max_length=6L, primary_key=True)
-	nombre = models.CharField(max_length=100L)
-	descripcion = models.CharField(max_length=500L, blank=True)
+	rol_id = models.CharField(max_length=20, unique=True)
+	nombre = models.CharField(max_length=100, unique=True)
+	descripcion = models.TextField(max_length=500, blank=True)
 
 	class Meta:
 		db_table = 'rol'
@@ -116,70 +127,73 @@ class Rol(models.Model):
 	def toString(self):
 		return self.nombre
 
+	def get_pk(self):
+		return self.pk
+
 class TipoContrato(models.Model):
-	tipo_contrato_id = models.IntegerField(primary_key=True)
-	nombre = models.CharField(max_length=45L)
+	nombre = models.CharField(max_length=45L, unique=True)
 
 	class Meta:
 		db_table = 'tipo_contrato'
 
 	def __unicode__(self):
-		return u'tipo_contrato_id: %d | nombre: %s' % (self.tipo_contrato_id, self.nombre)
+		return u'nombre: %s' % (self.nombre)
 
 	def toJson(self,minify=True):
-		retorno = {'tipo_contrato_id':self.tipo_contrato_id,
-				'nombre':self.nombre
-				}
+		retorno = {'nombre':self.nombre}
 		return retorno
 		
 	def toString(self):
 		return self.nombre
 
+	def get_pk(self):
+		return self.pk
+
 class TipoDocente(models.Model):
-	tipo_docente_id = models.IntegerField(primary_key=True)
-	nombre = models.CharField(max_length=100L)
+	nombre = models.CharField(max_length=100L, unique=True)
 
 	class Meta:
 		db_table = 'tipo_docente'
 
 	def __unicode__(self):
-		return u'tipo_docente_id: %d | nombre: %s ' % (self.tipo_docente_id, self.nombre)
+		return u'nombre: %s ' % (self.nombre)
 
 	def toJson(self,minify=True):
-		retorno = {'tipo_docente_id':self.tipo_docente_id,
-				'nombre':self.nombre
-				}
+		retorno = {'nombre':self.nombre	}
 		return retorno
 		
 	def toString(self):
 		return self.nombre
+
+	def get_pk(self):
+		return self.pk
 		
-                
+				
 ##########################################
 # Models wich do have foreing key bellow #
 ##########################################
 
 
 class JerarquiaDocente(models.Model):
-	jerarquia_docente_id = models.IntegerField(primary_key=True)
-	nombre = models.CharField(max_length=100L)
+	jerarquia = models.PositiveIntegerField(unique=True)
+	nombre = models.CharField(max_length=100, unique=True)
 	tipo_docente = models.ForeignKey('TipoDocente')
 
 	class Meta:
 		db_table = 'jerarquia_docente'
 
 	def __unicode__(self):
-		return u'jerarquia_docente_id: %d | nombre: %s | tipo_docente: %s' % (self.jerarquia_docente_id, self.nombre, str(self.tipo_docente))
+		return u'jerarquia: %d | nombre: %s | tipo_docente: %s' % (self.jerarquia,self.nombre, str(self.tipo_docente))
 
 	def toJson(self,minify=True):
-		retorno = {'jerarquia_docente_id':self.jerarquia_docente_id,
-				'nombre':self.nombre,
-				'tipo_docente':self.tipo_docente
-				}
+		retorno = {'jerarquia':self.jerarquia,'nombre':self.nombre,'tipo_docente':self.tipo_docente}
 		return retorno
 		
 	def toString(self):
 		return self.nombre
+
+	def get_pk(self):
+		return self.pk
 
 class Usuario(models.Model):
 	
@@ -190,25 +204,25 @@ class Usuario(models.Model):
 	telefono_celular = models.CharField(max_length=20L, blank=True)
 	telefono_oficina = models.CharField(max_length=20L, blank=True)
 	telefono_casa = models.CharField(max_length=20L, blank=True)
-	fecha_ingreso = models.DateField(null=True, blank=True)
-	direccion = models.CharField(max_length=500L, blank=True)
-	dedicacion = models.CharField(max_length=3L, blank=True)
-	estatus = models.CharField(max_length=3L)
-	jerarquia_docente = models.ForeignKey(JerarquiaDocente, null=True, blank=True)
-	tipo_contrato = models.ForeignKey(TipoContrato, null=True, blank=True)
+	fecha_ingreso = models.DateField(blank=True)
+	direccion = models.TextField(max_length=1000L, blank=True)
+	dedicacion = models.CharField(max_length=6) 
+	estatus = models.CharField(max_length= 2)
+	jerarquia_docente = models.ForeignKey(JerarquiaDocente)
+	tipo_contrato = models.ForeignKey(TipoContrato)
 	centro = models.ForeignKey(Centro)
 
 	class Meta:
 		db_table = 'usuario'
 
 	def __unicode__(self):
-		return u'usuario: %s | nombre: %s | apellido: %s | clave: %s | dedicacion: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.usuario_id.password, self.dedicacion)
+		return u'usuario: %s | nombre: %s | apellido: %s | dedicacion: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.dedicacion)
 
 	def toJson(self,minify=True):
 		retorno = {'usuario_id':self.usuario_id.username,
 				'nombre':self.usuario_id.first_name,
 				'apellido':self.usuario_id.last_name,
-				'password':self.usuario_id.password,
+				'password':'non displayable',
 				'correo_Electronico':self.usuario_id.email}
 
 		if not minify:
@@ -219,10 +233,10 @@ class Usuario(models.Model):
 				'fecha_ingreso':self.fecha_ingreso,
 				'direccion':self.direccion,
 				'dedicacion':self.dedicacion,
-				'estatus':self.estatus, 'jerarquia_docente': self.jerarquia_docente.jerarquia_docente_id, 'tipo_contrato': self.tipo_contrato.tipo_contrato_id, 'centro': self.centro.pk})
+				'estatus':self.estatus, 'jerarquia_docente': self.jerarquia_docente.pk, 'tipo_contrato': self.tipo_contrato.pk, 'centro': self.centro.pk})
 		return retorno
 
-	def get_pk(self,id):
+	def get_pk(self):
 		return self.usuario_id.username
 		
 	def toString(self):
@@ -230,25 +244,24 @@ class Usuario(models.Model):
 
 		
 class Materia(models.Model):
-	materia_id = models.IntegerField(primary_key=True)
-	nombre = models.CharField(max_length=100L)
-	tipo_materia = models.CharField(max_length=100L)
-	unidades_credito_teoria = models.IntegerField()
-	unidades_credito_practica = models.IntegerField()
-	unidades_credito_laboratorio = models.IntegerField()
-	estatus = models.CharField(max_length=3L)
-	semestre = models.IntegerField(null=True, blank=True)
-
-	centro = models.ForeignKey(Centro, null=True, blank=True)
+	codigo = models.PositiveIntegerField(unique=True)
+	nombre = models.CharField(max_length=100L, unique=True)
+	tipo_materia = models.CharField( max_length= 20, choices = (('Obligatoria','Obligatoria'),('Electiva','Electiva'), ('Electiva Obligatoria','Electiva Obligatoria'), ('Complementaria', 'Complementaria'), ('Laboratorio','Laboratorio')))
+	unidades_credito_teoria = models.PositiveIntegerField()
+	unidades_credito_practica = models.PositiveIntegerField()
+	unidades_credito_laboratorio = models.PositiveIntegerField()
+	estatus = models.CharField(max_length= 1, choices = (('A','Activa'), ('I','Inactiva')))
+	semestre = models.PositiveIntegerField(blank=True,null=True)
+	centro = models.ForeignKey(Centro)
 
 	class Meta:
 		db_table = 'materia'
 
 	def __unicode__(self):
-		return u'materia_id: %d | nombre: %s | tipo_materia: %s | semestre: %d' % (self.materia_id, self.nombre, self.tipo_materia, self.semestre)
+		return u'codigo: %d | nombre: %s | tipo_materia: %s | semestre: %d' % (self.codigo, self.nombre, self.tipo_materia, self.semestre)
 
 	def toJson(self,minify=True):
-		retorno = {'materia_id':self.materia_id,
+		retorno = {'codigo':self.codigo,
 				'nombre':self.nombre,
 				'tipo_materia':self.tipo_materia
 				}
@@ -269,12 +282,15 @@ class Materia(models.Model):
 		
 	def toString(self):
 		return self.nombre
+	
+	def get_pk(self):
+		return self.pk
 
 		
 class HorarioMateria(models.Model):
-	dia_semana = models.CharField(max_length=50L)
-	hora_inicio = models.TextField()
-	hora_fin = models.TextField()
+	dia_semana = models.CharField(max_length = 9,choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
+	hora_inicio = models.TimeField()
+	hora_fin = models.TimeField()
 	materia = models.ForeignKey('Materia')
 
 	class Meta:
@@ -299,44 +315,44 @@ class HorarioMateria(models.Model):
 
 	def toString(self):
 		return self.materia.nombre + ' ' + self.dia_semana
+
+	def get_pk(self):
+		return self.pk
 		
 class Programacion(models.Model):
-	programacion_id = models.IntegerField(primary_key=True)
-	nombre = models.CharField(max_length=100L)
-	descripcion = models.CharField(max_length=100L, blank=True)
-	fecha = models.DateTimeField()
-	estatus = models.CharField(max_length=3L)
-	ruta_pdf = models.CharField(max_length=100L, blank=True)
-	ano_lectivo = models.ForeignKey(PeriodoAcademico, db_column='ano_lectivo', related_name='programacion_tiene_ano')
-	semestre = models.ForeignKey(PeriodoAcademico, db_column='semestre', related_name='programacion_tiene_semestre')
+	nombre = models.CharField(max_length=100L, unique = True)
+	descripcion = models.TextField(max_length=100L, blank=True)
+	fecha = models.DateField(null=True,auto_now_add=True)	
+	estatus = models.CharField(max_length=8, choices = (('Aprobado','Aprobado'),('Borrador','Borrador')))
+	ruta_pdf = models.CharField(max_length=100L, blank=True,unique=True, editable=False)
+	periodo_lectivo = models.ForeignKey(PeriodoAcademico, db_column='periodo_lectivo', related_name='programacion_tiene_ano')
 
 	class Meta:
 		db_table = 'programacion'
 
 	def __unicode__(self):
-		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, self.hora_inicio, self.hora_fin)
+		return u'nombre: %s (%d-%d) | fecha_creacion: %s | estatus: %s | internal_path : %s' % 	(self.nombre, self.periodo_lectivo.periodo_lectivo,self.periodo_lectivo.semestre, self.fecha.strtime('%d/%m/%y'),self.estatus, self.ruta_pdf)
 
 	def toJson(self,minify=True):
-		retorno = {'programacion_id':self.programacion_id,
-				'nombre':self.nombre,
-				'descripcion':self.descripcion
-				}
+		retorno = {'nombre':self.nombre,
+				'descripcion':self.descripcion	}
 		if not minify:
 			retorno.update(
 				{'fecha':self.fecha,
 				'estatus':self.estatus,
 				'ruta_pdf':self.ruta_pdf,
-				'ano_lectivo':self.ano_lectivo,
-				'semestre':self.semestre})
+				'periodo_lectivo':self.periodo_lectivo.periodo_lectivo})
 
 		return retorno
 
 	def toString(self):
 		return self.nombre
+
+	def get_pk(self):
+		return self.pk
 		
 class ProgramacionDetalle(models.Model):
-	programacion_detalle_id = models.IntegerField(primary_key=True)
-	carga = models.CharField(max_length=3L, blank=True)
+	carga = models.CharField(max_length = 1, choices = (('T','Teorica'),('P','Practica'),('C','Coordinador')))
 	seccion = models.CharField(max_length=45L, blank=True)
 	programacion = models.ForeignKey(Programacion)
 	materia = models.ForeignKey(Materia)
@@ -349,8 +365,7 @@ class ProgramacionDetalle(models.Model):
 		return u'programacion: %s | materia: %s | cedula: %s' % (str(self.programacion), str(self.materia), str(self.cedula))
 
 	def toJson(self,minify=True):
-		retorno = {'programacion_detalle_id':self.programacion_detalle_id,
-				'carga':self.carga,
+		retorno = {'carga':self.carga,
 				'seccion':self.seccion,
 				'programacion':self.programacion.toJson(minify),
 				'materia':self.materia.toJson(minify),
@@ -360,12 +375,15 @@ class ProgramacionDetalle(models.Model):
 
 	def toString(self):
 		return self.programacion.nombre + ' - ' + self.materia.nombre + ' - ' + self.cedula.toString()
+
+	def get_pk(self):
+		return self.pk
 		
 class HorarioProgramado(models.Model):
-	dia_semana = models.CharField(max_length=50L)
-	hora_inicio = models.TextField()
-	hora_fin = models.TextField()
-	aula = models.ForeignKey(Aula, null=True, blank=True)
+	dia_semana = models.CharField(max_length = 9,choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
+	hora_inicio = models.TimeField()
+	hora_fin = models.TimeField()
+	aula = models.ForeignKey(Aula, blank=True, null=True)
 	programacion_detalle = models.ForeignKey('ProgramacionDetalle')
 
 	class Meta:
@@ -388,28 +406,29 @@ class HorarioProgramado(models.Model):
 
 	def toString(self):
 		return self.programacion_detalle.toString() + ' ' + self.dia_semana
+
+	def get_pk(self):
+		return self.pk
 		
 class MateriaOfertada(models.Model):
-	nro_estudiantes_estimados = models.IntegerField()
-	nro_secciones_teoria = models.IntegerField()
-	nro_secciones_practica = models.IntegerField(null=True, blank=True)
-	nro_secciones_laboratorio = models.IntegerField(null=True, blank=True)
-	nro_preparadores1 = models.IntegerField(null=True, blank=True)
-	nro_preparadores2 = models.IntegerField(null=True, blank=True)
-	nro_estudiantes_inscritos = models.IntegerField(null=True, blank=True)
-	anho_periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='anho_periodo_academico', related_name='materiaofertada_tiene_anho')
-	semestre_periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='semestre_periodo_academico', related_name='materiaofertada_tiene_semestre')
+	nro_estudiantes_estimados = models.PositiveIntegerField()
+	nro_secciones_teoria = models.PositiveIntegerField()
+	nro_secciones_practica = models.PositiveIntegerField(blank=True)
+	nro_secciones_laboratorio = models.PositiveIntegerField(blank=True)
+	nro_preparadores1 = models.PositiveIntegerField(blank=True)
+	nro_preparadores2 = models.PositiveIntegerField(blank=True)
+	nro_estudiantes_inscritos = models.PositiveIntegerField(blank=True)
+	periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='periodo_academico', related_name='materiaofertada_tiene_anho')
 	materia = models.ForeignKey(Materia)
 
 	class Meta:
 		db_table = 'materia_ofertada'
 
 	def __unicode__(self):
-		return u'materia: %s | periodo_academico: %s | anho_periodo_academico: %s' % (str(self. materia), str(self.PeriodoAcademico), str(self.anho_periodo_academico))
+		return u'materia: %s | periodo_academico: %s - %s ' % (str(self.materia.nombre), str(self.periodo_academico.semestre), str(self.periodo_academico.periodo_lectivo))
 
 	def toJson(self,minify=True):
-		retorno = {'anho_periodo_academico':self.anho_periodo_academico.toJson(minify),
-				'semestre_periodo_academico':self.semestre_periodo_academico.toJson(minify),
+		retorno = {'periodo_academico':self.periodo_academico.toJson(minify),
 				'materia':self.materia.toJson(minify)
 				}
 		if not minify:
@@ -425,42 +444,41 @@ class MateriaOfertada(models.Model):
 		return retorno
 
 	def toString(self):
-		return self.materia.nombre + ' ' + self.semestre_periodo_academico.toString()
+		return self.materia.nombre + ' ' + self.periodo_academico.toString()
+
+	def get_pk(self):
+		return self.pk
 		
 class MateriaSolicitada(models.Model):
-	materia_solicitada_id = models.IntegerField(primary_key=True)
-	estatus = models.CharField(max_length=3L)
+	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada')))
 	usuario = models.ForeignKey('Usuario')
-	ano_lectivo = models.ForeignKey(MateriaOfertada, db_column='ano_lectivo', related_name='materiasolicitada_tiene_ano')
-	semestre = models.ForeignKey(MateriaOfertada, db_column='semestre', related_name='materiasolicitada_tiene_semestre')
 	materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
 
 	class Meta:
 		db_table = 'materia_solicitada'
 
 	def __unicode__(self):
-		return u'materia: %d | usuario: %s | anho_lectivo: %s | semestre: %s' % (str(self.materia), str(self.usuario), str(self.ano_lectivo), str(self.semestre))
+		return u'materia: %d | usuario: %s ' % (str(self.materia), str(self.usuario))
 
 	def toJson(self,minify=True):
-		retorno = {'materia_solicitada_id':self.materia_solicitada_id,
-				'materia':self.materia.toJson(minify)
-				}
+		retorno = {'materia':self.materia.toJson(minify)}
 		if not minify:
 			retorno.update(
 				{'estatus':self.estatus,
-				'usuario':self.usuario.toJson(minify),
-				'ano_lectivo':self.ano_lectivo.toJson(minify),
-				'semestre':self.semestre.toJson(minify)})
+				'usuario':self.usuario.toJson(minify)})
 
 		return retorno
 
 	def toString(self):
-		return self.materia.nombre + ' ' + self.semestre.toString()
+		return self.materia.nombre + ' ' + self.materia.toString()
+
+	def get_pk(self):
+		return self.pk
 		
 class HorarioSolicitado(models.Model):
-	dia_semana = models.CharField(max_length=50L)
-	hora_inicio = models.TextField()
-	hora_fin = models.TextField()
+	dia_semana = models.CharField(max_length = 9,choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
+	hora_inicio = models.TimeField()
+	hora_fin = models.TimeField()
 
 	horario_solicitado = models.ForeignKey('MateriaSolicitada')
 	aula = models.ForeignKey(Aula, null=True, blank=True)
@@ -485,13 +503,15 @@ class HorarioSolicitado(models.Model):
 		
 	def toString(self):
 		return self.horario_solicitado.toString() + ' ' + self.dia_semana
+
+	def get_pk(self):
+		return self.pk
 		
 class Notificacion(models.Model):
-	notificacion_id = models.IntegerField(primary_key=True)
-	fecha = models.DateTimeField()
+	fecha = models.DateField(auto_now_add=True)
 	asunto = models.CharField(max_length=100L)
 	contenido = models.TextField()
-	estatus = models.CharField(max_length=3L)
+	estatus = models.CharField(max_length=7L,editable=False, blank = True)
 	usuario_emisor = models.ForeignKey('Usuario', related_name='notificacion_tiene_emisor')
 	usuario_receptor = models.ForeignKey('Usuario', related_name='notificacion_tiene_receptor')
 
@@ -516,7 +536,10 @@ class Notificacion(models.Model):
 		return retorno
 	
 	def toString(self):
-		return self.fecha + ' ' + self.asunto
+		return ' %s/%s/%s  %s [ %s ] ' % (self.fecha.day, self.fecha.month, self.fecha.year, self.asunto , (lambda s : 'En transito' if not s else s )(self.estatus))
+
+	def get_pk(self):
+		return self.pk
 
 class UsuarioRol(models.Model):
 	rol = models.ForeignKey(Rol)
@@ -537,3 +560,6 @@ class UsuarioRol(models.Model):
 		
 	def toString(self):
 		return self.cedula.toString() + ' ' + self.rol.nombre
+
+	def get_pk(self):
+		return self.pk
