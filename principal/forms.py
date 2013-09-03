@@ -84,4 +84,4 @@ def get_object_form( type_id,  excludes=None):
 		class Meta:
 			model = model_class
 			#excludes = excludes
-	return _ObjectForms
+	return _ObjectForm
