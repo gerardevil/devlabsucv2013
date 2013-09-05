@@ -1,5 +1,5 @@
 # Django settings for programacion_docente project.
-import os
+import os, sys
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -8,16 +8,28 @@ ADMINS = (('Gerardo Linares', 'gerardevil@gmail.com'), ('Jesus Gomez', 'jesus.ig
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'dbprogramacion',             
-        'USER': 'devlabsadmin',
-        'PASSWORD': 'devlabs2013',
-        'HOST': 'devlabsdb.webfactional.com', 
-        'PORT': ''
+if not ('test' in sys.argv):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql', 
+            'NAME': 'dbprogramacion',             
+            'USER': 'devlabsadmin',
+            'PASSWORD': 'devlabs2013',
+            'HOST': 'devlabsdb.webfactional.com', 
+            'PORT': ''
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql', 
+            'NAME': 'testdb',             
+            'USER': 'root',
+            'PASSWORD': 'testdb2013@devlabsdb',
+            'HOST': '108.168.149.236', 
+            'PORT': '27511'
+        }
+    }
 
 #Profile definitios for get_profile( ) function usage
 AUTH_PROFILE_MODULE = 'principal.Usuario'
