@@ -147,25 +147,24 @@ class FormFactory():
 			form_class = templateForm(type_id)
 			return form_class(inst.toJson(False))
 
-# Pruebas unitarias sobre los siguientes modelos:	#
-# TipoDocente										#
-# JerarquiaDocente									#
-# Usuario											#
-# Materia											#
-# HorarioMateria									#
-# Programacion										#
-#													#
-# - Pruebas FrontEnd:								#
-# Se toma un field de cada tipo en cada modelo		#
-# y se realizan las pruebas de correctitud			#
-#													#
-# - Pruebas BackEnd:								#
-# Se realizan pruebas de insercion, eliminacion		#
-# y actualizacion									#
-#####################################################
+# Pruebas unitarias sobre los siguientes modelos: #
+# TipoDocente                                     #
+# JerarquiaDocente                                #
+# Usuario                                         #
+# Materia                                         #
+# HorarioMateria                                  #
+# Programacion                                    #
+#                                                 #
+# - Pruebas FrontEnd:                             #
+# Se toma un field de cada tipo en cada modelo    #
+# y se realizan las pruebas de correctitud        #
+#                                                 #
+# - Pruebas BackEnd:                              #
+# Se realizan pruebas de insercion, eliminacion   #
+# y actualizacion                                 #
+###################################################
 
 class TipoDocenteTest(TestCase):
-
 	def setUp(self):
 		# Setting up a fake user logged-in
 		u = User(username='test')
@@ -204,6 +203,7 @@ class TipoDocenteTest(TestCase):
 	def test_create(self):
 		self.assertEqual(len(TipoDocente.objects.all()),0)
 		response =  self.main_client.post('/admins/modelos/tipo docente/crear', {'nombre': 'abc'})
+		self.assertEqual(response.status_code,302)#Redirectioning to another template
 		self.assertEqual(len(TipoDocente.objects.all()),1)
 
 	def test_delete(self):
@@ -213,14 +213,98 @@ class TipoDocenteTest(TestCase):
 		temp.save()
 		self.assertEqual(len(TipoDocente.objects.all()),1)
 		response = self.main_client.post('/admins/modelos/tipo docente/borrar/'+str(temp.pk))
+		self.assertEqual(response.status_code,302)#Redirectioning to another template
 		self.assertEqual(len(TipoDocente.objects.all()),0)
 
 	def test_update(self):
-		temp = TipoDocente(nombre='abc')
-		temp.save()
+		self.assertEqual(len(TipoDocente.objects.all()),0)	
+		temp = TipoDocente.objects.create(nombre='abc')
+		self.assertEqual(len(TipoDocente.objects.all()),1)	
 		pkey = temp.pk
 		old = temp.nombre
 		response = self.main_client.post('/admins/modelos/tipo docente/editar/'+str(temp.pk),{'nombre':'cba'})
+		self.assertEqual(response.status_code,302)#Redirectioning to another template
 		temp = TipoDocente.objects.get(pk=pkey)
 		self.assertTrue(old != temp.nombre)
+
+
+class JerarquiaDocenteTest(TestCase):	
+	def setUp(self):
+		# Setting up a fake user logged-in
+		u = User(username='test')
+		u.set_password('0000')
+		u.save()
+		self.main_client = Client()
+		self.main_client.login(username='test', password='0000')
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='john')
+
+	#Pruebas Frontend
+	def test_inputInvalidJerarquia(self):
+		model_object = JerarquiaDocente(jerarquia = RandomGenerator.genRandomInteger(valid=False),
+		nombre= 'abc',tipo_docente_id = 1)
+		form = FormFactory.genForm('jerarquia docente',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_inputWeirdToLongName(self):
+		model_object = JerarquiaDocente(
+			jerarquia = 6,
+			nombre=  RandomGenerator.genRandomString(weird=True,especific_long=150),
+			tipo_docente_id = 1)
+		form = FormFactory.genForm('jerarquia docente',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_inputEmptyName(self):
+		model_object = JerarquiaDocente(
+			jerarquia = 6,
+			nombre=  '',
+			tipo_docente_id = 1)
+		form = FormFactory.genForm('jerarquia docente',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_inputToLongNormalName(self):
+		model_object = JerarquiaDocente(
+			jerarquia = 6,
+			nombre=  RandomGenerator.genRandomString(especific_long=150),
+			tipo_docente_id = 1)
+		form = FormFactory.genForm('jerarquia docente',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_NormalShortName(self):
+		model_object = JerarquiaDocente(
+			jerarquia = 6,
+			nombre= 'abc',
+			tipo_docente_id = 1)
+		form = FormFactory.genForm('jerarquia docente',model_object)
+		self.assertTrue(form.is_valid())
+
+	#Pruebas Backend
+	def test_create(self):
+		self.assertEqual(len(JerarquiaDocente.objects.all()),0)
+		response =  self.main_client.post('/admins/modelos/jerarquia docente/crear', {'jerarquia':1, 'nombre': 'abc','tipo_docente':1})
+		self.assertEqual(response.status_code,302)#Redirectioning to another template
+		self.assertEqual(len(JerarquiaDocente.objects.all()),1)
+
+	def test_delete(self):
+		self.assertEqual(len(JerarquiaDocente.objects.all()),0)		
+		model_object = JerarquiaDocente.objects.create(
+			jerarquia = 6,
+			nombre=  'abc',
+			tipo_docente_id = 1)
+		self.assertEqual(len(JerarquiaDocente.objects.all()),1)
+		response = self.main_client.post('/admins/modelos/jerarquia docente/borrar/'+str(model_object.pk))
+		self.assertEqual(response.status_code,302)#Redirectioning to another template
+		self.assertEqual(len(JerarquiaDocente.objects.all()),0)
+
+	def test_update(self):
+		self.assertEqual(len(JerarquiaDocente.objects.all()),0)	
+		model_object = JerarquiaDocente.objects.create(
+			jerarquia = 6,
+			nombre=  'abc',
+			tipo_docente_id = 1)
+		self.assertEqual(len(JerarquiaDocente.objects.all()),1)
+		pkey = model_object.pk
+		old = (model_object.nombre,model_object.jerarquia,model_object.tipo_docente)
+		response = self.main_client.post('/admins/modelos/jerarquia docente/editar/'+str(model_object.pk),{'jerarquia':1,'nombre':'cba','tipo_docente':1})
+		temp = JerarquiaDocente.objects.get(pk=pkey)
+		self.assertTrue(old != (temp.nombre,temp.jerarquia,temp.tipo_docente))
 

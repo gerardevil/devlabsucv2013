@@ -179,7 +179,7 @@ class TipoDocente(models.Model):
 class JerarquiaDocente(models.Model):
 	jerarquia = models.PositiveIntegerField(unique=True)
 	nombre = models.CharField(max_length=100, unique=True)
-	tipo_docente = models.ForeignKey('TipoDocente')
+	tipo_docente = models.ForeignKey(TipoDocente)
 
 	class Meta:
 		db_table = 'jerarquia_docente'
@@ -188,7 +188,7 @@ class JerarquiaDocente(models.Model):
 		return u'jerarquia: %d | nombre: %s | tipo_docente: %s' % (self.jerarquia,self.nombre, str(self.tipo_docente))
 
 	def toJson(self,minify=True):
-		retorno = {'jerarquia':self.jerarquia,'nombre':self.nombre,'tipo_docente':self.tipo_docente}
+		retorno = {'jerarquia':self.jerarquia,'nombre':self.nombre,'tipo_docente':self.tipo_docente.pk}
 		return retorno
 		
 	def toString(self):
