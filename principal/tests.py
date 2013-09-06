@@ -7,6 +7,7 @@ from principal.manager import entity
 from django.test import TestCase
 from principal.models import *
 from datetime import datetime
+from principal.forms import *
 from django import forms
 from random import *
 import sys
@@ -21,7 +22,6 @@ class RandomGenerator(object):
 	maxInt = sys.maxint
 	minInt = -sys.maxint
 	maxyear =  datetime.now().year + 1000
-	maxEmailLen =  254  # Acording with RFC3696/532
 	validEmailset = ['niceandsimple@example.com','very.common@example.com','a.little.lengthy.but.fine@dept.example.com', 'disposable.style.email.with+symbol@example.com', '"very.unusual.@.unusual.com"@example.com']
 	invalidEmailset =  ['Abc.example.com','A@b@c@example.com' ,'a"b(c)d,e:f;g<h>i[j\k]l@example.com','just"not"right@example.com','this is"not\\allowed@example.com','this\ still\"not\\allowed@example.com']
 	
@@ -82,9 +82,9 @@ class RandomGenerator(object):
 				month = randint(1, 12)
 				day = randint(1, 31) if month in [1,5,7,8,10,12] else (randint(1, 30) if month != 2 else 28)
 			else:
-				year = randint(0,self.maxyear)
-				month = randint(0, 70)
-				day = randint(0, 70)
+				year = randint(datetime.now().year+1,self.maxyear)
+				month = randint(13, 70)
+				day = randint(32, 70)
 			date = str(day)+separator+str(month)+separator+str(year)
 		return date
 
@@ -121,11 +121,9 @@ class RandomGenerator(object):
 		if not empty:
 			if valid :
 				email = self.validEmailset[randint(0,len(self.validEmailset)-1)]			
-			else:
-				if randint(0,1) == 0:
-					email = self.invalidEmailset[randint(0,len(self.invalidEmailset)-1)]
-				else:
-					email = ('a'*self.maxEmailLen)+'@domain.com'
+			else:			
+				email = self.invalidEmailset[randint(0,len(self.invalidEmailset)-1)]
+		
 		return email
 
 # Metodos para generar formularios de prueba #
@@ -163,6 +161,9 @@ class FormFactory():
 # Se realizan pruebas de insercion, eliminacion   #
 # y actualizacion                                 #
 ###################################################
+
+class GlobalValidationTest(TestCase):
+	pass
 
 class TipoDocenteTest(TestCase):
 	def setUp(self):
@@ -236,7 +237,7 @@ class JerarquiaDocenteTest(TestCase):
 		u.save()
 		self.main_client = Client()
 		self.main_client.login(username='test', password='0000')
-		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='john')
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
 
 	#Pruebas Frontend
 	def test_inputInvalidJerarquia(self):
@@ -308,3 +309,102 @@ class JerarquiaDocenteTest(TestCase):
 		temp = JerarquiaDocente.objects.get(pk=pkey)
 		self.assertTrue(old != (temp.nombre,temp.jerarquia,temp.tipo_docente))
 
+
+class UsuarioTest(TestCase):
+	def setUp(self):
+		# Setting up a fake user logged-in
+		self.u = User(pk=1,username='123456',first_name='test',last_name='test',email='example@domain.com')
+		self.u.set_password('0000')
+		self.u.save()
+		self.main_client = Client()
+		self.main_client.login(username='123456', password='0000')
+
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
+		self.jerarquiaDocente = JerarquiaDocente.objects.create(pk=1,jerarquia=1,nombre='xjerarquia',tipo_docente_id=1)
+		self.tipoContrato = TipoContrato.objects.create(pk=1,nombre='xtipo')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+
+	#Pruebas Frontend
+	def test_inputInvalidDate(self):
+		model_object = Usuario(
+			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = RandomGenerator.genRandomDate(valid=False,separator='/'),
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+
+		form = FormFactory.genForm('usuario',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_NormalRandomShortPhone(self):
+		model_object = Usuario(
+			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = RandomGenerator.genRandomString(especific_long=20),
+			fecha_ingreso = '1/1/2013',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+
+		form = FormFactory.genForm('usuario',model_object)
+		self.assertTrue(form.is_valid())
+
+	def test_NormalRandomToLongPhone(self):
+		model_object = Usuario(
+			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = RandomGenerator.genRandomString(especific_long=21),
+			fecha_ingreso = '1/1/2013',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+
+		form = FormFactory.genForm('usuario',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_EmptyDate(self):
+		model_object = Usuario(
+			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa ='123456',
+			fecha_ingreso = '',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+
+		form = FormFactory.genForm('usuario',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_InvalidEmail(self):
+		self.u.email= RandomGenerator.genEmail(valid=False)
+		self.u.save()
+		model_object = Usuario(
+			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '1/1/2013',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+
+		form = FormFactory.genForm('usuario',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_emptyEstatus(self):
+		model_object = Usuario(
+			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '1/1/2013',
+			direccion = '',	dedicacion = '6 hrs', estatus = '',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+
+		form = FormFactory.genForm('usuario',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_emptyDedicacion(self):
+		model_object = Usuario(
+			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '1/1/2013',
+			direccion = '',	dedicacion = '', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+
+		form = FormFactory.genForm('usuario',model_object)
+		self.assertTrue(not form.is_valid())
+
+	#Pruebas Backend
+	def test_createUniqueUser(self):
+
+		self.assertEqual(Usuario.objects.count(),0)
+		response =  self.main_client.post('/admins/modelos/usuario/crear', 
+		{'usuario_id' :'123457','nombre' : 'test','apellido' : 'test', 'password' : '1234',
+		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
+		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
+		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})
+		self.assertEqual(response.status_code,302)
+		self.assertEqual(Usuario.objects.count(),1)

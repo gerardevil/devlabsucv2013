@@ -8,7 +8,7 @@ from principal.models import *
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import get_app, get_models, get_model
-from django.shortcuts import render_to_response
+from django.http import Http404
 
 def validateInputCrudData(view):
 	def wrapper(request, modelo, key=None):
@@ -17,9 +17,9 @@ def validateInputCrudData(view):
 				if key in map((lambda row: str(row.pk)),get_model('principal',str(modelo).replace(' ','')).objects.all()):
 					return view(request, modelo, key)
 				else:
-					return render_to_response('404.html')
+					raise Http404
 			else:	
 				return view(request, modelo)
 		else:
-			return render_to_response('404.html')
+			raise Http404
 	return wrapper
