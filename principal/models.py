@@ -1,3 +1,4 @@
+#encoding:utf-8
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
@@ -275,10 +276,7 @@ class Materia(models.Model):
 				'semestre':self.semestre})
 				
 			if self.centro != None:
-				retorno.update({'centro':self.centro.toJson(minify)})
-			else:
-				retorno.update({'centro':self.centro})
-
+				retorno.update({'centro':self.centro.pk})
 		return retorno
 		
 	def toString(self):
@@ -306,12 +304,8 @@ class HorarioMateria(models.Model):
 				'hora_fin':self.hora_fin
 				}
 		if not minify:
-		
 			if self.materia != None:
-				retorno.update({'materia':self.materia.toJson(minify)})
-			else:
-				retorno.update({'materia':self.materia})
-
+				retorno.update({'materia':self.materia.pk})
 		return retorno
 
 	def toString(self):
@@ -342,7 +336,7 @@ class Programacion(models.Model):
 				{'fecha':self.fecha,
 				'estatus':self.estatus,
 				'ruta_pdf':self.ruta_pdf,
-				'periodo_lectivo':self.periodo_lectivo.periodo_lectivo})
+				'periodo_lectivo':self.periodo_lectivo.pk})
 
 		return retorno
 
@@ -368,9 +362,9 @@ class ProgramacionDetalle(models.Model):
 	def toJson(self,minify=True):
 		retorno = {'carga':self.carga,
 				'seccion':self.seccion,
-				'programacion':self.programacion.toJson(minify),
-				'materia':self.materia.toJson(minify),
-				'cedula':self.cedula.toJson(minify)}
+				'programacion':self.programacion.pk,
+				'materia':self.materia.pk,
+				'cedula':self.cedula.pk}
 
 		return retorno
 
@@ -400,8 +394,8 @@ class HorarioProgramado(models.Model):
 				}
 		if not minify:
 			retorno.update(
-				{'aula':self.aula.toJson(minify),
-				'programacion_detalle':self.programacion_detalle.toJson(minify)})
+				{'aula':self.aula.pk,
+				'programacion_detalle':self.programacion_detalle.pk})
 
 		return retorno
 
@@ -429,8 +423,8 @@ class MateriaOfertada(models.Model):
 		return u'materia: %s | periodo_academico: %s - %s ' % (str(self.materia.nombre), str(self.periodo_academico.semestre), str(self.periodo_academico.periodo_lectivo))
 
 	def toJson(self,minify=True):
-		retorno = {'periodo_academico':self.periodo_academico.toJson(minify),
-				'materia':self.materia.toJson(minify)
+		retorno = {'periodo_academico':self.periodo_academico.pk,
+				'materia':self.materia.pk
 				}
 		if not minify:
 			retorno.update(
@@ -462,11 +456,11 @@ class MateriaSolicitada(models.Model):
 		return u'materia: %d | usuario: %s ' % (str(self.materia), str(self.usuario))
 
 	def toJson(self,minify=True):
-		retorno = {'materia':self.materia.toJson(minify)}
+		retorno = {'materia':self.materia.pk}
 		if not minify:
 			retorno.update(
 				{'estatus':self.estatus,
-				'usuario':self.usuario.toJson(minify)})
+				'usuario':self.usuario.pk})
 
 		return retorno
 
@@ -496,8 +490,8 @@ class HorarioSolicitado(models.Model):
 				}
 		if not minify:
 			retorno.update(
-				{'horario_solicitado':self.horario_solicitado.toJson(minify),
-				'aula':self.aula.toJson(minify)})
+				{'horario_solicitado':self.horario_solicitado.pk,
+				'aula':self.aula.pk})
 
 		return retorno
 		
@@ -522,16 +516,15 @@ class Notificacion(models.Model):
 		return u'usuario_emisor: %s | usuario_receptor: %s | estatus: %s | fecha: %s' % (str(self.usuario_emisor), str(self.usuario_receptor), self.estatus, convertDatetimeToString(self.fecha))
 
 	def toJson(self,minify=True):
-		retorno = {'notificacion_id':self.notificacion_id,
-				'fecha':self.fecha,
+		retorno = {'fecha':self.fecha,
 				'asunto':self.asunto
 				}
 		if not minify:
 			retorno.update(
 				{'contenido':self.contenido,
 				'estatus':self.estatus,
-				'usuario_emisor':self.usuario_emisor.toJson(minify),
-				'usuario_receptor':self.usuario_receptor.toJson(minify)})
+				'usuario_emisor':self.usuario_emisor.pk,
+				'usuario_receptor':self.usuario_receptor.pk})
 
 		return retorno
 	

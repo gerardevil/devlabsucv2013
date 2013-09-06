@@ -1,5 +1,13 @@
+#encoding:utf-8
+from django.db.models.loading import get_app, get_models, get_model
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
+from django.test.client import Client
+from principal.manager import entity
 from django.test import TestCase
+from principal.models import *
 from datetime import datetime
+from django import forms
 from random import *
 import sys
 
@@ -7,17 +15,16 @@ import sys
 #################################################
 
 class RandomGenerator(object):
+	seed()
+	ascii_letters_set = map ((lambda i : unichr(i)),range(97,123)) + map ((lambda i : unichr(i)),range(65,91)) + [u'ñ']
+	extended_ascii_set = map ((lambda i : unichr(i)),range(33,240))
+	maxInt = sys.maxint
+	minInt = -sys.maxint
+	maxyear =  datetime.now().year + 1000
+	maxEmailLen =  254  # Acording with RFC3696/532
+	validEmailset = ['niceandsimple@example.com','very.common@example.com','a.little.lengthy.but.fine@dept.example.com', 'disposable.style.email.with+symbol@example.com', '"very.unusual.@.unusual.com"@example.com']
+	invalidEmailset =  ['Abc.example.com','A@b@c@example.com' ,'a"b(c)d,e:f;g<h>i[j\k]l@example.com','just"not"right@example.com','this is"not\\allowed@example.com','this\ still\"not\\allowed@example.com']
 	
-	def __init__(self):
-		seed()
-		self.ascii_set = map ((lambda i : chr(i)),range(33,127))
-		self.extended_ascii_set = map ((lambda i : chr(i)),range(33,240))
-		self.maxInt = sys.maxint
-		self.minInt = -sys.maxint
-		self.maxyear =  datetime.now().year + 1000
-		self.maxEmailLen =  254  # Acording with RFC3696/532
-		self.validEmailset = ['niceandsimple@example.com','very.common@example.com','a.little.lengthy.but.fine@dept.example.com', 'disposable.style.email.with+symbol@example.com', '"very.unusual.@.unusual.com"@example.com']
-		self.invalidEmailset =  ['Abc.example.com','A@b@c@example.com' ,'a"b(c)d,e:f;g<h>i[j\k]l@example.com','just"not"right@example.com','this is"not\\allowed@example.com','this\ still\"not\\allowed@example.com']
 	'''
 		- genRandomString -
 		Funcion generadora de cadenas de caracteres aleatorios,
@@ -32,10 +39,11 @@ class RandomGenerator(object):
 		max_long (opcional) : si especific_long no es suministrado
 		se toma entonces el valor de max_long. 
 	'''
+	@classmethod
 	def genRandomString(self,weird = False, especific_long = None, max_long = 1000):
 		string = ''
-		l = (len(self.ascii_set) if not weird else len(self.extended_ascii_set))-1
-		set = self.ascii_set if not weird else self.extended_ascii_set
+		l = (len(self.ascii_letters_set) if not weird else len(self.extended_ascii_set))-1
+		set = self.ascii_letters_set if not weird else self.extended_ascii_set
 		long = randint(1, max_long) if especific_long is None else especific_long
 		while long:
 			string += set[randint(0,l)]
@@ -51,6 +59,7 @@ class RandomGenerator(object):
 		pertenece a determinado rango donde siendo x el valor generado
 		min_value <= x <=max_value
 	'''
+	@classmethod
 	def genRandomInteger(self,valid=True, max_value = None, min_value = None):
 		return (randint(0,self.maxInt) if max_value is None or min_value is None else randint(min_value,max_value) ) if valid else randint(self.minInt,-1)
 
@@ -63,6 +72,7 @@ class RandomGenerator(object):
 		vacia, en caso contrario este valor debe ser un caracter denotando
 		el separador a ser usado en la fecha generada.
 	'''
+	@classmethod
 	def genRandomDate(self,valid=True, separator=None):
 
 		date = ''
@@ -83,6 +93,7 @@ class RandomGenerator(object):
 		valid (opcional): valid = True , sugiere generacion
 		de horas validas, en formato de 24 horas.
 	'''
+	@classmethod
 	def genRandomTime(self,valid=True):
 
 		min_hour = 0 if valid else -30
@@ -104,6 +115,7 @@ class RandomGenerator(object):
 		es suministrado como True, los emails tomados como casos de prueba
 		son atributos de la clase generadora.
 	'''
+	@classmethod
 	def genEmail(self,valid=True, empty = False):
 		email = ''
 		if not empty:
@@ -116,9 +128,99 @@ class RandomGenerator(object):
 					email = ('a'*self.maxEmailLen)+'@domain.com'
 		return email
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 5)
+# Metodos para generar formularios de prueba #
+##############################################
+
+def templateForm( type_id,  excludes=None):
+	class _ObjectForm( forms.ModelForm ):
+		class Meta:
+			model = ContentType.objects.get( pk=type_id ).model_class() 
+	return _ObjectForm
+
+class FormFactory():
+	@classmethod
+	def genForm(self,modelo,inst):
+		type_id = ContentType.objects.get_for_model(get_model('principal',str(modelo).replace(' ',''))).id
+		if modelo == 'usuario':
+			return CustomUserForm(False, inst.toJson(False))
+		else:
+			form_class = templateForm(type_id)
+			return form_class(inst.toJson(False))
+
+# Pruebas unitarias sobre los siguientes modelos:	#
+# TipoDocente										#
+# JerarquiaDocente									#
+# Usuario											#
+# Materia											#
+# HorarioMateria									#
+# Programacion										#
+#													#
+# - Pruebas FrontEnd:								#
+# Se toma un field de cada tipo en cada modelo		#
+# y se realizan las pruebas de correctitud			#
+#													#
+# - Pruebas BackEnd:								#
+# Se realizan pruebas de insercion, eliminacion		#
+# y actualizacion									#
+#####################################################
+
+class TipoDocenteTest(TestCase):
+
+	def setUp(self):
+		# Setting up a fake user logged-in
+		u = User(username='test')
+		u.set_password('0000')
+		u.save()
+		self.main_client = Client()
+		self.main_client.login(username='test', password='0000')
+
+	#Pruebas Frontend
+	def test_NormalShortName(self):
+		model_object = TipoDocente(nombre = RandomGenerator.genRandomString(especific_long=50))
+		form = FormFactory.genForm('tipo docente',model_object)
+		self.assertTrue(form.is_valid())	
+
+	def test_inputToLongNormalName(self):
+		model_object = TipoDocente(nombre = RandomGenerator.genRandomString(especific_long=150))
+		form = FormFactory.genForm('tipo docente',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_inputWeirdShortName(self):
+		model_object = TipoDocente(nombre = RandomGenerator.genRandomString(weird=True,especific_long=50))
+		form = FormFactory.genForm('tipo docente',model_object)
+		self.assertTrue(form.is_valid())
+	
+	def test_inputWeirdToLongName(self):
+		model_object = TipoDocente(nombre = RandomGenerator.genRandomString(weird=True,especific_long=150))
+		form = FormFactory.genForm('tipo docente',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_inputEmptyName(self):
+		model_object = TipoDocente(nombre = '')
+		form = FormFactory.genForm('tipo docente',model_object)
+		self.assertTrue(not form.is_valid())
+
+	#Pruebas Backend
+	def test_create(self):
+		self.assertEqual(len(TipoDocente.objects.all()),0)
+		response =  self.main_client.post('/admins/modelos/tipo docente/crear', {'nombre': 'abc'})
+		self.assertEqual(len(TipoDocente.objects.all()),1)
+
+	def test_delete(self):
+		self.assertEqual(len(TipoDocente.objects.all()),0)		
+		l = len(TipoDocente.objects.all())
+		temp = TipoDocente(nombre='abc')
+		temp.save()
+		self.assertEqual(len(TipoDocente.objects.all()),1)
+		response = self.main_client.post('/admins/modelos/tipo docente/borrar/'+str(temp.pk))
+		self.assertEqual(len(TipoDocente.objects.all()),0)
+
+	def test_update(self):
+		temp = TipoDocente(nombre='abc')
+		temp.save()
+		pkey = temp.pk
+		old = temp.nombre
+		response = self.main_client.post('/admins/modelos/tipo docente/editar/'+str(temp.pk),{'nombre':'cba'})
+		temp = TipoDocente.objects.get(pk=pkey)
+		self.assertTrue(old != temp.nombre)
+
