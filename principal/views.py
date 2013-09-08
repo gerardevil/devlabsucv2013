@@ -132,7 +132,7 @@ def insertar(request,modelo):
 	form = m.generarFormulario(request,modelo,None,0)
 	if form.is_valid():
 		form.save()
-		return HttpResponseRedirect('/admins/modelos/'+modelo, status=200)
+		return HttpResponseRedirect('/admins/modelos/'+modelo)
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
 
 @login_required
@@ -146,7 +146,7 @@ def listar(request,modelo):
 def borrar(request, modelo, key):
 	'''Metodo generico para borrar'''
 	m.borrar(modelo,key)
-	return HttpResponseRedirect('/admins/modelos/'+modelo, status=200)
+	return HttpResponseRedirect('/admins/modelos/'+modelo)
 
 @login_required
 @validateInputCrudData
@@ -161,7 +161,7 @@ def editar(request,modelo,key):
 				form.save(o.usuario_id.username)
 			else:
 				form.save()
-			return HttpResponseRedirect('/admins/modelos/'+modelo, status=200)
+			return HttpResponseRedirect('/admins/modelos/'+modelo)
 	else:
 		form = m.generarFormulario(request, modelo, o, 2)
 	return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
