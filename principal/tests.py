@@ -17,7 +17,7 @@ import sys
 
 class RandomGenerator(object):
 	seed()
-	ascii_letters_set = map ((lambda i : unichr(i)),range(97,123)) + map ((lambda i : unichr(i)),range(65,91)) + [unichr(ord(u'ñ'))]
+	ascii_letters_set = map ((lambda i : unichr(i)),range(97,123)) + map ((lambda i : unichr(i)),range(65,91)) + [u'ñ']
 	extended_ascii_set = map ((lambda i : unichr(i)),range(33,240))
 	maxInt = sys.maxint
 	minInt = -sys.maxint
@@ -96,9 +96,9 @@ class RandomGenerator(object):
 	@classmethod
 	def genRandomTime(self,valid=True):
 
-		min_hour = 0 if valid else -30
+		min_hour = 0 if valid else 24
 		max_hour = 23 if valid else 53
-		min_minutes = 0 if valid else -30
+		min_minutes = 0 if valid else 60
 		max_minutes = 59 if valid else 89
 		m = randint(min_minutes, max_minutes)
 
@@ -206,16 +206,6 @@ class TipoDocenteTest(TestCase):
 		form = FormFactory.genForm('tipo docente',model_object)
 		self.assertTrue(not form.is_valid())
 
-	def test_inputWeirdShortName(self):
-		model_object = TipoDocente(nombre = RandomGenerator.genRandomString(weird=True,especific_long=50))
-		form = FormFactory.genForm('tipo docente',model_object)
-		self.assertTrue(form.is_valid())
-	
-	def test_inputWeirdToLongName(self):
-		model_object = TipoDocente(nombre = RandomGenerator.genRandomString(weird=True,especific_long=150))
-		form = FormFactory.genForm('tipo docente',model_object)
-		self.assertTrue(not form.is_valid())
-
 	def test_inputEmptyName(self):
 		model_object = TipoDocente(nombre = '')
 		form = FormFactory.genForm('tipo docente',model_object)
@@ -264,14 +254,6 @@ class JerarquiaDocenteTest(TestCase):
 	def test_inputInvalidJerarquia(self):
 		model_object = JerarquiaDocente(jerarquia = RandomGenerator.genRandomInteger(valid=False),
 		nombre= 'abc',tipo_docente_id = 1)
-		form = FormFactory.genForm('jerarquia docente',model_object)
-		self.assertTrue(not form.is_valid())
-
-	def test_inputWeirdToLongName(self):
-		model_object = JerarquiaDocente(
-			jerarquia = 6,
-			nombre=  RandomGenerator.genRandomString(weird=True,especific_long=150),
-			tipo_docente_id = 1)
 		form = FormFactory.genForm('jerarquia docente',model_object)
 		self.assertTrue(not form.is_valid())
 
@@ -418,9 +400,17 @@ class UsuarioTest(TestCase):
 		form = FormFactory.genForm('usuario',model_object)
 		self.assertTrue(not form.is_valid())
 
+	def test_insertExistentUser(self):
+		self.assertEqual(Usuario.objects.count(),0)
+		response =  self.main_client.post('/admins/modelos/usuario/crear', 
+		{'usuario_id' :'123456','nombre' : 'test','apellido' : 'test', 'password' : '1234',
+		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
+		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
+		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})	
+		self.assertEqual(Usuario.objects.count(),0)
+
 	#Pruebas Backend
 	def test_createUniqueUser(self):
-
 		self.assertEqual(Usuario.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/usuario/crear', 
 		{'usuario_id' :'123457','nombre' : 'test','apellido' : 'test', 'password' : '1234',
@@ -429,3 +419,6 @@ class UsuarioTest(TestCase):
 		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})
 		self.assertEqual(response.status_code,302)
 		self.assertEqual(Usuario.objects.count(),1)
+
+	
+
