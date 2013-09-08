@@ -30,6 +30,10 @@ else:
             'PORT': '27511'
         }
     }
+    """ Speeding Up AuthenticationMiddleware """
+    PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+    )
 
 #Profile definitios for get_profile( ) function usage
 AUTH_PROFILE_MODULE = 'principal.Usuario'

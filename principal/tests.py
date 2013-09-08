@@ -80,7 +80,7 @@ class RandomGenerator(object):
 			if valid :
 				year = randint(1958, datetime.now().year)
 				month = randint(1, 12)
-				day = randint(1, 31) if month in [1,5,7,8,10,12] else (randint(1, 30) if month != 2 else 28)
+				day = randint(1, 31) if month in [1,5,7,8,10,12] else (randint(1, 30) if month != 2 else randint(1,28))
 			else:
 				year = randint(datetime.now().year+1,self.maxyear)
 				month = randint(13, 70)
