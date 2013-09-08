@@ -17,7 +17,7 @@ import sys
 
 class RandomGenerator(object):
 	seed()
-	ascii_letters_set = map ((lambda i : unichr(i)),range(97,123)) + map ((lambda i : unichr(i)),range(65,91)) + [u'ñ']
+	ascii_letters_set = map ((lambda i : unichr(i)),range(97,123)) + map ((lambda i : unichr(i)),range(65,91)) + [unichr(ord(u'ñ'))]
 	extended_ascii_set = map ((lambda i : unichr(i)),range(33,240))
 	maxInt = sys.maxint
 	minInt = -sys.maxint
@@ -163,7 +163,28 @@ class FormFactory():
 ###################################################
 
 class GlobalValidationTest(TestCase):
-	pass
+	def setUp(self):
+		# Setting up a fake user logged-in
+		u = User(username='test')
+		u.set_password('0000')
+		u.save()
+		self.main_client = Client()
+		self.main_client.login(username='test', password='0000')
+
+	def test_AccessNonExistentModel(self):
+		model = RandomGenerator.genRandomString(especific_long=100)
+		response =  self.main_client.get('/admins/modelos/'+model)
+		self.assertEqual(response.status_code,404)
+
+	def test_AccessNonExistentKey(self):
+		'''
+			Se selecciona usuario para el test porque ya en setUp se hace
+			incersion de un usuario ficticio para la prueba
+		'''
+		key = RandomGenerator.genRandomInteger(min_value=10,max_value=100)
+		response =  self.main_client.get('/admins/modelos/usuario/editar/'+str(key))
+		self.assertEqual(response.status_code,404)		
+
 
 class TipoDocenteTest(TestCase):
 	def setUp(self):
@@ -202,25 +223,25 @@ class TipoDocenteTest(TestCase):
 
 	#Pruebas Backend
 	def test_create(self):
-		self.assertEqual(len(TipoDocente.objects.all()),0)
+		self.assertEqual(TipoDocente.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/tipo docente/crear', {'nombre': 'abc'})
 		self.assertEqual(response.status_code,302)#Redirectioning to another template
-		self.assertEqual(len(TipoDocente.objects.all()),1)
+		self.assertEqual(TipoDocente.objects.count(),1)
 
 	def test_delete(self):
-		self.assertEqual(len(TipoDocente.objects.all()),0)		
+		self.assertEqual(TipoDocente.objects.count(),0)		
 		l = len(TipoDocente.objects.all())
 		temp = TipoDocente(nombre='abc')
 		temp.save()
-		self.assertEqual(len(TipoDocente.objects.all()),1)
+		self.assertEqual(TipoDocente.objects.count(),1)
 		response = self.main_client.post('/admins/modelos/tipo docente/borrar/'+str(temp.pk))
 		self.assertEqual(response.status_code,302)#Redirectioning to another template
-		self.assertEqual(len(TipoDocente.objects.all()),0)
+		self.assertEqual(TipoDocente.objects.count(),0)
 
 	def test_update(self):
-		self.assertEqual(len(TipoDocente.objects.all()),0)	
+		self.assertEqual(TipoDocente.objects.count(),0)	
 		temp = TipoDocente.objects.create(nombre='abc')
-		self.assertEqual(len(TipoDocente.objects.all()),1)	
+		self.assertEqual(TipoDocente.objects.count(),1)	
 		pkey = temp.pk
 		old = temp.nombre
 		response = self.main_client.post('/admins/modelos/tipo docente/editar/'+str(temp.pk),{'nombre':'cba'})
@@ -280,29 +301,29 @@ class JerarquiaDocenteTest(TestCase):
 
 	#Pruebas Backend
 	def test_create(self):
-		self.assertEqual(len(JerarquiaDocente.objects.all()),0)
+		self.assertEqual(JerarquiaDocente.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/jerarquia docente/crear', {'jerarquia':1, 'nombre': 'abc','tipo_docente':1})
 		self.assertEqual(response.status_code,302)#Redirectioning to another template
-		self.assertEqual(len(JerarquiaDocente.objects.all()),1)
+		self.assertEqual(JerarquiaDocente.objects.count(),1)
 
 	def test_delete(self):
-		self.assertEqual(len(JerarquiaDocente.objects.all()),0)		
+		self.assertEqual(JerarquiaDocente.objects.count(),0)		
 		model_object = JerarquiaDocente.objects.create(
 			jerarquia = 6,
 			nombre=  'abc',
 			tipo_docente_id = 1)
-		self.assertEqual(len(JerarquiaDocente.objects.all()),1)
+		self.assertEqual(JerarquiaDocente.objects.count(),1)
 		response = self.main_client.post('/admins/modelos/jerarquia docente/borrar/'+str(model_object.pk))
 		self.assertEqual(response.status_code,302)#Redirectioning to another template
-		self.assertEqual(len(JerarquiaDocente.objects.all()),0)
+		self.assertEqual(JerarquiaDocente.objects.count(),0)
 
 	def test_update(self):
-		self.assertEqual(len(JerarquiaDocente.objects.all()),0)	
+		self.assertEqual(JerarquiaDocente.objects.count(),0)	
 		model_object = JerarquiaDocente.objects.create(
 			jerarquia = 6,
 			nombre=  'abc',
 			tipo_docente_id = 1)
-		self.assertEqual(len(JerarquiaDocente.objects.all()),1)
+		self.assertEqual(JerarquiaDocente.objects.count(),1)
 		pkey = model_object.pk
 		old = (model_object.nombre,model_object.jerarquia,model_object.tipo_docente)
 		response = self.main_client.post('/admins/modelos/jerarquia docente/editar/'+str(model_object.pk),{'jerarquia':1,'nombre':'cba','tipo_docente':1})
