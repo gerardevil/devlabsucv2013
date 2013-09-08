@@ -420,5 +420,27 @@ class UsuarioTest(TestCase):
 		self.assertEqual(response.status_code,302)
 		self.assertEqual(Usuario.objects.count(),1)
 
-	
+	def test_delete(self):
+		u =Usuario.objects.create(usuario_id_id=1, telefono_celular = '123456',
+		telefono_oficina = '123456',telefono_casa = '12356',fecha_ingreso = '2013-1-1',	direccion ='' ,
+		dedicacion = '6 hrs',estatus = 'A',	jerarquia_docente_id = 1, tipo_contrato_id = 1,centro_id = 1)
+		self.assertEqual(Usuario.objects.count(),1)
+		response =  self.main_client.post('/admins/modelos/usuario/borrar/'+str(u.pk)) 
+		self.assertEqual(Usuario.objects.count(),0)
+
+	def test_update(self):
+		u =Usuario.objects.create(usuario_id_id=1, telefono_celular = '123456',
+		telefono_oficina = '12345',telefono_casa = '12356',fecha_ingreso = '2013-1-1',	direccion ='' ,
+		dedicacion = '6 hrs',estatus = 'A',	jerarquia_docente_id = 1, tipo_contrato_id = 1,centro_id = 1)
+		self.assertEqual(Usuario.objects.count(),1)
+		name = u.usuario_id.first_name 
+		pkey = u.pk
+		response =  self.main_client.post('/admins/modelos/usuario/editar/'+str(u.pk), 
+		{'usuario_id' :'123456','nombre' : 'NEW NAME','apellido' : 'test', 'password' : '1234',
+		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
+		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
+		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})
+		new_name = Usuario.objects.get(pk=pkey).usuario_id.first_name
+		self.assertTrue(name != new_name)
+
 

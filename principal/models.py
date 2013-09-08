@@ -406,13 +406,13 @@ class HorarioProgramado(models.Model):
 		return self.pk
 		
 class MateriaOfertada(models.Model):
-	nro_estudiantes_estimados = models.PositiveIntegerField()
-	nro_secciones_teoria = models.PositiveIntegerField()
-	nro_secciones_practica = models.PositiveIntegerField(blank=True)
-	nro_secciones_laboratorio = models.PositiveIntegerField(blank=True)
-	nro_preparadores1 = models.PositiveIntegerField(blank=True)
-	nro_preparadores2 = models.PositiveIntegerField(blank=True)
-	nro_estudiantes_inscritos = models.PositiveIntegerField(blank=True)
+	nro_estudiantes_estimados = models.PositiveIntegerField(blank=True,null=True)
+	nro_secciones_teoria = models.PositiveIntegerField(blank=True,null=True)
+	nro_secciones_practica = models.PositiveIntegerField(blank=True,null=True)
+	nro_secciones_laboratorio = models.PositiveIntegerField(blank=True,null=True)
+	nro_preparadores1 = models.PositiveIntegerField(blank=True,null=True)
+	nro_preparadores2 = models.PositiveIntegerField(blank=True,null=True)
+	nro_estudiantes_inscritos = models.PositiveIntegerField(blank=True,null=True)
 	periodo_academico = models.ForeignKey('PeriodoAcademico', db_column='periodo_academico', related_name='materiaofertada_tiene_anho')
 	materia = models.ForeignKey(Materia)
 
