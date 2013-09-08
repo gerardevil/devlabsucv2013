@@ -146,12 +146,11 @@ class FormFactory():
 			return form_class(inst.toJson(False))
 
 # Pruebas unitarias sobre los siguientes modelos: #
+# TipoContrato                                    #
 # TipoDocente                                     #
 # JerarquiaDocente                                #
 # Usuario                                         #
 # Materia                                         #
-# HorarioMateria                                  #
-# Programacion                                    #
 #                                                 #
 # - Pruebas FrontEnd:                             #
 # Se toma un field de cada tipo en cada modelo    #
@@ -183,7 +182,58 @@ class GlobalValidationTest(TestCase):
 		'''
 		key = RandomGenerator.genRandomInteger(min_value=10,max_value=100)
 		response =  self.main_client.get('/admins/modelos/usuario/editar/'+str(key))
-		self.assertEqual(response.status_code,404)		
+		self.assertEqual(response.status_code,404)	
+
+class TipoContratoTest(TestCase):
+	def setUp(self):
+		# Setting up a fake user logged-in
+		u = User(username='test')
+		u.set_password('0000')
+		u.save()
+		self.main_client = Client()
+		self.main_client.login(username='test', password='0000')
+
+	#Pruebas Frontend
+	def test_NormalShortName(self):
+		model_object = TipoContrato(nombre = RandomGenerator.genRandomString(especific_long=45))
+		form = FormFactory.genForm('tipo contrato',model_object)
+		self.assertTrue(form.is_valid())	
+
+	def test_inputToLongNormalName(self):
+		model_object = TipoContrato(nombre = RandomGenerator.genRandomString(especific_long=50))
+		form = FormFactory.genForm('tipo contrato',model_object)
+		self.assertTrue(not form.is_valid())
+
+	def test_inputEmptyName(self):
+		model_object = TipoContrato(nombre = '')
+		form = FormFactory.genForm('tipo contrato',model_object)
+		self.assertTrue(not form.is_valid())
+
+	#Pruebas Backend
+	def test_create(self):
+		self.assertEqual(TipoContrato.objects.count(),0)
+		response =  self.main_client.post('/admins/modelos/tipo contrato/crear', {'nombre': 'abc'})
+		self.assertEqual(response.status_code,200)
+		self.assertEqual(TipoContrato.objects.count(),1)
+
+	def test_delete(self):
+		self.assertEqual(TipoContrato.objects.count(),0)		
+		temp = TipoContrato.objects.create(nombre='abc')
+		self.assertEqual(TipoContrato.objects.count(),1)
+		response = self.main_client.post('/admins/modelos/tipo contrato/borrar/'+str(temp.pk))
+		self.assertEqual(response.status_code,200)
+		self.assertEqual(TipoContrato.objects.count(),0)
+
+	def test_update(self):
+		self.assertEqual(TipoContrato.objects.count(),0)	
+		temp = TipoContrato.objects.create(nombre='abc')
+		self.assertEqual(TipoContrato.objects.count(),1)	
+		pkey = temp.pk
+		old = temp.nombre
+		response = self.main_client.post('/admins/modelos/tipo contrato/editar/'+str(temp.pk),{'nombre':'cba'})
+		temp = TipoContrato.objects.get(pk=pkey)
+		self.assertEqual(response.status_code,200)
+		self.assertTrue(old != temp.nombre)
 
 
 class TipoDocenteTest(TestCase):
@@ -447,17 +497,7 @@ class UsuarioTest(TestCase):
 		new_name = Usuario.objects.get(pk=pkey).usuario_id.first_name
 		self.assertTrue(name != new_name)
 
-"""
-	codigo = models.PositiveIntegerField(unique=True)
-	nombre = models.CharField(max_length=100L, unique=True)
-	tipo_materia = models.CharField( max_length= 20, choices = (('Obligatoria','Obligatoria'),('Electiva','Electiva'), ('Electiva Obligatoria','Electiva Obligatoria'), ('Complementaria', 'Complementaria'), ('Laboratorio','Laboratorio')))
-	unidades_credito_teoria = models.PositiveIntegerField()
-	unidades_credito_practica = models.PositiveIntegerField()
-	unidades_credito_laboratorio = models.PositiveIntegerField()
-	estatus = models.CharField(max_length= 1, choices = (('A','Activa'), ('I','Inactiva')))
-	semestre = models.PositiveIntegerField(blank=True,null=True)
-	centro = models.ForeignKey(Centro)
-"""
+
 class MateriaTest(TestCase):
 	def setUp(self):
 		# Setting up a fake user logged-in
@@ -548,5 +588,7 @@ class MateriaTest(TestCase):
 		self.assertEqual(response.status_code,200)
 		new_name = Materia.objects.get(pk=pkey).nombre
 		self.assertTrue(name != new_name)
+
+
 
 
