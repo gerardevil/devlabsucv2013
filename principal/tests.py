@@ -368,7 +368,7 @@ class TipoContratoTest(TestCase):
 	def test_create(self):
 		self.assertEqual(TipoContrato.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/tipo contrato/crear', {'nombre': 'abc'})
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
 		self.assertEqual(TipoContrato.objects.count(),1)
 
 	def test_delete(self):
@@ -376,7 +376,7 @@ class TipoContratoTest(TestCase):
 		temp = TipoContrato.objects.create(nombre='abc')
 		self.assertEqual(TipoContrato.objects.count(),1)
 		response = self.main_client.post('/admins/modelos/tipo contrato/borrar/'+str(temp.pk))
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
 		self.assertEqual(TipoContrato.objects.count(),0)
 
 	def test_update(self):
@@ -387,7 +387,7 @@ class TipoContratoTest(TestCase):
 		old = temp.nombre
 		response = self.main_client.post('/admins/modelos/tipo contrato/editar/'+str(temp.pk),{'nombre':'cba'})
 		temp = TipoContrato.objects.get(pk=pkey)
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
 		self.assertTrue(old != temp.nombre)
 
 
@@ -420,7 +420,7 @@ class TipoDocenteTest(TestCase):
 	def test_create(self):
 		self.assertEqual(TipoDocente.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/tipo docente/crear', {'nombre': 'abc'})
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/tipo%20docente',302,200)
 		self.assertEqual(TipoDocente.objects.count(),1)
 
 	def test_delete(self):
@@ -430,7 +430,7 @@ class TipoDocenteTest(TestCase):
 		temp.save()
 		self.assertEqual(TipoDocente.objects.count(),1)
 		response = self.main_client.post('/admins/modelos/tipo docente/borrar/'+str(temp.pk))
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/tipo%20docente',302,200)
 		self.assertEqual(TipoDocente.objects.count(),0)
 
 	def test_update(self):
@@ -441,7 +441,7 @@ class TipoDocenteTest(TestCase):
 		old = temp.nombre
 		response = self.main_client.post('/admins/modelos/tipo docente/editar/'+str(temp.pk),{'nombre':'cba'})
 		temp = TipoDocente.objects.get(pk=pkey)
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/tipo%20docente',302,200)
 		self.assertTrue(old != temp.nombre)
 
 
@@ -490,7 +490,7 @@ class JerarquiaDocenteTest(TestCase):
 	def test_create(self):
 		self.assertEqual(JerarquiaDocente.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/jerarquia docente/crear', {'jerarquia':1, 'nombre': 'abc','tipo_docente':1})
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/jerarquia%20docente',302,200)
 		self.assertEqual(JerarquiaDocente.objects.count(),1)
 
 	def test_delete(self):
@@ -501,7 +501,7 @@ class JerarquiaDocenteTest(TestCase):
 			tipo_docente_id = 1)
 		self.assertEqual(JerarquiaDocente.objects.count(),1)
 		response = self.main_client.post('/admins/modelos/jerarquia docente/borrar/'+str(model_object.pk))
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/jerarquia%20docente',302,200)
 		self.assertEqual(JerarquiaDocente.objects.count(),0)
 
 	def test_update(self):
@@ -515,7 +515,7 @@ class JerarquiaDocenteTest(TestCase):
 		old = (model_object.nombre,model_object.jerarquia,model_object.tipo_docente)
 		response = self.main_client.post('/admins/modelos/jerarquia docente/editar/'+str(model_object.pk),{'jerarquia':1,'nombre':'cba','tipo_docente':1})
 		temp = JerarquiaDocente.objects.get(pk=pkey)
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/jerarquia%20docente',302,200)
 		self.assertTrue(old != (temp.nombre,temp.jerarquia,temp.tipo_docente))
 
 
@@ -614,7 +614,7 @@ class UsuarioTest(TestCase):
 		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
 		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
 		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})	
-		self.assertEqual(response.status_code,200)
+		self.assertEqual(response.context['form']['usuario_id'].errors, [u'El Usuario : 123456 , ya esta Registrado en el Sistema'])
 		self.assertEqual(Usuario.objects.count(),0)
 
 	def test_createUniqueUser(self):
@@ -624,17 +624,19 @@ class UsuarioTest(TestCase):
 		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
 		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
 		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/usuario',302,200)
 		self.assertEqual(Usuario.objects.count(),1)
 
 	def test_delete(self):
 		u =Usuario.objects.create(usuario_id_id=1, telefono_celular = '123456',
 		telefono_oficina = '123456',telefono_casa = '12356',fecha_ingreso = '2013-1-1',	direccion ='' ,
 		dedicacion = '6 hrs',estatus = 'A',	jerarquia_docente_id = 1, tipo_contrato_id = 1,centro_id = 1)
+		
 		self.assertEqual(Usuario.objects.count(),1)
+		self.assertEqual(User.objects.count(),1)
 		response =  self.main_client.post('/admins/modelos/usuario/borrar/'+str(u.pk)) 
-		self.assertEqual(response.status_code,200)
 		self.assertEqual(Usuario.objects.count(),0)
+		self.assertEqual(User.objects.count(),0)
 
 	def test_update(self):
 		u =Usuario.objects.create(usuario_id_id=1, telefono_celular = '123456',
@@ -648,7 +650,7 @@ class UsuarioTest(TestCase):
 		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
 		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
 		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/usuario',302,200)
 		new_name = Usuario.objects.get(pk=pkey).usuario_id.first_name
 		self.assertTrue(name != new_name)
 
@@ -717,7 +719,7 @@ class MateriaTest(TestCase):
 		'unidades_credito_teoria' : '2' ,'unidades_credito_practica' : '2',
 		'unidades_credito_laboratorio' :'2' , 'estatus' : 'A',
 		'semestre' : '6', 'centro': 1})
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/materia',302,200)
 		self.assertEqual(Materia.objects.count(),1)
 
 	def test_delete(self):
@@ -726,7 +728,7 @@ class MateriaTest(TestCase):
 		unidades_credito_laboratorio =2 , estatus = 'A',semestre = 2013, centro_id = 1)
 		self.assertEqual(Materia.objects.count(),1)
 		response =  self.main_client.post('/admins/modelos/materia/borrar/'+str(m.pk)) 
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/materia',302,200)
 		self.assertEqual(Materia.objects.count(),0)
 
 	def test_update(self):
@@ -740,6 +742,6 @@ class MateriaTest(TestCase):
 		{'codigo':6602,	'nombre' : 'NEW NAME', 'tipo_materia' : 'Laboratorio',
 		'unidades_credito_teoria' :2 ,'unidades_credito_practica' : 2,
 		'unidades_credito_laboratorio' :2 , 'estatus' : 'A','semestre' : 2013, 'centro' : 1})
-		self.assertEqual(response.status_code,200)
+		self.assertRedirects(response,'/admins/modelos/materia',302,200)
 		new_name = Materia.objects.get(pk=pkey).nombre
 		self.assertTrue(name != new_name)

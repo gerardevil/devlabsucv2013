@@ -536,7 +536,7 @@ class Notificacion(models.Model):
 
 class UsuarioRol(models.Model):
 	rol = models.ForeignKey(Rol)
-	cedula = models.ForeignKey(Usuario, db_column='cedula')
+	cedula = models.ForeignKey(Usuario)
 
 	class Meta:
 		db_table = 'usuario_rol'
@@ -545,8 +545,8 @@ class UsuarioRol(models.Model):
 		return u'usuario: %s | rol: %s' % (str(self.cedula), str(self.rol))
 
 	def toJson(self,minify=True):
-		retorno = {'rol':self.rol.toJson(minify),
-				'cedula':self.cedula.toJson(minify)
+		retorno = {'rol':self.rol.pk,
+				'cedula':self.cedula.pk
 				}
 
 		return retorno
