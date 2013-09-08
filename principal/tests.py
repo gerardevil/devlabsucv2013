@@ -215,7 +215,7 @@ class TipoDocenteTest(TestCase):
 	def test_create(self):
 		self.assertEqual(TipoDocente.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/tipo docente/crear', {'nombre': 'abc'})
-		self.assertEqual(response.status_code,302)#Redirectioning to another template
+		self.assertEqual(response.status_code,200)
 		self.assertEqual(TipoDocente.objects.count(),1)
 
 	def test_delete(self):
@@ -225,7 +225,7 @@ class TipoDocenteTest(TestCase):
 		temp.save()
 		self.assertEqual(TipoDocente.objects.count(),1)
 		response = self.main_client.post('/admins/modelos/tipo docente/borrar/'+str(temp.pk))
-		self.assertEqual(response.status_code,302)#Redirectioning to another template
+		self.assertEqual(response.status_code,200)
 		self.assertEqual(TipoDocente.objects.count(),0)
 
 	def test_update(self):
@@ -235,8 +235,8 @@ class TipoDocenteTest(TestCase):
 		pkey = temp.pk
 		old = temp.nombre
 		response = self.main_client.post('/admins/modelos/tipo docente/editar/'+str(temp.pk),{'nombre':'cba'})
-		self.assertEqual(response.status_code,302)#Redirectioning to another template
 		temp = TipoDocente.objects.get(pk=pkey)
+		self.assertEqual(response.status_code,200)
 		self.assertTrue(old != temp.nombre)
 
 
@@ -285,7 +285,7 @@ class JerarquiaDocenteTest(TestCase):
 	def test_create(self):
 		self.assertEqual(JerarquiaDocente.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/jerarquia docente/crear', {'jerarquia':1, 'nombre': 'abc','tipo_docente':1})
-		self.assertEqual(response.status_code,302)#Redirectioning to another template
+		self.assertEqual(response.status_code,200)
 		self.assertEqual(JerarquiaDocente.objects.count(),1)
 
 	def test_delete(self):
@@ -296,7 +296,7 @@ class JerarquiaDocenteTest(TestCase):
 			tipo_docente_id = 1)
 		self.assertEqual(JerarquiaDocente.objects.count(),1)
 		response = self.main_client.post('/admins/modelos/jerarquia docente/borrar/'+str(model_object.pk))
-		self.assertEqual(response.status_code,302)#Redirectioning to another template
+		self.assertEqual(response.status_code,200)
 		self.assertEqual(JerarquiaDocente.objects.count(),0)
 
 	def test_update(self):
@@ -310,6 +310,7 @@ class JerarquiaDocenteTest(TestCase):
 		old = (model_object.nombre,model_object.jerarquia,model_object.tipo_docente)
 		response = self.main_client.post('/admins/modelos/jerarquia docente/editar/'+str(model_object.pk),{'jerarquia':1,'nombre':'cba','tipo_docente':1})
 		temp = JerarquiaDocente.objects.get(pk=pkey)
+		self.assertEqual(response.status_code,200)
 		self.assertTrue(old != (temp.nombre,temp.jerarquia,temp.tipo_docente))
 
 
@@ -400,6 +401,7 @@ class UsuarioTest(TestCase):
 		form = FormFactory.genForm('usuario',model_object)
 		self.assertTrue(not form.is_valid())
 
+	#Pruebas Backend
 	def test_insertExistentUser(self):
 		self.assertEqual(Usuario.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/usuario/crear', 
@@ -407,9 +409,9 @@ class UsuarioTest(TestCase):
 		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
 		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
 		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})	
+		self.assertEqual(response.status_code,200)
 		self.assertEqual(Usuario.objects.count(),0)
 
-	#Pruebas Backend
 	def test_createUniqueUser(self):
 		self.assertEqual(Usuario.objects.count(),0)
 		response =  self.main_client.post('/admins/modelos/usuario/crear', 
@@ -417,7 +419,7 @@ class UsuarioTest(TestCase):
 		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
 		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
 		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})
-		self.assertEqual(response.status_code,302)
+		self.assertEqual(response.status_code,200)
 		self.assertEqual(Usuario.objects.count(),1)
 
 	def test_delete(self):
@@ -426,6 +428,7 @@ class UsuarioTest(TestCase):
 		dedicacion = '6 hrs',estatus = 'A',	jerarquia_docente_id = 1, tipo_contrato_id = 1,centro_id = 1)
 		self.assertEqual(Usuario.objects.count(),1)
 		response =  self.main_client.post('/admins/modelos/usuario/borrar/'+str(u.pk)) 
+		self.assertEqual(response.status_code,200)
 		self.assertEqual(Usuario.objects.count(),0)
 
 	def test_update(self):
@@ -440,7 +443,110 @@ class UsuarioTest(TestCase):
 		'correo_Electronico' : 'example@domain.com' ,'telefono_celular' : '123456',
 		'telefono_oficina' : '123456','telefono_casa' : '12356','fecha_ingreso' : '1/1/2013',	'direccion' : '',
 		'dedicacion' : '6 hrs','estatus' : 'A',	'jerarquia_docente' : 1, 'tipo_contrato' : 1,'centro' : 1})
+		self.assertEqual(response.status_code,200)
 		new_name = Usuario.objects.get(pk=pkey).usuario_id.first_name
+		self.assertTrue(name != new_name)
+
+"""
+	codigo = models.PositiveIntegerField(unique=True)
+	nombre = models.CharField(max_length=100L, unique=True)
+	tipo_materia = models.CharField( max_length= 20, choices = (('Obligatoria','Obligatoria'),('Electiva','Electiva'), ('Electiva Obligatoria','Electiva Obligatoria'), ('Complementaria', 'Complementaria'), ('Laboratorio','Laboratorio')))
+	unidades_credito_teoria = models.PositiveIntegerField()
+	unidades_credito_practica = models.PositiveIntegerField()
+	unidades_credito_laboratorio = models.PositiveIntegerField()
+	estatus = models.CharField(max_length= 1, choices = (('A','Activa'), ('I','Inactiva')))
+	semestre = models.PositiveIntegerField(blank=True,null=True)
+	centro = models.ForeignKey(Centro)
+"""
+class MateriaTest(TestCase):
+	def setUp(self):
+		# Setting up a fake user logged-in
+		self.u = User(pk=1,username='test')
+		self.u.set_password('0000')
+		self.u.save()
+		self.main_client = Client()
+		self.main_client.login(username='test', password='0000')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.model_object = Materia(codigo=6602,
+		nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',
+		semestre = 2013, centro_id = 1)
+
+	def test_invalidCodigo(self):
+		self.model_object.codigo = RandomGenerator.genRandomInteger(valid=False)
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+
+	def test_tolongName(self):
+		self.model_object.nombre = RandomGenerator.genRandomString(especific_long=150)
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+
+	def test_invalidTipoMateria(self):
+		self.model_object.tipo_materia = '(:'
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+	
+	def test_invalidUnidades(self):
+		self.model_object.unidades_credito_teoria =-1
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+
+		self.model_object.unidades_credito_teoria = 1
+		self.model_object.unidades_credito_practica = -1
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+
+		self.model_object.unidades_credito_practica = 1
+		self.model_object.unidades_credito_laboratorio = -1		
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+
+	def test_invalidEstatus(self):
+		self.model_object.estatus =  'INVALID',
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+
+	def test_invalidSemestre(self):
+		self.model_object.semestre = -2000
+		form = FormFactory.genForm('materia', self.model_object)
+		self.assertEqual(form.is_valid(),False)
+
+	#Pruebas Bckend:
+	def test_create(self):
+		self.assertEqual(Materia.objects.count(),0)
+		response =  self.main_client.post('/admins/modelos/materia/crear', 
+		{'codigo':'6603',
+		'nombre' : 'xnombre', 'tipo_materia' : 'Laboratorio',
+		'unidades_credito_teoria' : '2' ,'unidades_credito_practica' : '2',
+		'unidades_credito_laboratorio' :'2' , 'estatus' : 'A',
+		'semestre' : '6', 'centro': 1})
+		self.assertEqual(response.status_code,200)
+		self.assertEqual(Materia.objects.count(),1)
+
+	def test_delete(self):
+		m = Materia.objects.create(codigo=6602,	nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',semestre = 2013, centro_id = 1)
+		self.assertEqual(Materia.objects.count(),1)
+		response =  self.main_client.post('/admins/modelos/materia/borrar/'+str(m.pk)) 
+		self.assertEqual(response.status_code,200)
+		self.assertEqual(Materia.objects.count(),0)
+
+	def test_update(self):
+		m = Materia.objects.create(codigo=6602,	nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',semestre = 2013, centro_id = 1)
+		self.assertEqual(Materia.objects.count(),1)
+		name = m.nombre 
+		pkey = m.pk
+		response =  self.main_client.post('/admins/modelos/materia/editar/'+str(m.pk), 
+		{'codigo':6602,	'nombre' : 'NEW NAME', 'tipo_materia' : 'Laboratorio',
+		'unidades_credito_teoria' :2 ,'unidades_credito_practica' : 2,
+		'unidades_credito_laboratorio' :2 , 'estatus' : 'A','semestre' : 2013, 'centro' : 1})
+		self.assertEqual(response.status_code,200)
+		new_name = Materia.objects.get(pk=pkey).nombre
 		self.assertTrue(name != new_name)
 
 
