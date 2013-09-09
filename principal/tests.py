@@ -191,46 +191,91 @@ class AulaTestCases(TestCase):
         self.assertEqual(response.context['modelo'],'aula')
 
         #Campos vacios
-        response = self.client.post('/admins/modelos/aula/crear', {'tipo_aula':'E','capacidad':20,'estatus_aula':'A'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'tipo_aula':'E',
+        'capacidad':20,
+        'estatus_aula':'A'})
         self.assertEqual(response.context['form']['aula_id'].errors, [u'Este campo es obligatorio.'])
 
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'capacidad':20,'estatus_aula':'A'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':2,
+        'capacidad':20,
+        'estatus_aula':'A'})
         self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Este campo es obligatorio.'])
 
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'E','estatus_aula':'A'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':2,
+        'tipo_aula':'E',
+        'estatus_aula':'A'})
         self.assertEqual(response.context['form']['capacidad'].errors, [u'Este campo es obligatorio.'])
 
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'E','capacidad':20})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':2,
+        'tipo_aula':'E',
+        'capacidad':20})
         self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Este campo es obligatorio.'])
 
         #Insercion correcta
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'E','capacidad':20,'estatus_aula':'A'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':2,
+        'tipo_aula':'E',
+        'capacidad':20,
+        'estatus_aula':'A'})
         self.assertRedirects(response,"/admins/modelos/aula",302,200)
 
-        #Insercion con id repetido
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'I','capacidad':10,'estatus_aula':'I'})
+        #Insercion con aula_id repetido
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':2,
+        'tipo_aula':'I',
+        'capacidad':10,
+        'estatus_aula':'I'})
         self.assertEqual(response.context['form']['aula_id'].errors, [u'Ya existe Aula con este Aula id.'])
 
         #Insercion con campos incorrectos
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':4,'tipo_aula':'Z','capacidad':10,'estatus_aula':'A'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':4,
+        'tipo_aula':'Z',
+        'capacidad':10,
+        'estatus_aula':'A'})
         self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
 
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':4,'tipo_aula':'L','capacidad':'Z','estatus_aula':'A'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':4,
+        'tipo_aula':'L',
+        'capacidad':'Z',
+        'estatus_aula':'A'})
         self.assertEqual(response.context['form']['capacidad'].errors, [u'Introduzca un n\xfamero completo.'])
 
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':4,'tipo_aula':'L','capacidad':10,'estatus_aula':'Z'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id':4,
+        'tipo_aula':'L',
+        'capacidad':10,
+        'estatus_aula':'Z'})
         self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
 
-
         #Insercion con numeros grandes
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':'E','capacidad':20,'estatus_aula':'A'})
-        self.assertRedirects(response,"/admins/modelos/aula",302,200)
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id': 4,'tipo_aula':'E','capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':'A'})
-        self.assertRedirects(response,"/admins/modelos/aula",302,200)
-        response = self.client.post('/admins/modelos/aula/crear', {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':'E','capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':'A'})
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'tipo_aula':'E',
+        'capacidad':20,
+        'estatus_aula':'A'})
         self.assertRedirects(response,"/admins/modelos/aula",302,200)
 
-        #Deben existir 5 registros
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id': 4,
+        'tipo_aula':'E',
+        'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'estatus_aula':'A'})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        response = self.client.post('/admins/modelos/aula/crear',
+        {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'tipo_aula':'E',
+        'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'estatus_aula':'A'})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        #Deben existir 6 registros
         self.assertEqual(Aula.objects.count(),6)
 
     def test_EditarAula(self):
@@ -244,43 +289,84 @@ class AulaTestCases(TestCase):
         self.assertEqual(response.context['modelo'],'aula')
 
         #Campos vacios
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'tipo_aula':aula.tipo_aula,
+        'capacidad':aula.capacidad,
+        'estatus_aula':aula.estatus_aula})
         self.assertEqual(response.context['form']['aula_id'].errors, [u'Este campo es obligatorio.'])
 
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula.aula_id,
+        'capacidad':aula.capacidad,
+        'estatus_aula':aula.estatus_aula})
         self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Este campo es obligatorio.'])
 
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':aula.tipo_aula,'estatus_aula':aula.estatus_aula})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula.aula_id,
+        'tipo_aula':aula.tipo_aula,
+        'estatus_aula':aula.estatus_aula})
         self.assertEqual(response.context['form']['capacidad'].errors, [u'Este campo es obligatorio.'])
 
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.id,'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula.id,
+        'tipo_aula':aula.tipo_aula,
+        'capacidad':aula.capacidad})
         self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Este campo es obligatorio.'])
 
         #Edicion correcta
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':str(aula.aula_id),'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula.aula_id,
+        'tipo_aula':aula.tipo_aula,
+        'capacidad':aula.capacidad,
+        'estatus_aula':aula.estatus_aula})
         self.assertRedirects(response,"/admins/modelos/aula",302,200)
 
-        #Edicion con id repetido
+        #Edicion con aula_id repetido
         aula2 =  Aula.objects.filter().all()[1]
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula2.aula_id,'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula2.aula_id,
+        'tipo_aula':aula.tipo_aula,
+        'capacidad':aula.capacidad,
+        'estatus_aula':aula.estatus_aula})
         self.assertEqual(response.context['form']['aula_id'].errors, [u'Ya existe Aula con este Aula id.'])
 
         #Edicion con campos incorrectos
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':'Z','capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula.aula_id,'tipo_aula':'Z',
+        'capacidad':aula.capacidad,
+        'estatus_aula':aula.estatus_aula})
         self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
 
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':'Z'})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula.aula_id,
+        'tipo_aula':aula.tipo_aula,
+        'capacidad':aula.capacidad,
+        'estatus_aula':'Z'})
         self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
 
         #Edicion con numeros grandes
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
-        self.assertRedirects(response,"/admins/modelos/aula",302,200)
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':aula.tipo_aula,'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':aula.estatus_aula})
-        self.assertRedirects(response,"/admins/modelos/aula",302,200)
-        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':aula.tipo_aula,'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':aula.estatus_aula})
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'tipo_aula':aula.tipo_aula,
+        'capacidad':aula.capacidad,
+        'estatus_aula':aula.estatus_aula})
         self.assertRedirects(response,"/admins/modelos/aula",302,200)
 
-        #Deben existir 5 registros
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id':aula.aula_id,
+        'tipo_aula':aula.tipo_aula,
+        'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'estatus_aula':aula.estatus_aula})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk),
+        {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'tipo_aula':aula.tipo_aula,
+        'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),
+        'estatus_aula':aula.estatus_aula})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        #Deben existir 2 registros
         self.assertEqual(Aula.objects.count(),2)
 
     def test_BorrarAula(self):
@@ -338,6 +424,482 @@ class AulaTestCases(TestCase):
         self.assertRedirects(response,"/login?next=/admins/modelos/aula/"+str(self.a.pk),302,200)
 
 #------------------------ Pruebas unitarias CRUD Aula -----------------------#
+
+#----------------------- Pruebas unitarias CRUD Centro ----------------------#
+
+class CentroTestCases(TestCase):
+
+    def setUp(self):
+        self.c = Centro(nombre='CCG',area='Computacion Grafica')
+        self.c2 = Centro(nombre='CCPD',area='Computacion de Alto Rendimiento')
+        self.c.save()
+        self.c2.save()
+        self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
+        self.f = RequestFactory()
+
+    def test_InsertarCentro(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/centro/crear")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'centro')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/centro/crear',
+        {'area':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertEqual(response.context['form']['nombre'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/centro/crear',
+        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertEqual(response.context['form']['area'].errors, [u'Este campo es obligatorio.'])
+
+        #Insercion correcta
+        response = self.client.post('/admins/modelos/centro/crear',
+        {'area':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'nombre':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+
+        #Insercion con campos incorrectos
+        #response = self.client.post('/admins/modelos/centro/crear', {'nombre':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'area':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        #self.assertEqual(response.context['form']['nombre'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+
+        #response = self.client.post('/admins/modelos/centro/crear', {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=20),'area':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000)})
+        #self.assertEqual(response.context['form']['area'].errors, [u'Introduzca un n\xfamero completo.'])
+
+        #Insercion con cadenas grandes
+#        response = self.client.post('/admins/modelos/centro/crear',
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=50)})
+#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+#
+#        response = self.client.post('/admins/modelos/centro/crear',
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=50),
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=None)})
+#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+#
+#        response = self.client.post('/admins/modelos/centro/crear',
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=None)})
+#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+
+        #Deben existir 3 registros
+        self.assertEqual(Centro.objects.count(),3)
+
+    def test_EditarCentro(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        centro = Centro.objects.filter().all()[0]
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/centro/editar/"+str(centro.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'centro')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk),
+        {'area':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertEqual(response.context['form']['nombre'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk),
+        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertEqual(response.context['form']['area'].errors, [u'Este campo es obligatorio.'])
+
+        #Edicion correcta
+        response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk),
+        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'area':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+
+        #Edicion con campos incorrectos
+        #response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk), {'nombre':RandomGenerator.genRandomInteger(valid=True),'area':RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        #self.assertEqual(response.context['form']['nombre'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+
+        #response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk), {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=20),'area':RandomGenerator.genRandomInteger(valid=True)})
+        #self.assertEqual(response.context['form']['area'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+
+        #Edicion con cadenas grandes
+#        response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk),
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=50)})
+#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+#
+#        response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk),
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=50),
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=None)})
+#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+#
+#        response = self.client.post('/admins/modelos/centro/editar/'+str(centro.pk),
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=None)})
+#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+
+        #Deben existir 2 registros
+        self.assertEqual(Centro.objects.count(),2)
+
+    def test_BorrarCentro(self):
+        remaining = Centro.objects.count()-1
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/centro/borrar/"+str(self.c.pk))
+        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+        self.assertEqual(Centro.objects.count(),remaining)
+
+    def test_ListarCentro(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/centro")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'centro')
+
+    def test_LeerCentro(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/centro/"+str(self.c.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'centro')
+
+    def test_LeerCentroNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/centro/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_BorrarCentroNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/centro/borrar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_EditarCentroNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/centro/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_InsertarCentroSinLogin(self):
+        response = self.client.post("/admins/modelos/centro/crear")
+        self.assertRedirects(response,"/login?next=/admins/modelos/centro/crear",302,200)
+
+    def test_EditarCentroSinLogin(self):
+        response = self.client.post("/admins/modelos/centro/editar/"+str(self.c.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/centro/editar/"+str(self.c.pk),302,200)
+
+    def test_BorrarCentroSinLogin(self):
+        response = self.client.post("/admins/modelos/centro/borrar/"+str(self.c.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/centro/borrar/"+str(self.c.pk),302,200)
+
+    def test_ListarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/centro")
+        self.assertRedirects(response,"/login?next=/admins/modelos/centro",302,200)
+
+    def test_LeerAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/centro/"+str(self.c.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/centro/"+str(self.c.pk),302,200)
+
+#------------------------ Pruebas unitarias CRUD Centro -----------------------#
+
+#----------------------- Pruebas unitarias CRUD Periodo Academico ----------------------#
+
+class PAcadTestCases(TestCase):
+
+    def setUp(self):
+        self.p = PeriodoAcademico(periodo_lectivo=2013,semestre=1,fecha_inicio='2013-04-04',fecha_fin='2013-08-30')
+        self.p2 = PeriodoAcademico(periodo_lectivo=2013,semestre=2,fecha_inicio='2013-11-25',fecha_fin='2014-03-30')
+        self.p.save()
+        self.p2.save()
+        self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
+        self.f = RequestFactory()
+
+    def test_InsertarPAcad(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/periodo%20academico/crear")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'periodo academico')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['periodo_lectivo'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['semestre'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Este campo es obligatorio.'])
+
+        #Insercion correcta
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+
+        #Insercion con campos incorrectos
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['periodo_lectivo'].errors, [u'Introduzca un n\xfamero completo.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['semestre'].errors, [u'Introduzca un n\xfamero completo.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        #Insercion con fechas invalidas
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=False,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=False,separator='/')})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        #Insercion con numeros grandes
+#        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+#        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=None,max_value=None),
+#        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+#        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+#        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
+#        self.assertNotEqual(response.context['form']['periodo_lectivo'].errors, [])
+#        #self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+#
+#        response = self.client.post('/admins/modelos/periodo%20academico/crear',
+#        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+#        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=None,max_value=None),
+#        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+#        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
+#        self.assertNotEqual(response.context['form']['semestre'].errors, [])
+        #self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+
+        #Deben existir 3 registros
+        self.assertEqual(PeriodoAcademico.objects.count(),3)
+
+    def test_EditarPAcad(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        pacad = PeriodoAcademico.objects.filter().all()[0]
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/periodo%20academico/editar/"+str(pacad.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'periodo academico')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['periodo_lectivo'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['semestre'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Este campo es obligatorio.'])
+
+        #Edicion correcta
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+
+        #Edicion con campos incorrectos
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['periodo_lectivo'].errors, [u'Introduzca un n\xfamero completo.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['semestre'].errors, [u'Introduzca un n\xfamero completo.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomString(weird=False,especific_long=20),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomString(weird=False,especific_long=20)})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        #Insercion con fechas invalidas
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=False,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+        self.assertEqual(response.context['form']['fecha_inicio'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+        'fecha_fin': RandomGenerator.genRandomDate(valid=False,separator='/')})
+        self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Introduzca una fecha v\xe1lida.'])
+
+        #Edicion con numeros grandes
+#        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+#        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=None,max_value=None),
+#        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
+#        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+#        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
+#        self.assertEqual(response.context['form']['periodo_lectivo'].errors, [])
+#        #self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+#
+#        response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
+#        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
+#        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=None,max_value=None),
+#        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
+#        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
+#        self.assertEqual(response.context['form']['semestre'].errors, [])
+        #self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+
+        #Deben existir 2 registros
+        self.assertEqual(PeriodoAcademico.objects.count(),2)
+
+    def test_BorrarPAcad(self):
+        remaining = PeriodoAcademico.objects.count()-1
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/periodo%20academico/borrar/"+str(self.p.pk))
+        self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+        self.assertEqual(PeriodoAcademico.objects.count(),remaining)
+
+    def test_ListarPAcad(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/periodo%20academico")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'periodo academico')
+
+    def test_LeerPAcad(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/periodo%20academico/"+str(self.p.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'periodo academico')
+
+    def test_LeerPAcadNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/periodo%20academico/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_BorrarPAcadNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/periodo%20academico/borrar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_EditarPAcadNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/periodo%20academico/editar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_InsertarPAcadSinLogin(self):
+        response = self.client.post("/admins/modelos/periodo%20academico/crear")
+        self.assertRedirects(response,"/login?next=/admins/modelos/periodo%20academico/crear",302,200)
+
+    def test_EditarPAcadSinLogin(self):
+        response = self.client.post("/admins/modelos/periodo%20academico/editar/"+str(self.p.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/periodo%20academico/editar/"+str(self.p.pk),302,200)
+
+    def test_BorrarPAcadSinLogin(self):
+        response = self.client.post("/admins/modelos/periodo%20academico/borrar/"+str(self.p.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/periodo%20academico/borrar/"+str(self.p.pk),302,200)
+
+    def test_ListarPAcadSinLogin(self):
+        response = self.client.post("/admins/modelos/periodo%20academico")
+        self.assertRedirects(response,"/login?next=/admins/modelos/periodo%20academico",302,200)
+
+    def test_LeerPAcadSinLogin(self):
+        response = self.client.post("/admins/modelos/periodo%20academico/"+str(self.p.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/periodo%20academico/"+str(self.p.pk),302,200)
+
+#------------------------ Pruebas unitarias CRUD Periodo Academico -----------------------#
 
 class TipoContratoTest(TestCase):
 	def setUp(self):
