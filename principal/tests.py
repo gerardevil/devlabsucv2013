@@ -1,6 +1,7 @@
 #encoding:utf-8
 from django.db.models.loading import get_app, get_models, get_model
 from django.contrib.contenttypes.models import ContentType
+from django.test.client import RequestFactory
 from django.contrib.auth.models import User
 from django.test.client import Client
 from principal.manager import entity
@@ -549,4 +550,171 @@ class MateriaTest(TestCase):
 		new_name = Materia.objects.get(pk=pkey).nombre
 		self.assertTrue(name != new_name)
 
+#----------------------- Pruebas unitarias CRUD Aula ----------------------#
 
+class AulaTestCases(TestCase):
+
+    def setUp(self):
+        self.a = Aula(aula_id=1,tipo_aula='I',capacidad=30,estatus_aula='A')
+        self.a2 = Aula(aula_id=10,tipo_aula='E',capacidad=20,estatus_aula='A')
+        self.a.save()
+        self.a2.save()
+        self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
+        self.f = RequestFactory()
+
+    def test_InsertarAula(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/aula/crear")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'aula')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/aula/crear', {'tipo_aula':'E','capacidad':20,'estatus_aula':'A'})
+        self.assertEqual(response.context['form']['aula_id'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'capacidad':20,'estatus_aula':'A'})
+        self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'E','estatus_aula':'A'})
+        self.assertEqual(response.context['form']['capacidad'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'E','capacidad':20})
+        self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Este campo es obligatorio.'])
+
+        #Insercion correcta
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'E','capacidad':20,'estatus_aula':'A'})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        #Insercion con id repetido
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':2,'tipo_aula':'I','capacidad':10,'estatus_aula':'I'})
+        self.assertEqual(response.context['form']['aula_id'].errors, [u'Ya existe Aula con este Aula id.'])
+
+        #Insercion con campos incorrectos
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':4,'tipo_aula':'Z','capacidad':10,'estatus_aula':'A'})
+        self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':4,'tipo_aula':'L','capacidad':'Z','estatus_aula':'A'})
+        self.assertEqual(response.context['form']['capacidad'].errors, [u'Introduzca un n\xfamero completo.'])
+
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id':4,'tipo_aula':'L','capacidad':10,'estatus_aula':'Z'})
+        self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+
+
+        #Insercion con numeros grandes
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':'E','capacidad':20,'estatus_aula':'A'})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id': 4,'tipo_aula':'E','capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':'A'})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+        response = self.client.post('/admins/modelos/aula/crear', {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':'E','capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':'A'})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        #Deben existir 5 registros
+        self.assertEqual(Aula.objects.count(),6)
+
+    def test_EditarAula(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        aula = Aula.objects.filter().all()[0]
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/aula/editar/"+str(aula.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'aula')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        self.assertEqual(response.context['form']['aula_id'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':aula.tipo_aula,'estatus_aula':aula.estatus_aula})
+        self.assertEqual(response.context['form']['capacidad'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.id,'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad})
+        self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Este campo es obligatorio.'])
+
+        #Edicion correcta
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':str(aula.aula_id),'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        #Edicion con id repetido
+        aula2 =  Aula.objects.filter().all()[1]
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula2.aula_id,'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        self.assertEqual(response.context['form']['aula_id'].errors, [u'Ya existe Aula con este Aula id.'])
+
+        #Edicion con campos incorrectos
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':'Z','capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        self.assertEqual(response.context['form']['tipo_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':'Z'})
+        self.assertEqual(response.context['form']['estatus_aula'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+
+        #Edicion con numeros grandes
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':aula.tipo_aula,'capacidad':aula.capacidad,'estatus_aula':aula.estatus_aula})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id':aula.aula_id,'tipo_aula':aula.tipo_aula,'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':aula.estatus_aula})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+        response = self.client.post('/admins/modelos/aula/editar/'+str(aula.pk), {'aula_id': RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'tipo_aula':aula.tipo_aula,'capacidad':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'estatus_aula':aula.estatus_aula})
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+        #Deben existir 5 registros
+        self.assertEqual(Aula.objects.count(),2)
+
+    def test_BorrarAula(self):
+        remaining = Aula.objects.count()-1
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/borrar/"+str(self.a.pk))
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+        self.assertEqual(Aula.objects.count(),remaining)
+
+    def test_ListarAula(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'aula')
+
+    def test_LeerAula(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/"+str(self.a.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'aula')
+
+    def test_LeerAulaNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_BorrarAulaNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/borrar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_EditarAulaNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/editar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_InsertarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/crear")
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/crear",302,200)
+
+    def test_EditarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/editar/"+str(self.a.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/editar/"+str(self.a.pk),302,200)
+
+    def test_BorrarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/borrar/"+str(self.a.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/borrar/"+str(self.a.pk),302,200)
+
+    def test_ListarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula")
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula",302,200)
+
+    def test_LeerAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/"+str(self.a.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/"+str(self.a.pk),302,200)
+
+#------------------------ Pruebas unitarias CRUD Aula -----------------------#

@@ -133,7 +133,7 @@ def insertar(request,modelo):
 	if form.is_valid():
 		form.save()
 		return HttpResponseRedirect('/admins/modelos/'+modelo, status=200)
-	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
+	return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
 
 @login_required
 @validateInputCrudData
@@ -164,13 +164,13 @@ def editar(request,modelo,key):
 			return HttpResponseRedirect('/admins/modelos/'+modelo, status=200)
 	else:
 		form = m.generarFormulario(request, modelo, o, 2)
-	return render_to_response('Insertar.html' ,{'form' : form,'opc':5},context_instance=RequestContext(request))
+	return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
 
 @login_required
 @validateInputCrudData	
 def leer(request,modelo,key):
 	'''Metodo generico para leer'''
 	objeto = m.leer(modelo,key)
-	return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4},context_instance=RequestContext(request))
+	return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
 
 #END CRUD Generico
