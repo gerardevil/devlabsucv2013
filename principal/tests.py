@@ -469,19 +469,19 @@ class CentroTestCases(TestCase):
 
         #Insercion con cadenas grandes
 #        response = self.client.post('/admins/modelos/centro/crear',
-#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=200),
 #        'area':RandomGenerator.genRandomString(weird=False,especific_long=50)})
-#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+#        self.assertNotEqual(response.context['error'],'')
 #
 #        response = self.client.post('/admins/modelos/centro/crear',
 #        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=50),
-#        'area':RandomGenerator.genRandomString(weird=False,especific_long=None)})
-#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=200)})
+#        self.assertTrue('error' in response.context)
 #
 #        response = self.client.post('/admins/modelos/centro/crear',
-#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=None),
-#        'area':RandomGenerator.genRandomString(weird=False,especific_long=None)})
-#        self.assertRedirects(response,"/admins/modelos/centro",302,200)
+#        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=200),
+#        'area':RandomGenerator.genRandomString(weird=False,especific_long=200)})
+#        self.assertTrue('error' in response.context)
 
         #Deben existir 3 registros
         self.assertEqual(Centro.objects.count(),3)
@@ -706,20 +706,18 @@ class PAcadTestCases(TestCase):
 
         #Insercion con numeros grandes
 #        response = self.client.post('/admins/modelos/periodo%20academico/crear',
-#        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=None,max_value=None),
+#        {'periodo_lectivo':9999999999999999999999999999999999999,
 #        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
 #        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
-#        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
-#        self.assertNotEqual(response.context['form']['periodo_lectivo'].errors, [])
-#        #self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+#        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+#        self.assertTrue('error' in response.context)
 #
 #        response = self.client.post('/admins/modelos/periodo%20academico/crear',
 #        {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
-#        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=None,max_value=None),
+#        'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=9999999999999999999999999999999999999,max_value=99999999999999999999999999999999999999),
 #        'fecha_inicio':RandomGenerator.genRandomDate(valid=True,separator='/'),
-#        'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
-#        self.assertNotEqual(response.context['form']['semestre'].errors, [])
-        #self.assertRedirects(response,"/admins/modelos/periodo%20academico",302,200)
+#        'fecha_fin': RandomGenerator.genRandomDate(valid=True,separator='/')})
+#        self.assertTrue('error' in response.context)
 
         #Deben existir 3 registros
         self.assertEqual(PeriodoAcademico.objects.count(),3)
@@ -810,7 +808,7 @@ class PAcadTestCases(TestCase):
         'fecha_fin': RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=50)})
         self.assertEqual(response.context['form']['fecha_fin'].errors, [u'Introduzca una fecha v\xe1lida.'])
 
-        #Insercion con fechas invalidas
+        #Edicion con fechas invalidas
         response = self.client.post('/admins/modelos/periodo%20academico/editar/'+str(pacad.pk),
         {'periodo_lectivo':RandomGenerator.genRandomInteger(valid=True,min_value=2000,max_value=3000),
         'semestre':RandomGenerator.genRandomInteger(valid=True,min_value=1,max_value=2),
@@ -1161,12 +1159,12 @@ class RolTestCases(TestCase):
         self.assertEqual(response.context['form']['nombre'].errors, [u'Este campo es obligatorio.'])
 
         #Edicion correcta
-#        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
-#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
-#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
-#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
-#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
-#
+        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
+        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+
 #        #Edicion con cadenas grandes
 #        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
 #        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None),

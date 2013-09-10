@@ -10,5 +10,12 @@
 	</table>
 	<input type='submit' value="Submit">
 </form>
+{% if error %}
+<div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <h4>¡Error!</h4>
+    {{error}}
+</div>
+{% endif %}
 
 {% endblock %}

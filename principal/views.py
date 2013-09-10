@@ -2,6 +2,7 @@
 
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
+import sys
 from principal.manager.decorators import *
 from principal.manager import entity
 from principal.models import *
@@ -128,12 +129,15 @@ def listarm(request):
 @login_required
 @validateInputCrudData
 def insertar(request,modelo):
-	'''Metodo generico para insertar'''
-	form = m.generarFormulario(request,modelo,None,0)
-	if form.is_valid():
-		form.save()
-		return HttpResponseRedirect('/admins/modelos/'+modelo)
-	return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
+	try:
+		'''Metodo generico para insertar'''
+		form = m.generarFormulario(request,modelo,None,0)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('/admins/modelos/'+modelo)
+		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
+	except Warning as w:
+		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__} ,context_instance=RequestContext(request))
 
 @login_required
 @validateInputCrudData
@@ -151,21 +155,24 @@ def borrar(request, modelo, key):
 @login_required
 @validateInputCrudData
 def editar(request,modelo,key):
-	'''Metodo generico para editar'''
-	model = get_model('principal',str(modelo).replace(' ',''))
-	o = model.objects.get(pk=key)
-	if request.method == 'POST':
-		form = m.generarFormulario(request, modelo, o, 1)
-		if form.is_valid():
-			if modelo=='usuario':
-				form.save(o.usuario_id.username)
-			else:
-				form.save()
-			return HttpResponseRedirect('/admins/modelos/'+modelo)
-	else:
-		form = m.generarFormulario(request, modelo, o, 2)
-	return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
-
+	try:
+		'''Metodo generico para editar'''
+		model = get_model('principal',str(modelo).replace(' ',''))
+		o = model.objects.get(pk=key)
+		if request.method == 'POST':
+			form = m.generarFormulario(request, modelo, o, 1)
+			if form.is_valid():
+				if modelo=='usuario':
+					form.save(o.usuario_id.username)
+				else:
+					form.save()
+				return HttpResponseRedirect('/admins/modelos/'+modelo)
+		else:
+			form = m.generarFormulario(request, modelo, o, 2)
+		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
+	except Warning as w:
+		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__},context_instance=RequestContext(request))
+	
 @login_required
 @validateInputCrudData	
 def leer(request,modelo,key):
