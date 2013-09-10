@@ -462,10 +462,10 @@ class CentroTestCases(TestCase):
 
         #Insercion con campos incorrectos
         #response = self.client.post('/admins/modelos/centro/crear', {'nombre':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000),'area':RandomGenerator.genRandomString(weird=False,especific_long=20)})
-        #self.assertEqual(response.context['form']['nombre'].errors, [u'Escoja una opci\xf3n v\xe1lida. Z no es una de las opciones disponibles.'])
+        #self.assertNotEqual(response.context['form']['nombre'].errors, [])
 
         #response = self.client.post('/admins/modelos/centro/crear', {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=20),'area':RandomGenerator.genRandomInteger(valid=True,min_value=3,max_value=100000)})
-        #self.assertEqual(response.context['form']['area'].errors, [u'Introduzca un n\xfamero completo.'])
+        #self.assertNotEqual(response.context['form']['area'].errors, [])
 
         #Insercion con cadenas grandes
 #        response = self.client.post('/admins/modelos/centro/crear',
@@ -900,6 +900,178 @@ class PAcadTestCases(TestCase):
         self.assertRedirects(response,"/login?next=/admins/modelos/periodo%20academico/"+str(self.p.pk),302,200)
 
 #------------------------ Pruebas unitarias CRUD Periodo Academico -----------------------#
+
+#----------------------- Pruebas unitarias CRUD Propiedades del Sistema ----------------------#
+
+class PSisTestCases(TestCase):
+
+    def setUp(self):
+        self.p = PropiedadesSistema(
+        propiedades_sistema_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
+        nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
+        valor=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44))
+        self.p2 = PropiedadesSistema(
+        propiedades_sistema_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
+        nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
+        valor=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44))
+        self.p.save()
+        self.p2.save()
+        self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
+        self.f = RequestFactory()
+
+    def test_InsertarPSis(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/propiedades%20sistema/crear")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'propiedades sistema')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/propiedades%20sistema/crear',
+        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+        self.assertEqual(response.context['form']['nombre'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/propiedades%20sistema/crear',
+        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+        self.assertEqual(response.context['form']['valor'].errors, [u'Este campo es obligatorio.'])
+
+        #Insercion correcta
+        response = self.client.post('/admins/modelos/propiedades%20sistema/crear',
+        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+
+        #Insercion con cadenas grandes
+#        response = self.client.post('/admins/modelos/propiedades%20sistema/crear',
+#        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+#        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+#
+#        response = self.client.post('/admins/modelos/propiedades%20sistema/crear',
+#        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+#        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+#
+#        response = self.client.post('/admins/modelos/propiedades%20sistema/crear',
+#        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None)})
+#        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+
+        #Deben existir 3 registros
+        self.assertEqual(PropiedadesSistema.objects.count(),3)
+
+    def test_EditarPSis(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        psis = PropiedadesSistema.objects.filter().all()[0]
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/propiedades%20sistema/editar/"+str(psis.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'propiedades sistema')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/propiedades%20sistema/editar/'+str(psis.pk),
+        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+        self.assertEqual(response.context['form']['nombre'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/propiedades%20sistema/editar/'+str(psis.pk),
+        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+        self.assertEqual(response.context['form']['valor'].errors, [u'Este campo es obligatorio.'])
+
+        #Edicion correcta
+        response = self.client.post('/admins/modelos/propiedades%20sistema/editar/'+str(psis.pk),
+        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+
+        #Edicion con cadenas grandes
+#        response = self.client.post('/admins/modelos/propiedades%20sistema/editar/'+str(psis.pk),
+#        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+#        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+#
+#        response = self.client.post('/admins/modelos/propiedades%20sistema/editar/'+str(psis.pk),
+#        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45)})
+#        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+#
+#        response = self.client.post('/admins/modelos/propiedades%20sistema/editar/'+str(psis.pk),
+#        {'propiedades_sistema_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+#        'valor': RandomGenerator.genRandomString(weird=False,especific_long=None)})
+#        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+
+        #Deben existir 2 registros
+        self.assertEqual(PropiedadesSistema.objects.count(),2)
+
+    def test_BorrarPSis(self):
+        remaining = PropiedadesSistema.objects.count()-1
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/propiedades%20sistema/borrar/"+str(self.p.pk))
+        self.assertRedirects(response,"/admins/modelos/propiedades%20sistema",302,200)
+        self.assertEqual(PropiedadesSistema.objects.count(),remaining)
+
+    def test_ListarPSis(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/propiedades%20sistema")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'propiedades sistema')
+
+    def test_LeerPPSis(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/propiedades%20sistema/"+str(self.p.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'propiedades sistema')
+
+    def test_LeerPSisNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/propiedades%20sistema/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_BorrarPSisNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/propiedades%20sistema/borrar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_EditarPSisNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/propiedades%20sistema/editar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_InsertarPSisSinLogin(self):
+        response = self.client.post("/admins/modelos/propiedades%20sistema/crear")
+        self.assertRedirects(response,"/login?next=/admins/modelos/propiedades%20sistema/crear",302,200)
+
+    def test_EditarPSisSinLogin(self):
+        response = self.client.post("/admins/modelos/propiedades%20sistema/editar/"+str(self.p.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/propiedades%20sistema/editar/"+str(self.p.pk),302,200)
+
+    def test_BorrarPSisSinLogin(self):
+        response = self.client.post("/admins/modelos/propiedades%20sistema/borrar/"+str(self.p.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/propiedades%20sistema/borrar/"+str(self.p.pk),302,200)
+
+    def test_ListarPSisSinLogin(self):
+        response = self.client.post("/admins/modelos/propiedades%20sistema")
+        self.assertRedirects(response,"/login?next=/admins/modelos/propiedades%20sistema",302,200)
+
+    def test_LeerPSisSinLogin(self):
+        response = self.client.post("/admins/modelos/propiedades%20sistema/"+str(self.p.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/propiedades%20sistema/"+str(self.p.pk),302,200)
+
+#------------------------ Pruebas unitarias CRUD Propiedades del Sistema -----------------------#
 
 class TipoContratoTest(TestCase):
 	def setUp(self):
