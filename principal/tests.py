@@ -146,7 +146,6 @@ class FormFactory():
 			form_class = templateForm(type_id)
 			return form_class(inst.toJson(False))
 
-<<<<<<< HEAD
 
 class GlobalValidationTest(TestCase):
 	def setUp(self):
@@ -1245,26 +1244,56 @@ class RolTestCases(TestCase):
 #------------------------ Pruebas unitarias CRUD Rol -----------------------#
 
 class TipoContratoTest(TestCase):
-=======
-# Pruebas unitarias sobre los siguientes modelos: #
-# TipoDocente                                     #
-# JerarquiaDocente                                #
-# Usuario                                         #
-# Materia                                         #
-# HorarioMateria                                  #
-# Programacion                                    #
-#                                                 #
-# - Pruebas FrontEnd:                             #
-# Se toma un field de cada tipo en cada modelo    #
-# y se realizan las pruebas de correctitud        #
-#                                                 #
-# - Pruebas BackEnd:                              #
-# Se realizan pruebas de insercion, eliminacion   #
-# y actualizacion                                 #
-###################################################
+    def setUp(self):
+        # Setting up a fake user logged-in
+        u = User(username='test')
+        u.set_password('0000')
+        u.save()
+        self.main_client = Client()
+        self.main_client.login(username='test', password='0000')
 
-class GlobalValidationTest(TestCase):
-	pass
+    #Pruebas Frontend
+    def test_NormalShortName(self):
+        model_object = TipoContrato(nombre = RandomGenerator.genRandomString(especific_long=45))
+        form = FormFactory.genForm('tipo contrato',model_object)
+        self.assertTrue(form.is_valid())    
+
+    def test_inputToLongNormalName(self):
+        model_object = TipoContrato(nombre = RandomGenerator.genRandomString(especific_long=50))
+        form = FormFactory.genForm('tipo contrato',model_object)
+        self.assertTrue(not form.is_valid())
+
+    def test_inputEmptyName(self):
+        model_object = TipoContrato(nombre = '')
+        form = FormFactory.genForm('tipo contrato',model_object)
+        self.assertTrue(not form.is_valid())
+
+    #Pruebas Backend
+    def test_create(self):
+        self.assertEqual(TipoContrato.objects.count(),0)
+        response =  self.main_client.post('/admins/modelos/tipo contrato/crear', {'nombre': 'abc'})
+        self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
+        self.assertEqual(TipoContrato.objects.count(),1)
+
+    def test_delete(self):
+        self.assertEqual(TipoContrato.objects.count(),0)        
+        temp = TipoContrato.objects.create(nombre='abc')
+        self.assertEqual(TipoContrato.objects.count(),1)
+        response = self.main_client.post('/admins/modelos/tipo contrato/borrar/'+str(temp.pk))
+        self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
+        self.assertEqual(TipoContrato.objects.count(),0)
+
+    def test_update(self):
+        self.assertEqual(TipoContrato.objects.count(),0)    
+        temp = TipoContrato.objects.create(nombre='abc')
+        self.assertEqual(TipoContrato.objects.count(),1)    
+        pkey = temp.pk
+        old = temp.nombre
+        response = self.main_client.post('/admins/modelos/tipo contrato/editar/'+str(temp.pk),{'nombre':'cba'})
+        temp = TipoContrato.objects.get(pk=pkey)
+        self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
+        self.assertTrue(old != temp.nombre)
+    
 
 class TipoDocenteTest(TestCase):
 	def setUp(self):
@@ -1624,63 +1653,6 @@ class MateriaTest(TestCase):
 		self.assertEqual(Usuario.objects.count(),1)
 
 
-class AulaTestCases(TestCase):
-
-    def setUp(self):
-        self.a = Aula(tipo_aula='I',capacidad=30,estatus_aula='A')
-        self.a.save()
-        self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
-
-
-
-    def test_InsertarAula(self):
-        self.client.login(username='brucewayne',password='batman')
-        response = self.client.post("/admins/modelos/aula/crear")
-        self.assertEqual(response.status_code,200)
-
-    def test_EditarAula(self):
-        self.client.login(username='brucewayne',password='batman')
-        response = self.client.post("/admins/modelos/aula/editar/"+str(self.a.pk))
-        self.assertEqual(response.status_code,200)
-
-    def test_BorrarAula(self):
-        self.client.login(username='brucewayne',password='batman')
-        response = self.client.post("/admins/modelos/aula/borrar/"+str(self.a.pk))
-        self.assertRedirects(response,"/admins/modelos/aula",302,200)
-
-    def test_ListarAula(self):
-        self.client.login(username='brucewayne',password='batman')
-        response = self.client.post("/admins/modelos/aula")
-        self.assertEqual(response.status_code,200)
-
-    def test_LeerAula(self):
-        self.client.login(username='brucewayne',password='batman')
-        response = self.client.post("/admins/modelos/aula/"+str(self.a.pk))
-        self.assertEqual(response.status_code,200)
-
-
-
-    def test_InsertarAulaSinLogin(self):
-        response = self.client.post("/admins/modelos/aula/crear")
-        self.assertRedirects(response,"/login?next=/admins/modelos/aula/crear",302,200)
-
-    def test_EditarAulaSinLogin(self):
-        response = self.client.post("/admins/modelos/aula/editar/"+str(self.a.pk))
-        self.assertRedirects(response,"/login?next=/admins/modelos/aula/editar/"+str(self.a.pk),302,200)
-
-    def test_BorrarAulaSinLogin(self):
-        response = self.client.post("/admins/modelos/aula/borrar/"+str(self.a.pk))
-        self.assertRedirects(response,"/login?next=/admins/modelos/aula/borrar/"+str(self.a.pk),302,200)
-
-    def test_ListarAulaSinLogin(self):
-        response = self.client.post("/admins/modelos/aula")
-        self.assertRedirects(response,"/login?next=/admins/modelos/aula",302,200)
-
-    def test_LeerAulaSinLogin(self):
-        response = self.client.post("/admins/modelos/aula/"+str(self.a.pk))
-        self.assertRedirects(response,"/login?next=/admins/modelos/aula/"+str(self.a.pk),302,200)
-
-
 class NotificacionTest(TestCase):
 	def setUp(self):
 		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
@@ -1697,7 +1669,7 @@ class NotificacionTest(TestCase):
 			fecha_ingreso = '2013-1-1',
 			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
 			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
-		self.notificacion = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'as' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
+		self.notificacion = Notificacion(pk=1,fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'as' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		self.notificacion.save()
 
 	def normalTest(self):
@@ -1717,7 +1689,7 @@ class NotificacionTest(TestCase):
 		self.assertEqual(Notificacion.objects.count(),1)		
 		asunto = self.notificacion.asunto
 		pkey = self.notificacion.pk
-		response = self.client.post("/admins/modelos/notificacion/editar/"+str(self.notificacion.pk), {'fecha': 'wrenj' , 'asunto': 'NEW SUBJECT', 'contenido': 'gsdjgdsaf','estatus' : 'agsd' , 'usuario_emisor ': self.usuarioE, 'usuario_receptor ' : self.usuarioR })
+		response = self.client.post("/admins/modelos/notificacion/editar/1", {'fecha': 'wrenj' , 'asunto': 'NEW SUBJECT', 'contenido': 'gsdjgdsaf','estatus' : 'agsd' , 'usuario_emisor ': self.usuarioE, 'usuario_receptor ' : self.usuarioR })
 		self.assertEqual(response.status_code,200)
 		new_subject = Notificacion.objects.get(pk=pkey).asunto
 		print 'asunto: ' + asunto
