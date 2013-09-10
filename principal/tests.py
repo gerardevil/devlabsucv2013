@@ -907,13 +907,13 @@ class PSisTestCases(TestCase):
 
     def setUp(self):
         self.p = PropiedadesSistema(
-        propiedades_sistema_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
-        nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
-        valor=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44))
+        propiedades_sistema_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        valor=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45))
         self.p2 = PropiedadesSistema(
-        propiedades_sistema_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
-        nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44),
-        valor=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=44))
+        propiedades_sistema_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45),
+        valor=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=45))
         self.p.save()
         self.p2.save()
         self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
@@ -1030,7 +1030,7 @@ class PSisTestCases(TestCase):
         self.assertEqual(response.status_code,200)
         self.assertEqual(response.context['modelo'],'propiedades sistema')
 
-    def test_LeerPPSis(self):
+    def test_LeerPSis(self):
         self.client.login(username='brucewayne',password='batman')
         response = self.client.post("/admins/modelos/propiedades%20sistema/"+str(self.p.pk))
         self.assertEqual(response.status_code,200)
@@ -1072,6 +1072,178 @@ class PSisTestCases(TestCase):
         self.assertRedirects(response,"/login?next=/admins/modelos/propiedades%20sistema/"+str(self.p.pk),302,200)
 
 #------------------------ Pruebas unitarias CRUD Propiedades del Sistema -----------------------#
+
+#----------------------- Pruebas unitarias CRUD Rol ----------------------#
+
+class RolTestCases(TestCase):
+
+    def setUp(self):
+        self.r = Rol(
+            rol_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+            nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+            descripcion=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500))
+        self.r2 = Rol(
+            rol_id=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+            nombre=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+            descripcion=RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500))
+        self.r.save()
+        self.r2.save()
+        self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
+        self.f = RequestFactory()
+
+    def test_InsertarRol(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/rol/crear")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'rol')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/rol/crear',
+        {'nombre':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+        self.assertEqual(response.context['form']['rol_id'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/rol/crear',
+        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+        self.assertEqual(response.context['form']['nombre'].errors, [u'Este campo es obligatorio.'])
+
+        #Insercion correcta
+        response = self.client.post('/admins/modelos/rol/crear',
+        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+#
+#        #Insercion con cadenas grandes
+#        response = self.client.post('/admins/modelos/rol/crear',
+#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+#
+#        response = self.client.post('/admins/modelos/rol/crear',
+#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+#
+#        response = self.client.post('/admins/modelos/rol/crear',
+#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=1000)})
+#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+
+        #Deben existir 3 registros
+        self.assertEqual(Rol.objects.count(),3)
+
+    def test_EditarRol(self):
+        self.client.login(username='brucewayne',password='batman')
+
+        rol = Rol.objects.filter().all()[0]
+
+        #Es el modelo correcto
+        response = self.client.post("/admins/modelos/rol/editar/"+str(rol.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'rol')
+
+        #Campos vacios
+        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
+        {'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+        self.assertEqual(response.context['form']['rol_id'].errors, [u'Este campo es obligatorio.'])
+
+        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
+        {'rol_id': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+        self.assertEqual(response.context['form']['nombre'].errors, [u'Este campo es obligatorio.'])
+
+        #Edicion correcta
+#        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
+#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+#
+#        #Edicion con cadenas grandes
+#        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
+#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+#
+#        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
+#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None),
+#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=500)})
+#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+#
+#        response = self.client.post('/admins/modelos/rol/editar/'+str(rol.pk),
+#        {'rol_id':RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=20),
+#        'nombre': RandomGenerator.genRandomString(weird=False,especific_long=None,max_long=100),
+#        'descripcion': RandomGenerator.genRandomString(weird=False,especific_long=1000)})
+#        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+
+        #Deben existir 2 registros
+        self.assertEqual(Rol.objects.count(),2)
+
+    def test_BorrarRol(self):
+        remaining = Rol.objects.count()-1
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/rol/borrar/"+str(self.r.pk))
+        self.assertRedirects(response,"/admins/modelos/rol",302,200)
+        self.assertEqual(Rol.objects.count(),remaining)
+
+    def test_ListarRol(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/rol")
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'rol')
+
+    def test_LeerRol(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/rol/"+str(self.r.pk))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.context['modelo'],'rol')
+
+    def test_LeerRolNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/rol/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_BorrarRolNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/rol/borrar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_EditarRolNoExiste(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/rol/editar/100000")
+        self.assertEqual(response.status_code,404)
+
+    def test_InsertarRolSinLogin(self):
+        response = self.client.post("/admins/modelos/rol/crear")
+        self.assertRedirects(response,"/login?next=/admins/modelos/rol/crear",302,200)
+
+    def test_EditarRolSinLogin(self):
+        response = self.client.post("/admins/modelos/rol/editar/"+str(self.r.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/rol/editar/"+str(self.r.pk),302,200)
+
+    def test_BorrarRolSinLogin(self):
+        response = self.client.post("/admins/modelos/rol/borrar/"+str(self.r.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/rol/borrar/"+str(self.r.pk),302,200)
+
+    def test_ListarRolSinLogin(self):
+        response = self.client.post("/admins/modelos/rol")
+        self.assertRedirects(response,"/login?next=/admins/modelos/rol",302,200)
+
+    def test_LeerRolSinLogin(self):
+        response = self.client.post("/admins/modelos/rol/"+str(self.r.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/rol/"+str(self.r.pk),302,200)
+
+#------------------------ Pruebas unitarias CRUD Rol -----------------------#
 
 class TipoContratoTest(TestCase):
 	def setUp(self):
