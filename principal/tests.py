@@ -1258,7 +1258,7 @@ class TipoContratoTest(TestCase):
         form = FormFactory.genForm('tipo contrato',model_object)
         self.assertTrue(form.is_valid())    
 
-    def test_inputToLongNormalName(self):
+    def test_inputTooLongNormalName(self):
         model_object = TipoContrato(nombre = RandomGenerator.genRandomString(especific_long=50))
         form = FormFactory.genForm('tipo contrato',model_object)
         self.assertTrue(not form.is_valid())
@@ -1310,7 +1310,7 @@ class TipoDocenteTest(TestCase):
 		form = FormFactory.genForm('tipo docente',model_object)
 		self.assertTrue(form.is_valid())	
 
-	def test_inputToLongNormalName(self):
+	def test_inputTooLongNormalName(self):
 		model_object = TipoDocente(nombre = RandomGenerator.genRandomString(especific_long=150))
 		form = FormFactory.genForm('tipo docente',model_object)
 		self.assertTrue(not form.is_valid())
@@ -1374,7 +1374,7 @@ class JerarquiaDocenteTest(TestCase):
 		form = FormFactory.genForm('jerarquia docente',model_object)
 		self.assertTrue(not form.is_valid())
 
-	def test_inputToLongNormalName(self):
+	def test_inputTooLongNormalName(self):
 		model_object = JerarquiaDocente(
 			jerarquia = 6,
 			nombre=  RandomGenerator.genRandomString(especific_long=150),
@@ -1458,7 +1458,7 @@ class UsuarioTest(TestCase):
 		form = FormFactory.genForm('usuario',model_object)
 		self.assertTrue(form.is_valid())
 
-	def test_NormalRandomToLongPhone(self):
+	def test_NormalRandomTooLongPhone(self):
 		model_object = Usuario(
 			usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = RandomGenerator.genRandomString(especific_long=21),
 			fecha_ingreso = '1/1/2013',
@@ -1579,7 +1579,7 @@ class MateriaTest(TestCase):
 		form = FormFactory.genForm('materia', self.model_object)
 		self.assertEqual(form.is_valid(),False)
 
-	def test_tolongName(self):
+	def test_toolongName(self):
 		self.model_object.nombre = RandomGenerator.genRandomString(especific_long=150)
 		form = FormFactory.genForm('materia', self.model_object)
 		self.assertEqual(form.is_valid(),False)
@@ -1650,7 +1650,7 @@ class MateriaTest(TestCase):
 		new_name = Materia.objects.get(pk=pkey).nombre
 		self.assertTrue(name != new_name)
 		self.assertEqual(response.status_code,302)
-		self.assertEqual(Usuario.objects.count(),1)
+		self.assertEqual(Materia.objects.count(),1)
 
 
 class NotificacionTest(TestCase):
@@ -1743,22 +1743,22 @@ class UsuarioRolTest(TestCase):
 
 	def test_LeerUsuarioRol(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/UsuarioRol/"+str(self.UsuarioRol.pk))
+		response = self.client.post("/admins/modelos/usuario%20rol/"+str(self.UsuarioRol.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_EditarUsuarioRol(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/UsuarioRol/editar/"+str(self.UsuarioRol.pk))
+		response = self.client.post("/admins/modelos/usuario%20rol/editar/"+str(self.UsuarioRol.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_BorrarUsuarioRol(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/UsuarioRol/borrar/"+str(self.UsuarioRol.pk))
+		response = self.client.post("/admins/modelos/usuario%20rol/borrar/"+str(self.UsuarioRol.pk))
 		self.assertEqual(response.status_code,200)	
 
 	def test_CrearUsuarioRol(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/UsuarioRol/crear")
+		response = self.client.post("/admins/modelos/usuario%20rol/crear")
 		self.assertEqual(response.status_code,200)
 
 
@@ -1855,22 +1855,22 @@ class HorarioSolicitadoTest(TestCase):
 
 	def test_LeerHorarioSolicitado(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/HorarioSolicitado/"+str(self.horarioS.pk))
+		response = self.client.post("/admins/modelos/horario%20solicitado/"+str(self.horarioS.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_EditarHorarioSolicitado(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/HorarioSolicitado/editar/"+str(self.horarioS.pk))
+		response = self.client.post("/admins/modelos/horario%20solicitado/editar/"+str(self.horarioS.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_BorrarHorarioSolicitado(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/HorarioSolicitado/borrar/"+str(self.horarioS.pk))
+		response = self.client.post("/admins/modelos/horario%20solicitado/borrar/"+str(self.horarioS.pk))
 		self.assertEqual(response.status_code,200)	
 
 	def test_CrearHorarioSolicitado(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/HorarioSolicitado/crear")
+		response = self.client.post("/admins/modelos/horario%20solicitado/crear")
 		self.assertEqual(response.status_code,200)
 
 
@@ -1911,22 +1911,22 @@ class MateriaOfertadaTest(TestCase):
 
 	def test_LeerMateriaOfertada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaOfertada/"+str(self.materiaO.pk))
+		response = self.client.post("/admins/modelos/materia%20ofertada/"+str(self.materiaO.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_EditarMateriaOfertada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaOfertada/editar/"+str(self.materiaO.pk))
+		response = self.client.post("/admins/modelos/materia%20ofertada/editar/"+str(self.materiaO.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_BorrarMateriaOfertada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaOfertada/borrar/"+str(self.materiaO.pk))
+		response = self.client.post("/admins/modelos/materia%20ofertada/borrar/"+str(self.materiaO.pk))
 		self.assertEqual(response.status_code,200)	
 
 	def test_CrearMateriaOfertada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaOfertada/crear")
+		response = self.client.post("/admins/modelos/materia%20ofertada/crear")
 		self.assertEqual(response.status_code,200)
 
 
@@ -1980,21 +1980,21 @@ class MateriaSolicitadaTest(TestCase):
 
 	def test_LeerMateriaSolicitada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaSolicitada/"+str(self.materiaS.pk))
+		response = self.client.post("/admins/modelos/materia%20solicitada/"+str(self.materiaS.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_EditarMateriaSolicitada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaSolicitada/editar/"+str(self.materiaS.pk))
+		response = self.client.post("/admins/modelos/materia%20solicitada/editar/"+str(self.materiaS.pk))
 		self.assertEqual(response.status_code,200)
 
 	def test_BorrarMateriaSolicitada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaSolicitada/borrar/"+str(self.materiaS.pk))
+		response = self.client.post("/admins/modelos/materia%20solicitada/borrar/"+str(self.materiaS.pk))
 		self.assertEqual(response.status_code,200)	
 
 	def test_CrearMateriaSolicitada(self):
 		self.client.login(username='brucewayne',password='batman')
-		response = self.client.post("/admins/modelos/MateriaSolicitada/crear")
+		response = self.client.post("/admins/modelos/materia%20solicitada/crear")
 		self.assertEqual(response.status_code,200)
 
