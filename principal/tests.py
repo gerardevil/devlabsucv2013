@@ -1669,7 +1669,7 @@ class NotificacionTest(TestCase):
 			fecha_ingreso = '2013-1-1',
 			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
 			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
-		self.notificacion = Notificacion(pk=1,fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'as' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
+		self.notificacion = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'as' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		self.notificacion.save()
 
 	def normalTest(self):
@@ -1689,7 +1689,7 @@ class NotificacionTest(TestCase):
 		self.assertEqual(Notificacion.objects.count(),1)		
 		asunto = self.notificacion.asunto
 		pkey = self.notificacion.pk
-		response = self.client.post("/admins/modelos/notificacion/editar/1", {'fecha': 'wrenj' , 'asunto': 'NEW SUBJECT', 'contenido': 'gsdjgdsaf','estatus' : 'agsd' , 'usuario_emisor ': self.usuarioE, 'usuario_receptor ' : self.usuarioR })
+		response = self.client.post("/admins/modelos/notificacion/editar/"+str(self.notificacion.pk), {'asunto': 'NEW SUBJECT', 'contenido': 'gsdjgdsaf','usuario_emisor': self.usuarioE, 'usuario_receptor' : self.usuarioR })
 		self.assertEqual(response.status_code,200)
 		new_subject = Notificacion.objects.get(pk=pkey).asunto
 		print 'asunto: ' + asunto
