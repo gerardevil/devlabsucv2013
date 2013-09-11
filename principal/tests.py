@@ -146,6 +146,7 @@ class FormFactory():
 			form_class = templateForm(type_id)
 			return form_class(inst.toJson(False))
 
+<<<<<<< HEAD
 
 class GlobalValidationTest(TestCase):
 	def setUp(self):
@@ -1244,56 +1245,26 @@ class RolTestCases(TestCase):
 #------------------------ Pruebas unitarias CRUD Rol -----------------------#
 
 class TipoContratoTest(TestCase):
-	def setUp(self):
-		# Setting up a fake user logged-in
-		u = User(username='test')
-		u.set_password('0000')
-		u.save()
-		self.main_client = Client()
-		self.main_client.login(username='test', password='0000')
+=======
+# Pruebas unitarias sobre los siguientes modelos: #
+# TipoDocente                                     #
+# JerarquiaDocente                                #
+# Usuario                                         #
+# Materia                                         #
+# HorarioMateria                                  #
+# Programacion                                    #
+#                                                 #
+# - Pruebas FrontEnd:                             #
+# Se toma un field de cada tipo en cada modelo    #
+# y se realizan las pruebas de correctitud        #
+#                                                 #
+# - Pruebas BackEnd:                              #
+# Se realizan pruebas de insercion, eliminacion   #
+# y actualizacion                                 #
+###################################################
 
-	#Pruebas Frontend
-	def test_NormalShortName(self):
-		model_object = TipoContrato(nombre = RandomGenerator.genRandomString(especific_long=45))
-		form = FormFactory.genForm('tipo contrato',model_object)
-		self.assertTrue(form.is_valid())	
-
-	def test_inputToLongNormalName(self):
-		model_object = TipoContrato(nombre = RandomGenerator.genRandomString(especific_long=50))
-		form = FormFactory.genForm('tipo contrato',model_object)
-		self.assertTrue(not form.is_valid())
-
-	def test_inputEmptyName(self):
-		model_object = TipoContrato(nombre = '')
-		form = FormFactory.genForm('tipo contrato',model_object)
-		self.assertTrue(not form.is_valid())
-
-	#Pruebas Backend
-	def test_create(self):
-		self.assertEqual(TipoContrato.objects.count(),0)
-		response =  self.main_client.post('/admins/modelos/tipo contrato/crear', {'nombre': 'abc'})
-		self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
-		self.assertEqual(TipoContrato.objects.count(),1)
-
-	def test_delete(self):
-		self.assertEqual(TipoContrato.objects.count(),0)		
-		temp = TipoContrato.objects.create(nombre='abc')
-		self.assertEqual(TipoContrato.objects.count(),1)
-		response = self.main_client.post('/admins/modelos/tipo contrato/borrar/'+str(temp.pk))
-		self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
-		self.assertEqual(TipoContrato.objects.count(),0)
-
-	def test_update(self):
-		self.assertEqual(TipoContrato.objects.count(),0)	
-		temp = TipoContrato.objects.create(nombre='abc')
-		self.assertEqual(TipoContrato.objects.count(),1)	
-		pkey = temp.pk
-		old = temp.nombre
-		response = self.main_client.post('/admins/modelos/tipo contrato/editar/'+str(temp.pk),{'nombre':'cba'})
-		temp = TipoContrato.objects.get(pk=pkey)
-		self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
-		self.assertTrue(old != temp.nombre)
-
+class GlobalValidationTest(TestCase):
+	pass
 
 class TipoDocenteTest(TestCase):
 	def setUp(self):
@@ -1535,7 +1506,7 @@ class UsuarioTest(TestCase):
 		u =Usuario.objects.create(usuario_id_id=1, telefono_celular = '123456',
 		telefono_oficina = '123456',telefono_casa = '12356',fecha_ingreso = '2013-1-1',	direccion ='' ,
 		dedicacion = '6 hrs',estatus = 'A',	jerarquia_docente_id = 1, tipo_contrato_id = 1,centro_id = 1)
-		
+
 		self.assertEqual(Usuario.objects.count(),1)
 		self.assertEqual(User.objects.count(),1)
 		response =  self.main_client.post('/admins/modelos/usuario/borrar/'+str(u.pk)) 
@@ -1649,3 +1620,409 @@ class MateriaTest(TestCase):
 		self.assertRedirects(response,'/admins/modelos/materia',302,200)
 		new_name = Materia.objects.get(pk=pkey).nombre
 		self.assertTrue(name != new_name)
+		self.assertEqual(response.status_code,302)
+		self.assertEqual(Usuario.objects.count(),1)
+
+
+class AulaTestCases(TestCase):
+
+    def setUp(self):
+        self.a = Aula(tipo_aula='I',capacidad=30,estatus_aula='A')
+        self.a.save()
+        self.u = User.objects.create_user(username='brucewayne', email='batman@gmail.com', password='batman')
+
+
+
+    def test_InsertarAula(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/crear")
+        self.assertEqual(response.status_code,200)
+
+    def test_EditarAula(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/editar/"+str(self.a.pk))
+        self.assertEqual(response.status_code,200)
+
+    def test_BorrarAula(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/borrar/"+str(self.a.pk))
+        self.assertRedirects(response,"/admins/modelos/aula",302,200)
+
+    def test_ListarAula(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula")
+        self.assertEqual(response.status_code,200)
+
+    def test_LeerAula(self):
+        self.client.login(username='brucewayne',password='batman')
+        response = self.client.post("/admins/modelos/aula/"+str(self.a.pk))
+        self.assertEqual(response.status_code,200)
+
+
+
+    def test_InsertarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/crear")
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/crear",302,200)
+
+    def test_EditarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/editar/"+str(self.a.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/editar/"+str(self.a.pk),302,200)
+
+    def test_BorrarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/borrar/"+str(self.a.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/borrar/"+str(self.a.pk),302,200)
+
+    def test_ListarAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula")
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula",302,200)
+
+    def test_LeerAulaSinLogin(self):
+        response = self.client.post("/admins/modelos/aula/"+str(self.a.pk))
+        self.assertRedirects(response,"/login?next=/admins/modelos/aula/"+str(self.a.pk),302,200)
+
+
+class NotificacionTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.u = User.objects.create_user(pk=2,username='peterparker', email='spiderman@gmail.com', password='spiderman')
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
+		self.jerarquiaDocente = JerarquiaDocente.objects.create(pk=1,jerarquia=1,nombre='xjerarquia',tipo_docente_id=1)
+		self.tipoContrato = TipoContrato.objects.create(pk=1,nombre='xtipo')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.usuarioE = Usuario.objects.create(pk=1,usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '2013-1-1',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+		self.usuarioR = Usuario.objects.create(pk=2,usuario_id_id=2,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '2013-1-1',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+		self.notificacion = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'as' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
+		self.notificacion.save()
+
+	def normalTest(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'astdfjhsagdfha' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
+		form = FormFactory.genForm('notificacion' , model_object)
+		self.assertEqual(True,form.is_valid())
+
+	def tooLongAsunto(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Notificacion(fecha = 'wrenj', asunto = RandomGenerator.genRandomString(especific_long=150) , contenido = 'gsdjgdsaf' , estatus = 'agsd' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
+		form = FormFactory.genForm('notificacion' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_UpdateNotificacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		self.assertEqual(Notificacion.objects.count(),1)		
+		asunto = self.notificacion.asunto
+		pkey = self.notificacion.pk
+		response = self.client.post("/admins/modelos/notificacion/editar/"+str(self.notificacion.pk), {'fecha': 'wrenj' , 'asunto': 'NEW SUBJECT', 'contenido': 'gsdjgdsaf','estatus' : 'agsd' , 'usuario_emisor ': self.usuarioE, 'usuario_receptor ' : self.usuarioR })
+		self.assertEqual(response.status_code,200)
+		new_subject = Notificacion.objects.get(pk=pkey).asunto
+		print 'asunto: ' + asunto
+		print 'new_subject: '+ new_subject
+		self.assertTrue(asunto != new_subject)
+
+
+	def test_LeerNotificacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/notificacion/"+str(self.notificacion.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarNotificacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/notificacion/editar/"+str(self.notificacion.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_BorrarNotificacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/notificacion/borrar/"+str(self.notificacion.pk))
+		self.assertEqual(response.status_code,200)	
+
+	def test_CrearNotificacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/notificacion/crear")
+		self.assertEqual(response.status_code,200)
+
+
+class UsuarioRolTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.u = User.objects.create_user(pk=2,username='peterparker', email='spiderman@gmail.com', password='spiderman')
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
+		self.jerarquiaDocente = JerarquiaDocente.objects.create(pk=1,jerarquia=1,nombre='xjerarquia',tipo_docente_id=1)
+		self.tipoContrato = TipoContrato.objects.create(pk=1,nombre='xtipo')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.rol = Rol.objects.create(pk=1, rol_id=1, nombre = 'sghdsjaf', descripcion = 'sghadashfd')
+		self.usuario = Usuario.objects.create(pk=1,usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '2013-1-1',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+		self.UsuarioRol = UsuarioRol(rol_id=1,cedula = self.usuario)
+		self.UsuarioRol.save()
+		
+
+	def normalTest(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = UsuarioRol(rol_id=1, cedula = self.usuario)
+		form = FormFactory.genForm('usuario rol' , model_object)
+		self.assertEqual(True, form.is_valid())
+
+	def test_LeerUsuarioRol(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/UsuarioRol/"+str(self.UsuarioRol.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarUsuarioRol(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/UsuarioRol/editar/"+str(self.UsuarioRol.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_BorrarUsuarioRol(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/UsuarioRol/borrar/"+str(self.UsuarioRol.pk))
+		self.assertEqual(response.status_code,200)	
+
+	def test_CrearUsuarioRol(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/UsuarioRol/crear")
+		self.assertEqual(response.status_code,200)
+
+
+class HorarioSolicitadoTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
+		self.jerarquiaDocente = JerarquiaDocente.objects.create(pk=1,jerarquia=1,nombre='xjerarquia',tipo_docente_id=1)
+		self.tipoContrato = TipoContrato.objects.create(pk=1,nombre='xtipo')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.rol = Rol.objects.create(pk=1, rol_id=1, nombre = 'sghdsjaf', descripcion = 'sghadashfd')
+		self.usuario = Usuario.objects.create(pk=1,usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '2013-1-1',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+		self.aula = Aula.objects.create(aula_id=1,tipo_aula='I',capacidad=30,estatus_aula='A')
+		self.periodo_academico = PeriodoAcademico.objects.create(periodo_lectivo = 2013, semestre=2, fecha_inicio='2013-9-16', fecha_fin='2013-11-11')
+		self.materia = Materia.objects.create(codigo=6602,
+		nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',
+		semestre = 2013, centro_id = 1)
+		self.materiaOfertada = MateriaOfertada.objects.create(nro_estudiantes_estimados=40,nro_secciones_teoria=2,nro_secciones_practica=2,
+			nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
+		self.materiaSolicitada = MateriaSolicitada.objects.create(estatus='A', usuario=self.usuario, materia=self.materiaOfertada)
+		self.horarioS = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		self.horarioS.save()
+
+	def normalCase(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(True,form.is_valid())
+
+	def wrongDiaSemana(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='dfsasuth',hora_inicio='7:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def wrongHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='30:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def invalidHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='astdfjhsagdfha',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def wrongFormatHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7>00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def wrongFormatHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9/00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def wrongHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='90:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def invalidHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='asfd', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def emptyDiaSemana(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='',hora_inicio='7:00',hora_fin='asfd', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def emptyHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='',hora_fin='asfd', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def emptyHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioSolicitado(dia_semana='Martes',hora_inicio='7:00',hora_fin='', horario_solicitado = self.materiaSolicitada , aula = self.aula)
+		form = FormFactory.genForm('horario solicitado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_LeerHorarioSolicitado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/HorarioSolicitado/"+str(self.horarioS.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarHorarioSolicitado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/HorarioSolicitado/editar/"+str(self.horarioS.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_BorrarHorarioSolicitado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/HorarioSolicitado/borrar/"+str(self.horarioS.pk))
+		self.assertEqual(response.status_code,200)	
+
+	def test_CrearHorarioSolicitado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/HorarioSolicitado/crear")
+		self.assertEqual(response.status_code,200)
+
+
+class MateriaOfertadaTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.materia = Materia.objects.create(codigo=6602,
+		nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',
+		semestre = 2013, centro_id = 1)
+		self.periodo_academico = PeriodoAcademico.objects.create(periodo_lectivo = 2013, semestre=2, fecha_inicio='2013-9-16', fecha_fin='2013-11-11')
+		self.materiaO = model_object = MateriaOfertada(nro_estudiantes_estimados=40,nro_secciones_teoria=2,nro_secciones_practica=2,nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, 
+			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
+		self.materiaO.save()
+
+	def normalCase(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = MateriaOfertada(nro_estudiantes_estimados=40,nro_secciones_teoria=2,nro_secciones_practica=2,nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, 
+			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
+		form = FormFactory.genForm('materia ofertada' , model_object)
+		self.assertEqual(True,form.is_valid())
+
+	def negativeNroEstudiantes(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = MateriaOfertada(nro_estudiantes_estimados=-40,nro_secciones_teoria=2,nro_secciones_practica=2,nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, 
+			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
+		form = FormFactory.genForm('materia ofertada' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def invalidNroEstudiantes(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = MateriaOfertada(nro_estudiantes_estimados='asfd',nro_secciones_teoria=2,nro_secciones_practica=2,nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, 
+			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
+		form = FormFactory.genForm('materia ofertada' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_LeerMateriaOfertada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaOfertada/"+str(self.materiaO.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarMateriaOfertada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaOfertada/editar/"+str(self.materiaO.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_BorrarMateriaOfertada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaOfertada/borrar/"+str(self.materiaO.pk))
+		self.assertEqual(response.status_code,200)	
+
+	def test_CrearMateriaOfertada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaOfertada/crear")
+		self.assertEqual(response.status_code,200)
+
+
+class MateriaSolicitadaTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
+		self.jerarquiaDocente = JerarquiaDocente.objects.create(pk=1,jerarquia=1,nombre='xjerarquia',tipo_docente_id=1)
+		self.tipoContrato = TipoContrato.objects.create(pk=1,nombre='xtipo')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.rol = Rol.objects.create(pk=1, rol_id=1, nombre = 'sghdsjaf', descripcion = 'sghadashfd')
+		self.usuario = Usuario.objects.create(pk=1,usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '2013-1-1',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+		self.aula = Aula.objects.create(aula_id=1,tipo_aula='I',capacidad=30,estatus_aula='A')
+		self.periodo_academico = PeriodoAcademico.objects.create(periodo_lectivo = 2013, semestre=2, fecha_inicio='2013-9-16', fecha_fin='2013-11-11')
+		self.materia = Materia.objects.create(codigo=6602,
+		nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',
+		semestre = 2013, centro_id = 1)
+		self.materiaOfertada = MateriaOfertada.objects.create(nro_estudiantes_estimados=40,nro_secciones_teoria=2,nro_secciones_practica=2,
+			nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
+		self.materiaS = MateriaSolicitada( estatus='A', usuario = self.usuario, materia = self.materiaOfertada)
+		self.materiaS.save()
+
+	def normalCase(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = MateriaSolicitada( estatus='A', usuario = self.usuario, materia = self.materiaOfertada)
+		form = FormFactory.genForm('materia solicitada' , model_object)
+		self.assertEqual(True,form.is_valid())
+
+	def wrongEstatus(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = MateriaSolicitada( estatus=17845, usuario = self.usuario, materia = self.materiaOfertada)
+		form = FormFactory.genForm('materia solicitada' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def emptyEstatus(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = MateriaSolicitada( estatus='', usuario = self.usuario, materia = self.materiaOfertada)
+		form = FormFactory.genForm('materia solicitada' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def notValidEstatus(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = MateriaSolicitada( estatus='Q', usuario = self.usuario, materia = self.materiaOfertada)
+		form = FormFactory.genForm('materia solicitada' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_LeerMateriaSolicitada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaSolicitada/"+str(self.materiaS.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarMateriaSolicitada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaSolicitada/editar/"+str(self.materiaS.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_BorrarMateriaSolicitada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaSolicitada/borrar/"+str(self.materiaS.pk))
+		self.assertEqual(response.status_code,200)	
+
+	def test_CrearMateriaSolicitada(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/MateriaSolicitada/crear")
+		self.assertEqual(response.status_code,200)
+
