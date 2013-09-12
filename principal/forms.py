@@ -6,6 +6,7 @@ from principal.models import *
 from principal.manager.formValidators import validateUniqueUser
 from django.db.models.loading import get_app, get_models, get_model
 from django.contrib.contenttypes.models import ContentType 
+from django.contrib.auth.hashers import *
 
 
 class LoginForm(forms.Form):
@@ -36,10 +37,7 @@ class CustomUserForm(forms.Form):
 		super(CustomUserForm,self).__init__(*args,**kwargs)
 		if not hide:
 			self.fields['usuario_id'] = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, min_value = 1, label = "Cedula")
-			self.fields['password'].widget = forms.TextInput()
-		else :
-			self.fields['password'].widget = forms.PasswordInput()
-
+	
 	def save(self,pastPk=None):
 		data = self.cleaned_data
 		# Divide cases between update and purely save.
@@ -53,7 +51,10 @@ class CustomUserForm(forms.Form):
 			user.email= data['correo_Electronico']
 			user.first_name= data['nombre']
 			user.last_name= data['apellido']
-			user.set_password(data['password']) # hasing into sha256
+			if is_password_usable(data['password']):
+				user.password = data['password']
+			else:
+				user.set_password(data['password'])# hashing into sha256 
 		
 		user.save()
 		

@@ -224,7 +224,7 @@ class Usuario(models.Model):
 		retorno = {'usuario_id':self.usuario_id.username,
 				'nombre':self.usuario_id.first_name,
 				'apellido':self.usuario_id.last_name,
-				'password':'non displayable',
+				'password':self.usuario_id.password,
 				'correo_Electronico':self.usuario_id.email}
 
 		if not minify:
