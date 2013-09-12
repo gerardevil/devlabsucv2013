@@ -2390,4 +2390,4 @@ class HorarioProgramadoTest(TestCase):
 		self.client.login(username='brucewayne',password='batman')
 		response = self.client.post("/admins/modelos/horario%20programado/crear")
 		self.assertEqual(response.status_code,200)
-		
+
