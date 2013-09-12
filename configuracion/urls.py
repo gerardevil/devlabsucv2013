@@ -29,6 +29,8 @@ urlpatterns = patterns('',
     url(r'^obtenerMateria$', 'principal.views.obtenerMateria', name='obtenerMateria'),
     url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
     url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
+	
+	url(r'^horario$', 'principal.views.horario', name='horario')
 )
 
 '''

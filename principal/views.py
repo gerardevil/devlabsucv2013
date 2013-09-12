@@ -188,10 +188,15 @@ def leer(request,modelo,key):
 
 #END CRUD Generico
 
+
+def horario(request):
+	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+
 # Coordinador Features #
 ########################
 
 '''Only for development usage '''
 def getTemplate(request,template):
 	return render_to_response(template)
+
 

@@ -1,0 +1,40 @@
+{% extends "Plantilla.html" %}
+{% load staticfiles %}
+
+{% block contenido_vista %}
+<link href="{% static "css/horario.css" %}" rel="stylesheet">
+<table class="horario">
+	<!--<caption> -->
+		<!--<b>Listado de Materias</b> -->
+	<!--</caption> -->
+	<thead>
+		<tr>
+			<th>Horario</th>
+			<th>Lunes</th>
+			<th>Martes</th>
+			<th>Mi&eacute;rcoles</th>
+			<th>Jueves</th>
+			<th>Viernes</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for hora in listaHorarios %}
+		<tr>
+		  <td>{{ hora }}:00 - {{ hora }}:59</td>
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+
+</table>
+{% endblock %}	
+
+$(function(){
+	
+	cargar();
+
+});
