@@ -260,7 +260,7 @@ class Materia(models.Model):
 		db_table = 'materia'
 
 	def __unicode__(self):
-		return u'codigo: %d | nombre: %s | tipo_materia: %s | semestre: %d' % (self.codigo, self.nombre, self.tipo_materia, self.semestre)
+		return u'codigo: %d | nombre: %s | tipo_materia: %s ' % (self.codigo, self.nombre, self.tipo_materia)
 
 	def toJson(self,minify=True):
 		retorno = {'codigo':self.codigo,

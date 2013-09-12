@@ -6,8 +6,9 @@
 	{% csrf_token %}
 	{{type_id}}
 	<table>
-	{{ form.as_p }}
+	{{ form.as_p}}
 	</table>
+	</br>
 	<input type='submit' value="Submit">
 </form>
 {% if error %}

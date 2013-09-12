@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.core import serializers
+from django.http import Http404
 from principal.forms import *
 import json
 import os
@@ -39,7 +40,12 @@ def loginUser(request):
 				login(request, user)
 
 				if request.GET and 'next' in request.GET:
-					return HttpResponseRedirect(request.GET['next']) 
+
+					try:
+						return HttpResponseRedirect(request.GET['next']) 
+					except Exception, e:
+						raise Http404
+						
 				else:
 					return HttpResponseRedirect('/profile')
 			else:
@@ -181,3 +187,11 @@ def leer(request,modelo,key):
 	return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
 
 #END CRUD Generico
+
+# Coordinador Features #
+########################
+
+'''Only for development usage '''
+def getTemplate(request,template):
+	return render_to_response(template)
+
