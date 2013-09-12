@@ -218,7 +218,7 @@ class Usuario(models.Model):
 		db_table = 'usuario'
 
 	def __unicode__(self):
-		return u'usuario: %s | nombre: %s | apellido: %s | dedicacion: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.dedicacion)
+		return u'usuario: %s | nombre: %s | apellido: %s | centro: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.centro.nombre)
 
 	def toJson(self,minify=True):
 		retorno = {'usuario_id':self.usuario_id.username,
@@ -445,7 +445,7 @@ class MateriaOfertada(models.Model):
 		return self.pk
 		
 class MateriaSolicitada(models.Model):
-	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada')))
+	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada')),editable=False)
 	usuario = models.ForeignKey('Usuario')
 	materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
 
@@ -465,7 +465,7 @@ class MateriaSolicitada(models.Model):
 		return retorno
 
 	def toString(self):
-		return self.materia.nombre + ' ' + self.materia.toString()
+		return self.materia.materia.nombre + ' ' + self.materia.toString()
 
 	def get_pk(self):
 		return self.pk
