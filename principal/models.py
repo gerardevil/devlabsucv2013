@@ -319,7 +319,7 @@ class Programacion(models.Model):
 	descripcion = models.TextField(max_length=100L, blank=True)
 	fecha = models.DateField(null=True,auto_now_add=True)	
 	estatus = models.CharField(max_length=8, choices = (('Aprobado','Aprobado'),('Borrador','Borrador')))
-	ruta_pdf = models.CharField(max_length=100L, blank=True,unique=True, editable=False)
+	ruta_pdf = models.CharField(max_length=100L, blank=True, unique=True, editable=False)
 	periodo_lectivo = models.ForeignKey(PeriodoAcademico, db_column='periodo_lectivo', related_name='programacion_tiene_ano')
 
 	class Meta:

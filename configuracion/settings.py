@@ -25,9 +25,12 @@ else:
             'ENGINE': 'django.db.backends.mysql', 
             'NAME': 'testdb',             
             'USER': 'root',
-            'PASSWORD': 'testdb2013@devlabsdb',
-            'HOST': '108.168.149.236', 
-            'PORT': '27511'
+            #'PASSWORD': 'testdb2013@devlabsdb',
+            #'HOST': '108.168.149.236', 
+            #'PORT': '27511'
+			'PASSWORD': 'root',
+            'HOST': '', 
+            'PORT': ''
         }
     }
     """ Speeding Up AuthenticationMiddleware """
