@@ -420,7 +420,7 @@ class MateriaOfertada(models.Model):
 		db_table = 'materia_ofertada'
 
 	def __unicode__(self):
-		return u'materia: %s | periodo_academico: %s - %s ' % (str(self.materia.nombre), str(self.periodo_academico.semestre), str(self.periodo_academico.periodo_lectivo))
+		return u'materia: %s | periodo_academico: %s - %s ' % (self.materia.nombre, str(self.periodo_academico.semestre), str(self.periodo_academico.periodo_lectivo))
 
 	def toJson(self,minify=True):
 		retorno = {'periodo_academico':self.periodo_academico.pk,
