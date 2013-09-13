@@ -2,12 +2,11 @@
 
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
-import sys
 from principal.manager.decorators import *
 from principal.manager import entity
 from principal.models import *
 from django.contrib.auth.models import User
-
+import sys
 
 # Imports for validation or any other thing bellow
 from principal.manager.converters import convertDatetimeToString
@@ -164,10 +163,6 @@ def leer(request,modelo,key):
 
 #END CRUD Generico
 
-
-def horario(request):
-	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
-
 #Profesor
 @login_required
 def horarios_materia(request):
@@ -180,12 +175,10 @@ def horarios_materia(request):
     else:
         return HttpResponse('Fallo en AJAX')
 
-# Coordinador Features #
-########################
 
-'''Only for development usage '''
-def getTemplate(request,template):
-	return render_to_response(template)
+@login_required
+def horario(request):
+	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 @login_required
 def getHorariosSolicitados(request,rol):
