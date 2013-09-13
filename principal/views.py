@@ -8,6 +8,7 @@ from principal.manager import entity
 from principal.models import *
 
 # Imports for validation or any other thing bellow
+from principal.manager.converters import convertDatetimeToString
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
@@ -199,4 +200,75 @@ def horario(request):
 def getTemplate(request,template):
 	return render_to_response(template)
 
+@login_required
+def getHorariosSolicitados(request,rol):
+	if request :
+		rol_pattern = rol.lower()
+		if rol_pattern == 'cc':
+			'''Obtenemos a que centro pertenece el Coordinador'''			
+			centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+			
+			try:
+				'''Seleccionamos los usuarios que pertenecen al centro actual'''
+				center_user_list = Usuario.objects.filter(centro_id=centro.pk)
+				users = [e['id'] for e in center_user_list.values('id')]
 
+				'''Seleccionamos las Materias Solicitadas por estos usuario '''		
+				center_request_subject_list=MateriaSolicitada.objects.filter(usuario__in=users)
+				
+				requested_subject =[e['id'] for e in center_request_subject_list.values('id')]
+
+				'''Seleccionamos los horarios solicitados para estas Materias '''
+				center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__in=requested_subject) 
+
+				'''
+				Formato Posicional Json de Retorno:
+
+				[0]materia_id, 
+				[1]materia_solicitada_id, 
+				[2]username , 
+				[3]nombre , 
+				[4]dia_seman, 
+				[5]hora_inicio, 
+				[6]hora_fin				
+				'''
+				json = {}
+				counter = 0
+				for h in center_schedule_list:
+					json.update(
+					{
+					str(counter):	{
+					 'materia_id': h.horario_solicitado.materia.materia.pk,
+					 'materia_solicitada':h.pk,
+					 'horario_solicitado':h.horario_solicitado.pk,
+					 'username':h.horario_solicitado.usuario.usuario_id.username,
+					 'nombre':h.horario_solicitado.materia.materia.nombre,
+					 'dia_semana':h.dia_semana,
+					 'hora_inicio':convertDatetimeToString(h.hora_inicio),
+					 'hora_fin':convertDatetimeToString(h.hora_fin)}
+					}
+					)
+					counter +=1		
+							
+				return HttpResponse(str(json))		
+
+			except Exception, e:
+				raise e
+
+		elif  rol_pattern == 'jdd':
+			'''El usuario es un Jefe de Departamento obtiene todos los horarios 
+			de la Escuela de Computacion'''
+			pass
+		else:
+			raise Http404
+	else:
+		raise Http404;
+
+	return HttpResponse('Hello	World')
+
+
+def getUsuarioCentro(request,rol):
+	pass
+
+def getMateriasSolicitadasCentro(request,rol):
+	pass

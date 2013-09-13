@@ -30,7 +30,8 @@ urlpatterns = patterns('',
     url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
     url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
 	
-	url(r'^horario$', 'principal.views.horario', name='horario')
+	url(r'^horario$', 'principal.views.horario', name='horario'),
+    url(r'^prueba/(?P<rol>[^/]+)$', 'principal.views.getHorariosSolicitados', name='prueba'),
 )
 
 '''

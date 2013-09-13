@@ -221,7 +221,9 @@ class Usuario(models.Model):
 		return u'usuario: %s | nombre: %s | apellido: %s | centro: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.centro.nombre)
 
 	def toJson(self,minify=True):
-		retorno = {'usuario_id':self.usuario_id.username,
+		retorno = {
+				'pk': self.pk,
+				'usuario_id':self.usuario_id.username,
 				'nombre':self.usuario_id.first_name,
 				'apellido':self.usuario_id.last_name,
 				'password':self.usuario_id.password,
@@ -456,7 +458,9 @@ class MateriaSolicitada(models.Model):
 		return u'materia: %s | usuario: %s ' % (self.materia.toString(), self.usuario.toString())
 
 	def toJson(self,minify=True):
-		retorno = {'materia':self.materia.pk}
+		retorno = {
+		'pk': self.pk,
+		'materia':self.materia.pk}
 		if not minify:
 			retorno.update(
 				{'estatus':self.estatus,
@@ -484,7 +488,9 @@ class HorarioSolicitado(models.Model):
 		return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin), str(self.horario_solicitado), str(self.aula))
 
 	def toJson(self,minify=True):
-		retorno = {'dia_semana':self.dia_semana,
+		retorno = {
+				'pk': self.pk,
+				'dia_semana':self.dia_semana,
 				'hora_inicio':self.hora_inicio,
 				'hora_fin':self.hora_fin
 				}
