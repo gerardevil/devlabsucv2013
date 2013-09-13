@@ -181,3 +181,7 @@ def leer(request,modelo,key):
 	return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
 
 #END CRUD Generico
+
+def horario(request):
+	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+	
