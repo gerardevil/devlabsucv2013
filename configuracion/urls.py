@@ -4,9 +4,8 @@ from configuracion import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
-
-	url(r'^$', 'principal.views.inicio', name='home'), 
-	url(r'^login$', 'principal.views.loginUser', name='login'),
+    url(r'^$', 'principal.views.inicio', name='home'), 
+    url(r'^login$', 'principal.views.loginUser', name='login'),
     url(r'^logout$', 'principal.views.logoutUser', name='log'),
     url(r'^profile$', 'principal.views.profile', name='profile'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
