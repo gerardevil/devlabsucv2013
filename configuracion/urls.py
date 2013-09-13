@@ -21,16 +21,7 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/(?P<key>\d+)$', 'principal.views.leer', name='leer'), #Muestra todos los atributos de un objeto
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear$', 'principal.views.insertar', name='insertar'), # Permite insertar un Objeto
 
-     #Matria's views
-    url(r'^ppalCrudMaterias$', 'principal.views.ppalCrudMaterias', name='ppalCrudMaterias'),
-    url(r'^crearMateria$', 'principal.views.crearMateria', name='crearMateria'),
-    url(r'^modificarMateria$', 'principal.views.modificarMateria', name='modificiarMateria'),
-    url(r'^listarMaterias$', 'principal.views.listarMaterias', name='listarMaterias'),
-    url(r'^obtenerMateria$', 'principal.views.obtenerMateria', name='obtenerMateria'),
-    url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
-    url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
-	
-	url(r'^horario$', 'principal.views.horario', name='horario'),
+    url(r'^horario$', 'principal.views.horario', name='horario'),
     url(r'^prueba/(?P<rol>[^/]+)$', 'principal.views.getHorariosSolicitados', name='prueba'),
 
     #Agregar Materia

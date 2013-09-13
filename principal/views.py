@@ -90,54 +90,6 @@ def profile(request):
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
 
-	
-# CRUD Materia Begin:
-def ppalCrudMaterias(request):
-	materias = Materia.objects.all().order_by('nombre')
-	return render_to_response('PpalMaterias_Admin.html', {'listaMaterias':materias})
-
-def crearMateria(request):
-	centros = Centro.objects.all().order_by('nombre')
-	return render_to_response('CrearMateria_Admin.html', {'listaCentros':centros})
-
-def modificarMateria(request):
-	return render_to_response('ModificarMateria_Admin.html')
-
-def listarMaterias(request):
-	materias = Materia.objects.all()
-	#json = serializers.serialize('json',materias)
-	temp = [m.toJson() for m in materias]
-	return HttpResponse(json.dumps(temp), content_type="application/json")
-	
-def obtenerMateria(request):
-	materia = Materia.objects.get(pk=request.GET['id'])
-	return HttpResponse(json.dumps(materia.toJson(False)), content_type="application/json")
-	
-def guardarMateria(request):
-
-	if 'centro' in request.GET:
-		centro = Centro.objects.get(pk=request.GET['centro'])
-	else:
-		centro=None
-	materia = Materia(materia_id=request.GET['id'],
-					  nombre = request.GET['nombre'],
-					  tipo_materia = request.GET['tipo'],
-					  unidades_credito_teoria = request.GET['uct'],
-					  unidades_credito_practica = request.GET['ucp'],
-					  unidades_credito_laboratorio = request.GET['ucl'],
-					  estatus = request.GET['estatus'],
-					  semestre=request.GET['semestre'],
-					  centro=centro)
-	materia.save()
-	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')
-	
-def eliminarMateria(request):
-	materia = Materia.objects.get(pk=request.GET['id'])
-	materia.delete()
-	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')
-
-# CRUD Materia End.
-
 # Admin principal views :
 
 @login_required
