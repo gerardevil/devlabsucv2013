@@ -1,37 +1,129 @@
 {% extends "Plantilla.html" %}
 
+
 {% block op_barra %}
-	<li class="active">
-		<a href="#"><i class="icon-home"></i> Principal</a>
-	</li>
-	<li>
-		<a href="LlenarProp_Prof.html"><i class="icon-pencil" id="Crear"></i> Editar Propuesta</a>
-	</li>
-	<li>
-		<a href="Perfil_Prof.html"><i class="icon-user"></i> Información de perfil</a>
-	</li>
+<li class="active">
+    <a href="#"><i class="icon-home"></i> Principal</a>
+</li>
+<li>
+    <a data-toggle="modal" href="#agregarMateria"><i class="icon-pencil" id="Crear"></i> Editar Propuesta</a>
+</li>
+<li>
+    <a href="Perfil_Prof.html"><i class="icon-user"></i> Información de perfil</a>
+</li>
 {% endblock %}
 
 {% block contenido_vista %}
-	<div class="container">
-		<table class="table">
-			<tbody>
-				<tr>
-					<td>
-						Materia
-					</td>
-					<td>
-						Horario
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<button type="submit" class="btn btn-warning">
-			Enviar Propuesta
-		</button>
-		<br>
-		<br>
-	</div>
+<div class="container">
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>
+                Materia
+            </td>
+            <td>
+                Horario
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-warning" id="ep">
+        Enviar Propuesta
+    </button>
+    <br>
+    <br>
+    <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria">
+        Agregar materia
+    </button>
+
+
+
+    <br>
+    <br>
+</div>
+<!-- -->
+<div id="agregarMateria" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            ×
+        </button>
+        <h3>
+            Agregar materia a la propuesta
+        </h3>
+    </div>
+    <div id="agregarMat_mb" class="modal-body">
+        <form id="agregarMat" method="POST">{% csrf_token %}
+            <div class="control-group">
+            {{form}}
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+
+        <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
+
+        <a button="" type="submit" class="btn btn-primary" form="#agregarMat" >Guardar materia</a>
+
+    </div>
+</div>
 {% endblock %}
-		
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $( "#id_materia" ).change(function() {
+            var materia_sel = $("#id_materia option:selected").val()
+            //alert(materia_sel)
+            if (materia_sel != ""){
+            $.ajax({
+                url : "/horarios_materia",
+                type : "POST",
+                dataType: "json",
+                data : {
+                    mat_sel : materia_sel,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success : function(data) {
+//                    $('#result').append( 'Server Response: ' + json.server_response);
+                      //alert(data)
+                    $(".horarios").remove()
+                    $(".horariosl").remove()
+                    $(".error_am").remove()
+                    if(data.length > 0){
+                        $("#agregarMat").append('<tr><th><label class="horariosl" for="horarios">Horario:</label></th><td><select class="horarios" name="horarios">')
+                        for (var i = 0;i < data.length;i++){
+                            d = data[i]
+                            //alert(d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin)
+                            //alert('<option value="'+i+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
+                            $(".horarios").append('<option value="'+i+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
+                        }
+                        $("#agregarMat").append('</select></td></tr>')
+                    }else{
+                        $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>La materia seleccionada no posee horarios asignados</div>')
+
+                    }
+
+                },
+                error : function(xhr,errmsg,err) {
+                    alert(xhr.status + ": " + xhr.responseText);
+                }
+            });
+            }
+            else{
+                //alert("Debe seleccionar una materia")
+                $(".horarios").remove()
+                $(".horariosl").remove()
+                $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>Debe seleccionar una materia</div>')
+            }
+        });
+        $( "#salir_am" ).click(function() {
+            $(".horarios").remove()
+            $(".horariosl").remove()
+            $(".error_am").remove()
+            $('#id_materia').prop('selectedIndex',0);
+
+        });
+    });
+</script>
+{% endblock %}
 

@@ -53,7 +53,8 @@ def loginUser(request):
 
 		else:
 			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
-	else:	
+	else:
+		login_form =  LoginForm()
 		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
 
 # Logout view
@@ -64,7 +65,17 @@ def logoutUser(request):
 
 @login_required
 def profile(request):
-	return render_to_response('Principal_Prof.html')	
+    try:
+        if request.method == 'POST':
+            form = AgregarMateriaForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return render_to_response('Principal_Prof.html' ,{'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
+        else:
+            form = AgregarMateriaForm()
+        return render_to_response('Principal_Prof.html' ,{'form' : form},context_instance=RequestContext(request))
+    except Warning as w:
+        return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
 
 	
 # CRUD Materia Begin:
@@ -191,6 +202,19 @@ def leer(request,modelo,key):
 
 def horario(request):
 	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+
+#Profesor
+
+@login_required
+def horarios_materia(request):
+    if request.is_ajax():
+        key = request.POST['mat_sel']
+        mat = MateriaOfertada.objects.get(pk=int(key)).materia
+        lista_horarios = HorarioMateria.objects.filter(materia=mat)
+        lista_horarios_json = [h.toJson() for h in lista_horarios]
+        return HttpResponse(json.dumps(lista_horarios_json), mimetype='application/javascript')
+    else:
+        return HttpResponse('Fallo en AJAX')
 
 # Coordinador Features #
 ########################
