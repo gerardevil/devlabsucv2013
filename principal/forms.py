@@ -77,11 +77,10 @@ class CustomUserForm(forms.Form):
 		userProfile.save()
 
 
-def get_object_form( type_id,  excludes=None):
+def get_object_form( type_id ):
 	ctype = ContentType.objects.get( pk=type_id ) 
-	model_class = ctype.model_class( ) 
+	model_class = ctype.model_class() 
 	class _ObjectForm( forms.ModelForm ):
 		class Meta:
 			model = model_class
-			#excludes = excludes
 	return _ObjectForm
