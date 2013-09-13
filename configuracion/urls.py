@@ -31,11 +31,11 @@ urlpatterns = patterns('',
     url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
 	
 	url(r'^horario$', 'principal.views.horario', name='horario'),
+    url(r'^prueba/(?P<rol>[^/]+)$', 'principal.views.getHorariosSolicitados', name='prueba'),
 
     #Agregar Materia
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
     url(r'^horarios_materia$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
-
 )
 
 '''
