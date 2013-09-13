@@ -2001,3 +2001,394 @@ class MateriaSolicitadaTest(TestCase):
 		response = self.client.post("/admins/modelos/materia%20solicitada/crear")
 		self.assertEqual(response.status_code,200)
 
+				
+#------------------------ Pruebas unitarias CRUD HorarioMateria -----------------------#
+
+class HorarioMateriaTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.Centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.materia = Materia.objects.create(codigo=6602,
+		nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',
+		semestre = 2013, centro_id = 1)
+		self.horarioM = HorarioMateria(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00', materia = self.materia)
+		self.horarioM.save()
+
+	def test_normalCase(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(True,form.is_valid())
+
+	def test_wrongDiaSemana(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='dfsasuth',hora_inicio='7:00',hora_fin='9:00', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='30:00',hora_fin='9:00', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_invalidHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='astdfjhsagdfha',hora_fin='9:00', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongFormatHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='7>00',hora_fin='9:00', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongFormatHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9/00', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='7:00',hora_fin='90:00', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_invalidHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='7:00',hora_fin='asfd', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_emptyDiaSemana(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='',hora_inicio='7:00',hora_fin='asfd', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_emptyHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Lunes',hora_inicio='',hora_fin='asfd', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_emptyHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioMateria(dia_semana='Martes',hora_inicio='7:00',hora_fin='', materia = self.materia)
+		form = FormFactory.genForm('horario materia' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_LeerHorarioMateria(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20materia/"+str(self.horarioM.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarHorarioMateria(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20materia/editar/"+str(self.horarioM.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_BorrarHorarioMateria(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20materia/borrar/"+str(self.horarioM.pk))
+		self.assertRedirects(response,'/admins/modelos/horario%20materia',302,200)
+		self.assertEqual(HorarioMateria.objects.count(),0)
+
+	def test_CrearHorarioMateria(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20materia/crear")
+		self.assertEqual(response.status_code,200)
+
+		
+#------------------------ Pruebas unitarias CRUD Programacion -----------------------#
+
+class ProgramacionTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.pa = PeriodoAcademico.objects.create(pk=1,periodo_lectivo=2013, semestre=2, fecha_inicio='2013-9-16', fecha_fin='2013-11-11')
+		self.prog = Programacion(pk=1, nombre='Programacion Docente Anterior',descripcion='Programacion Docente II-2013', estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		self.prog.save()
+		
+	def test_normalCase(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre='Programacion Docente',descripcion='Programacion Docente II-2013', estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(True,form.is_valid())
+		
+	def test_LongNombre(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre=RandomGenerator.genRandomString(especific_long=150),descripcion='Programacion Docente II-2013', estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(False,form.is_valid())
+		
+	# def test_LongDescripcion(self):
+		# self.client.login(username='brucewayne',password='batman')
+		# model_object = Programacion(nombre='Programacion Docente',descripcion=RandomGenerator.genRandomString(especific_long=150), estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		# form = FormFactory.genForm('programacion' , model_object)
+		# self.assertEqual(False,form.is_valid())
+	
+	def test_LongEstatus(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre='Programacion Docente',descripcion='Programacion Docente II-2013', estatus=RandomGenerator.genRandomString(especific_long=10), ruta_pdf='', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(False,form.is_valid())
+		
+	# def test_LongRuta(self):
+		# self.client.login(username='brucewayne',password='batman')
+		# model_object = Programacion(nombre='Programacion Docente',descripcion='Programacion Docente II-2013', estatus='Aprobado', ruta_pdf=RandomGenerator.genRandomString(especific_long=150), periodo_lectivo=self.pa)
+		# form = FormFactory.genForm('programacion' , model_object)
+		# self.assertEqual(False,form.is_valid())
+	
+	def test_emptyNombre(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre='',descripcion='Programacion Docente II-2013', estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(False,form.is_valid())
+		
+	def test_emptyDescripcion(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre='Programacion Docente', estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(True,form.is_valid())
+		
+	def test_emptyEstatus(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre='Programacion Docente',descripcion='Programacion Docente II-2013', estatus='', ruta_pdf='', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(False,form.is_valid())
+		
+	def test_emptyRuta(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre='Programacion Docente', descripcion='Programacion Docente II-2013', estatus='Aprobado', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(True,form.is_valid())
+		
+	def test_invalidEstatus(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = Programacion(nombre='Programacion Docente',descripcion='Programacion Docente II-2013', estatus='dkasd', ruta_pdf='', periodo_lectivo=self.pa)
+		form = FormFactory.genForm('programacion' , model_object)
+		self.assertEqual(False,form.is_valid())
+		
+		
+	def test_LeerProgramacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion/"+str(self.prog.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarProgramacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion/editar/"+str(self.prog.pk))
+		self.assertEqual(response.status_code,200)
+
+		
+	def test_BorrarProgramacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion/borrar/"+str(self.prog.pk))
+		self.assertRedirects(response,'/admins/modelos/programacion',302,200)
+		self.assertEqual(Programacion.objects.count(),0)
+
+	def test_CrearProgramacion(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion/crear")
+		self.assertEqual(response.status_code,200)
+		
+		
+#------------------------ Pruebas unitarias CRUD ProgramacionDetalle -----------------------#
+
+class ProgramacionDetalleTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.pa = PeriodoAcademico.objects.create(pk=1,periodo_lectivo=2013, semestre=2, fecha_inicio='2013-9-16', fecha_fin='2013-11-11')
+		self.prog = Programacion.objects.create(pk=1, nombre='Programacion Docente',descripcion='Programacion Docente II-2013', estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		self.centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.materia = Materia.objects.create(codigo=6602,
+		nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',
+		semestre = 2013, centro_id = 1)
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
+		self.jerarquiaDocente = JerarquiaDocente.objects.create(pk=1,jerarquia=1,nombre='xjerarquia',tipo_docente_id=1)
+		self.tipoContrato = TipoContrato.objects.create(pk=1,nombre='xtipo')
+		self.usuario = Usuario.objects.create(pk=1,usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '2013-1-1',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+		self.progDet = ProgramacionDetalle(pk=1,carga='T',seccion='C2',programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		self.progDet.save()
+		
+	def test_normalCase(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = ProgramacionDetalle(carga='T',seccion='C2',programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		form = FormFactory.genForm('programacion detalle' , model_object)
+		self.assertEqual(True,form.is_valid())
+		
+	def test_tooLongCarga(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = ProgramacionDetalle(carga='TKASDL',seccion='C2',programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		form = FormFactory.genForm('programacion detalle' , model_object)
+		self.assertEqual(False,form.is_valid())
+	
+	def test_tooLongSeccion(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = ProgramacionDetalle(carga='T',seccion=RandomGenerator.genRandomString(especific_long=100),programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		form = FormFactory.genForm('programacion detalle' , model_object)
+		self.assertEqual(False,form.is_valid())
+	
+	def test_emptyCarga(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = ProgramacionDetalle(seccion='C2',programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		form = FormFactory.genForm('programacion detalle' , model_object)
+		self.assertEqual(False,form.is_valid())
+		
+	def test_emptySeccion(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = ProgramacionDetalle(carga='T',programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		form = FormFactory.genForm('programacion detalle' , model_object)
+		self.assertEqual(True,form.is_valid())
+		
+	def test_invalidCarga(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = ProgramacionDetalle(carga='K',seccion='C2',programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		form = FormFactory.genForm('programacion detalle' , model_object)
+		self.assertEqual(False,form.is_valid())
+		
+		
+	def test_LeerProgramacionDetalle(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion%20detalle/"+str(self.progDet.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarProgramacionDetalle(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion%20detalle/editar/"+str(self.progDet.pk))
+		self.assertEqual(response.status_code,200)
+
+		
+	def test_BorrarProgramacionDetalle(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion%20detalle/borrar/"+str(self.progDet.pk))
+		self.assertRedirects(response,'/admins/modelos/programacion%20detalle',302,200)
+		self.assertEqual(ProgramacionDetalle.objects.count(),0)
+
+	def test_CrearProgramacionDetalle(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/programacion%20detalle/crear")
+		self.assertEqual(response.status_code,200)
+		
+
+#------------------------ Pruebas unitarias CRUD HorarioMateria -----------------------#
+
+class HorarioProgramadoTest(TestCase):
+	def setUp(self):
+		self.u = User.objects.create_user(pk=1,username='brucewayne', email='batman@gmail.com', password='batman')
+		self.pa = PeriodoAcademico.objects.create(pk=1,periodo_lectivo=2013, semestre=2, fecha_inicio='2013-9-16', fecha_fin='2013-11-11')
+		self.prog = Programacion.objects.create(pk=1, nombre='Programacion Docente',descripcion='Programacion Docente II-2013', estatus='Aprobado', ruta_pdf='', periodo_lectivo=self.pa)
+		self.centro = Centro.objects.create(pk=1,nombre='xcentro', area='any')
+		self.materia = Materia.objects.create(codigo=6602,
+		nombre = 'xnombre', tipo_materia = 'Laboratorio',
+		unidades_credito_teoria =2 ,unidades_credito_practica = 2,
+		unidades_credito_laboratorio =2 , estatus = 'A',
+		semestre = 2013, centro_id = 1)
+		self.aula = Aula.objects.create(aula_id=1,tipo_aula='I',capacidad=30,estatus_aula='A')
+		self.tipoDocente = TipoDocente.objects.create(pk=1,nombre='xtipo')
+		self.jerarquiaDocente = JerarquiaDocente.objects.create(pk=1,jerarquia=1,nombre='xjerarquia',tipo_docente_id=1)
+		self.tipoContrato = TipoContrato.objects.create(pk=1,nombre='xtipo')
+		self.usuario = Usuario.objects.create(pk=1,usuario_id_id=1,telefono_celular = '123456',telefono_oficina = '123456',telefono_casa = '123456',
+			fecha_ingreso = '2013-1-1',
+			direccion = '',	dedicacion = '6 hrs', estatus = 'A',
+			jerarquia_docente_id = 1,tipo_contrato_id = 1,centro_id = 1)
+		self.progDet = ProgramacionDetalle.objects.create(pk=1,carga='T',seccion='C2',programacion=self.prog,materia=self.materia,cedula=self.usuario)
+		self.horarioP = HorarioProgramado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		self.horarioP.save()
+
+	def test_normalCase(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(True,form.is_valid())
+
+	def test_wrongDiaSemana(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='dfsasuth',hora_inicio='7:00',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='30:00',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_invalidHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='astdfjhsagdfha',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongFormatHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='7>00',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongFormatHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9/00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_wrongHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='90:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_invalidHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='asfd',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_emptyDiaSemana(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='',hora_inicio='7:00',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_emptyHoraInicio(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='',hora_fin='9:00',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_emptyHoraFin(self):
+		self.client.login(username='brucewayne',password='batman')
+		model_object = HorarioProgramado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='',aula=self.aula,programacion_detalle=self.progDet)
+		form = FormFactory.genForm('horario programado' , model_object)
+		self.assertEqual(False,form.is_valid())
+
+	def test_LeerHorarioProgramado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20programado/"+str(self.horarioP.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_EditarHorarioProgramado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20programado/editar/"+str(self.horarioP.pk))
+		self.assertEqual(response.status_code,200)
+
+	def test_BorrarHorarioProgramado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20programado/borrar/"+str(self.horarioP.pk))
+		self.assertRedirects(response,'/admins/modelos/horario%20programado',302,200)
+		self.assertEqual(HorarioMateria.objects.count(),0)
+
+	def test_CrearHorarioProgramado(self):
+		self.client.login(username='brucewayne',password='batman')
+		response = self.client.post("/admins/modelos/horario%20programado/crear")
+		self.assertEqual(response.status_code,200)
+
