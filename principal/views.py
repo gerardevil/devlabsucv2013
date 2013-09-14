@@ -73,15 +73,16 @@ def profile(request):
         if request.method == 'POST':
             form = AgregarMateriaForm(request.POST)
             if form.is_valid():
-
                 u = Usuario.objects.get(usuario_id=request.user)
-                ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+                cse = MateriaSolicitada.objects.filter(estatus='R',usuario=u,materia=form.cleaned_data['materia']).count()
+                if (cse == 0):
+                    ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+                    ms.save()
+                else:
+                    ms = MateriaSolicitada.objects.get(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
                 h = HorarioMateria.objects.get(pk=request.POST['horario1'])
-                #hs = HorarioSolicitado(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
-                ms.save()
                 HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
                 form = AgregarMateriaForm()
-                #return render_to_response('Principal_Prof.html' ,{'form':form,'info':str(h)},context_instance=RequestContext(request))
                 return render_to_response('Principal_Prof.html' ,{'form':form,'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
             else:
                 return render_to_response('Principal_Prof.html' ,{'form' : form,'error':'El formulario no es valido :('},context_instance=RequestContext(request))
@@ -90,7 +91,6 @@ def profile(request):
         return render_to_response('Principal_Prof.html' ,{'form' : form},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
-
 
 # Admin principal views :
 
