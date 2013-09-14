@@ -30,11 +30,14 @@ $(document).ready(function() {
                             d = data[i]
                             //alert(d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin)
                             //alert('<option value="'+i+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
-                            $(".horarios").append('<option value="'+ d.valor+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
+                            $(".horarios").append('<option value="'+ d.valor+'">'+d.dia_semana+" "+d.hora_inicio+"-"+ d.hora_fin+'</option>')
                         }
                         $("#agregarMat").append('</select></td></tr>')
+                        $('#cantidad_hor').prop('value',1);
+                        $("#enviar_am").prop('disabled',false)
                     }else{
                         $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>La materia seleccionada no posee horarios asignados</div>')
+                        $("#enviar_am").prop('disabled',true)
                     }
                     $("#pg_am").hide()
                 },

@@ -72,7 +72,8 @@ def profile(request):
     try:
         if request.method == 'POST':
             form = AgregarMateriaForm(request.POST)
-            if form.is_valid():
+            cant_hor = int(request.POST['cantidad_hor'])
+            if form.is_valid() and cant_hor:
                 u = Usuario.objects.get(usuario_id=request.user)
                 cse = MateriaSolicitada.objects.filter(estatus='R',usuario=u,materia=form.cleaned_data['materia']).count()
                 if (cse == 0):
@@ -80,8 +81,11 @@ def profile(request):
                     ms.save()
                 else:
                     ms = MateriaSolicitada.objects.get(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
-                h = HorarioMateria.objects.get(pk=request.POST['horario1'])
-                HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
+                for ind in range(1,cant_hor+1):
+                    cad = 'horario'+str(ind)
+                    h = HorarioMateria.objects.get(pk=request.POST[cad])
+                    HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
+
                 form = AgregarMateriaForm()
                 return render_to_response('Principal_Prof.html' ,{'form':form,'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
             else:
