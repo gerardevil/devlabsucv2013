@@ -51,7 +51,7 @@
     <br>
     <br>
 </div>
-<!-- -->
+
 <div id="agregarMateria" class="modal hide fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
@@ -65,18 +65,15 @@
         <div id="pg_am" class="progress progress-striped active">
             <div class="bar" style="width: 100%;"></div>
         </div>
-        <form id="agregarMat" method="POST">{% csrf_token %}
+        <form action="/profile" id="agregarMat" method="POST">{% csrf_token %}
             <div class="control-group">
-            {{form}}
+                {{form}}
             </div>
         </form>
     </div>
     <div class="modal-footer">
-
         <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
-
-        <a button=""  class="btn btn-primary" form="#agregarMat" href="/profile">Guardar materia</a>
-
+        <input form="agregarMat" class="btn btn-primary" type="submit" value="Guardar materia" />
     </div>
 </div>
 {% endblock %}

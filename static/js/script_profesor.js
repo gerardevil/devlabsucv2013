@@ -30,7 +30,7 @@ $(document).ready(function() {
                             d = data[i]
                             //alert(d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin)
                             //alert('<option value="'+i+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
-                            $(".horarios").append('<option value="'+i+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
+                            $(".horarios").append('<option value="'+ d.valor+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
                         }
                         $("#agregarMat").append('</select></td></tr>')
                     }else{

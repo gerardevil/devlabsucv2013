@@ -303,7 +303,8 @@ class HorarioMateria(models.Model):
 	def toJson(self,minify=True):
 		retorno = {'dia_semana':str(self.dia_semana),
 				'hora_inicio':str(self.hora_inicio),
-				'hora_fin':str(self.hora_fin)
+				'hora_fin':str(self.hora_fin),
+                'valor':str(self.pk)
 				}
 		if not minify:
 			if self.materia != None:

@@ -11,6 +11,7 @@ import sys
 # Imports for validation or any other thing bellow
 from principal.manager.converters import convertDatetimeToString
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -72,17 +73,16 @@ def profile(request):
         if request.method == 'POST':
             form = AgregarMateriaForm(request.POST)
             if form.is_valid():
-#                form.save()
-#                u = Usuario.objects.get(usuario_id=request.User)
-#                ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
-#                sel = str(form.cleaned_data['horario1']).split()
-#                ds = sel[0]
-#                hi = sel[1]
-#                hf = sel[2]
-#                hs = HorarioSolicitado(dia_semana=ds,hora_inicio=hi,hora_fin=hf,horario_solicitado=ms,aula=form.cleaned_data['aula'])
-#                ms.save()
-#                hs.save()
-                return render_to_response('Principal_Prof.html' ,{'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
+
+                u = Usuario.objects.get(usuario_id=request.user)
+                ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+                h = HorarioMateria.objects.get(pk=request.POST['horario1'])
+                #hs = HorarioSolicitado(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
+                ms.save()
+                HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
+                form = AgregarMateriaForm()
+                #return render_to_response('Principal_Prof.html' ,{'form':form,'info':str(h)},context_instance=RequestContext(request))
+                return render_to_response('Principal_Prof.html' ,{'form':form,'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
             else:
                 return render_to_response('Principal_Prof.html' ,{'form' : form,'error':'El formulario no es valido :('},context_instance=RequestContext(request))
         else:
