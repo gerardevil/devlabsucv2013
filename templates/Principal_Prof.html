@@ -36,8 +36,6 @@
         Agregar materia
     </button>
 
-
-
     <br>
     <br>
 </div>
@@ -52,6 +50,9 @@
         </h3>
     </div>
     <div id="agregarMat_mb" class="modal-body">
+        <div id="pg_am" class="progress progress-striped active">
+            <div class="bar" style="width: 100%;"></div>
+        </div>
         <form id="agregarMat" method="POST">{% csrf_token %}
             <div class="control-group">
             {{form}}
@@ -71,7 +72,14 @@
 {% block scripts %}
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#pg_am").hide()
+
         $( "#id_materia" ).change(function() {
+            $("#pg_am").show()
+            $(".horarios").remove()
+            $(".horariosl").remove()
+            $(".error_am").remove()
+            //$(".agregarMat").prepend('<div id="progressbar"></div>')
             var materia_sel = $("#id_materia option:selected").val()
             //alert(materia_sel)
             if (materia_sel != ""){
@@ -86,9 +94,7 @@
                 success : function(data) {
 //                    $('#result').append( 'Server Response: ' + json.server_response);
                       //alert(data)
-                    $(".horarios").remove()
-                    $(".horariosl").remove()
-                    $(".error_am").remove()
+
                     if(data.length > 0){
                         $("#agregarMat").append('<tr><th><label class="horariosl" for="horarios">Horario:</label></th><td><select class="horarios" name="horarios">')
                         for (var i = 0;i < data.length;i++){
@@ -100,9 +106,8 @@
                         $("#agregarMat").append('</select></td></tr>')
                     }else{
                         $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>La materia seleccionada no posee horarios asignados</div>')
-
                     }
-
+                    $("#pg_am").hide()
                 },
                 error : function(xhr,errmsg,err) {
                     alert(xhr.status + ": " + xhr.responseText);
@@ -114,7 +119,9 @@
                 $(".horarios").remove()
                 $(".horariosl").remove()
                 $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>Debe seleccionar una materia</div>')
+                $("#pg_am").hide()
             }
+
         });
         $( "#salir_am" ).click(function() {
             $(".horarios").remove()
