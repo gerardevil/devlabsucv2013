@@ -256,7 +256,7 @@ def getUserByCenter(request):
 	jsontemp = {}
 	for u in final_user_list:
 		jsontemp.update({
-			str(counter):{
+			counter:{
 			'username':final_user_list[counter]['username'],
 			'name': final_user_list[counter]['first_name']+' '+final_user_list[counter]['last_name']}
 			})
@@ -276,7 +276,7 @@ def getSubjectByRequest(request):
 	counter = 0
 	for e in center_request_subject_list:
 		if e['materia__materia__nombre'] not in jsontemp.values():
-			jsontemp.update({str(counter):e['materia__materia__nombre']})
+			jsontemp.update({counter:e['materia__materia__nombre']})
 			counter+=1
 	
 	jsontemp.update({'length':counter})
