@@ -1,0 +1,14 @@
+
+.loading-indicator {
+	height: 48px;
+	width: 48px;
+	background: url( '../../art/cargando2.gif' );
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.loading-indicator-overlay {
+	background-color: #000;
+	opacity: 0.4;
+	filter: alpha(opacity = 40);
+}
