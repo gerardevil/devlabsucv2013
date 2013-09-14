@@ -21,8 +21,10 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear$', 'principal.views.insertar', name='insertar'), # Permite insertar un Objeto
 
     url(r'^horario$', 'principal.views.horario', name='horario'),
-    url(r'^prueba/(?P<rol>[^/]+)$', 'principal.views.getHorariosSolicitados', name='prueba'),
-
+    url(r'^schedulexrequest/(?P<rol>[^/]+)$', 'principal.views.getScheduleByRequest', name='schedulexrequest'),
+    url(r'^subjectxrequest$', 'principal.views.getSubjectByRequest', name='subjectxrequest'),
+    url(r'^userxcenter$', 'principal.views.getUserByCenter', name='userxcenter'),
+    
     #Agregar Materia
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
     url(r'^horarios_materia$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
