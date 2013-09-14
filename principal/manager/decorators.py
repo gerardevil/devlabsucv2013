@@ -27,15 +27,17 @@ def validateInputCrudData(view):
 
 
 def coordinatorRequired(view):
-	def wrapper(request,rol):
+	def wrapper(request,rol=None):
 		try:
-			roles = UsuarioRol.objects.filter(cedula__usuario_id__pk = request.user.pk).values('rol')
-			exclusive_id_rol = [e['rol'] for e in roles]
-			str_roles = Rol.objects.filter(pk__in=exclusive_id_rol).values('rol_id')
-			if {'rol_id':u'CC'} in str_roles:
-				return view(request,rol)	
+			roles = UsuarioRol.objects.filter(cedula__usuario_id__pk = request.user.pk).values('rol__rol_id')
+			print map((lambda e : e.values()),roles)
+			if [u'CC'] in map((lambda e : e.values()),roles):
+				if rol is not None:
+					return view(request,rol)
+				else:
+					return view(request)
 			else:				
 				raise Http404
 		except Exception, e:
 			raise Http404
-	return wrapper
+	return wrapper	

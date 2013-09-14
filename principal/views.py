@@ -268,15 +268,17 @@ def getUserByCenter(request):
 
 
 @login_required
-#@coordinatorRequired
+@coordinatorRequired
 def getSubjectByRequest(request):
 	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-	center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('materia__materia__nombre')
+	center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('id','materia__materia__nombre')
 	jsontemp = {}
 	counter = 0
+	names = []
 	for e in center_request_subject_list:
-		if e['materia__materia__nombre'] not in jsontemp.values():
-			jsontemp.update({counter:e['materia__materia__nombre']})
+		if e['materia__materia__nombre'] not in names:
+			jsontemp.update({counter:{'id':e['id'],'nombre':e['materia__materia__nombre']}})
+			names.append(e['materia__materia__nombre'])
 			counter+=1
 	
 	jsontemp.update({'length':counter})
