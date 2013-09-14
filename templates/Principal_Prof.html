@@ -27,15 +27,27 @@
         </tr>
         </tbody>
     </table>
-    <button type="submit" class="btn btn-warning" id="ep">
-        Enviar Propuesta
-    </button>
-    <br>
-    <br>
+    {% if info %}
+        <div class="alert alert-success" style="width:70%" >
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{info}}
+        </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-error" style="width:70%" >
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{error}}
+    </div>
+    {% endif %}
+
     <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria">
         Agregar materia
     </button>
-
+    <br>
+    <br>
+    <button type="submit" class="btn btn-warning" id="ep">
+        Enviar Propuesta
+    </button>
     <br>
     <br>
 </div>
@@ -53,7 +65,7 @@
         <div id="pg_am" class="progress progress-striped active">
             <div class="bar" style="width: 100%;"></div>
         </div>
-        <form id="agregarMat" method="POST" action="/profile">{% csrf_token %}
+        <form id="agregarMat" method="POST">{% csrf_token %}
             <div class="control-group">
             {{form}}
             </div>
@@ -63,7 +75,7 @@
 
         <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
 
-        <a button="" type="submit" class="btn btn-primary" form="#agregarMat" >Guardar materia</a>
+        <a button=""  class="btn btn-primary" form="#agregarMat" href="/profile">Guardar materia</a>
 
     </div>
 </div>

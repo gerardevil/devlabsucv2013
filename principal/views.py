@@ -83,11 +83,14 @@ def profile(request):
 #                ms.save()
 #                hs.save()
                 return render_to_response('Principal_Prof.html' ,{'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
+            else:
+                return render_to_response('Principal_Prof.html' ,{'form' : form,'error':'El formulario no es valido :('},context_instance=RequestContext(request))
         else:
             form = AgregarMateriaForm()
         return render_to_response('Principal_Prof.html' ,{'form' : form},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
+
 
 # Admin principal views :
 
@@ -245,7 +248,6 @@ def getHorariosSolicitados(request,rol):
 		raise Http404;
 
 	return HttpResponse('Hello	World')
-
 
 def getUsuarioCentro(request,rol):
 	pass
