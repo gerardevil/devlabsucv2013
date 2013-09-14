@@ -53,7 +53,7 @@
         <div id="pg_am" class="progress progress-striped active">
             <div class="bar" style="width: 100%;"></div>
         </div>
-        <form id="agregarMat" method="POST">{% csrf_token %}
+        <form id="agregarMat" method="POST" action="/profile">{% csrf_token %}
             <div class="control-group">
             {{form}}
             </div>
@@ -72,6 +72,8 @@
 {% block scripts %}
 <script type="text/javascript">
     $(document).ready(function() {
+        var numero_horarios = 0
+
         $("#pg_am").hide()
 
         $( "#id_materia" ).change(function() {
@@ -96,7 +98,7 @@
                       //alert(data)
 
                     if(data.length > 0){
-                        $("#agregarMat").append('<tr><th><label class="horariosl" for="horarios">Horario:</label></th><td><select class="horarios" name="horarios">')
+                        $("#agregarMat").append('<tr><th><label id="horario1" class="horariosl" for="horarios">Horario: </label></th><td><select class="horarios" name="horario1">')
                         for (var i = 0;i < data.length;i++){
                             d = data[i]
                             //alert(d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin)
@@ -128,6 +130,7 @@
             $(".horariosl").remove()
             $(".error_am").remove()
             $('#id_materia').prop('selectedIndex',0);
+            $('#id_aula').prop('selectedIndex',0);
 
         });
     });

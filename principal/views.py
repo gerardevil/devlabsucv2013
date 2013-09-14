@@ -6,6 +6,8 @@ import sys
 from principal.manager.decorators import *
 from principal.manager import entity
 from principal.models import *
+from django.contrib.auth.models import User
+
 
 # Imports for validation or any other thing bellow
 from django.contrib.auth import authenticate, login, logout
@@ -63,13 +65,23 @@ def logoutUser(request):
 	logout(request)
 	return render_to_response('Home.html')
 
+
 @login_required
 def profile(request):
     try:
         if request.method == 'POST':
             form = AgregarMateriaForm(request.POST)
             if form.is_valid():
-                form.save()
+#                form.save()
+#                u = Usuario.objects.get(usuario_id=request.User)
+#                ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+#                sel = str(form.cleaned_data['horario1']).split()
+#                ds = sel[0]
+#                hi = sel[1]
+#                hf = sel[2]
+#                hs = HorarioSolicitado(dia_semana=ds,hora_inicio=hi,hora_fin=hf,horario_solicitado=ms,aula=form.cleaned_data['aula'])
+#                ms.save()
+#                hs.save()
                 return render_to_response('Principal_Prof.html' ,{'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
         else:
             form = AgregarMateriaForm()
@@ -204,7 +216,6 @@ def horario(request):
 	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 #Profesor
-
 @login_required
 def horarios_materia(request):
     if request.is_ajax():

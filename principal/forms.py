@@ -79,10 +79,11 @@ class CustomUserForm(forms.Form):
 
 
 class AgregarMateriaForm(forms.Form):
+    aula = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
     materia = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects)
 
-    def save(self):
-        data = self.cleaned_data
+
+
 
 
 
