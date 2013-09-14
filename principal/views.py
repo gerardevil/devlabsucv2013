@@ -215,12 +215,12 @@ def getHorariosSolicitados(request,rol):
 				[5]hora_inicio, 
 				[6]hora_fin				
 				'''
-				json = {}
+				jsontmp = {}
 				counter = 0
 				for h in center_schedule_list:
-					json.update(
+					jsontmp.update(
 					{
-					str(counter):	{
+					counter:	{
 					 'materia_id': h.horario_solicitado.materia.materia.pk,
 					 'materia_solicitada':h.pk,
 					 'horario_solicitado':h.horario_solicitado.pk,
@@ -233,7 +233,10 @@ def getHorariosSolicitados(request,rol):
 					)
 					counter +=1		
 							
-				return HttpResponse(str(json))		
+				jsontmp.update({'length':counter})
+				
+					
+				return  HttpResponse(json.dumps(jsontmp), content_type="application/json")		
 
 			except Exception, e:
 				raise e
