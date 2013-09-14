@@ -5,7 +5,6 @@ from django.db.models.loading import get_app, get_models, get_model
 from principal.manager.decorators import *
 from principal.manager import entity
 from principal.models import *
-from django.contrib.auth.models import User
 import sys
 
 # Imports for validation or any other thing bellow
@@ -184,6 +183,7 @@ def horario(request):
 	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 @login_required
+@coordinatorRequired
 def getHorariosSolicitados(request,rol):
 	if request :
 		rol_pattern = rol.lower()
@@ -206,14 +206,8 @@ def getHorariosSolicitados(request,rol):
 
 				'''
 				Formato Posicional Json de Retorno:
-
-				[0]materia_id, 
-				[1]materia_solicitada_id, 
-				[2]username , 
-				[3]nombre , 
-				[4]dia_seman, 
-				[5]hora_inicio, 
-				[6]hora_fin				
+				[0]materia_id, [1]materia_solicitada_id, [2]username , 
+				[3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin				
 				'''
 				jsontmp = {}
 				counter = 0
@@ -233,8 +227,7 @@ def getHorariosSolicitados(request,rol):
 					)
 					counter +=1		
 							
-				jsontmp.update({'length':counter})
-				
+				jsontmp.update({'length':counter})				
 					
 				return  HttpResponse(json.dumps(jsontmp), content_type="application/json")		
 
