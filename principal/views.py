@@ -183,8 +183,8 @@ def horario(request):
 	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 @login_required
-@coordinatorRequired
-def getHorariosSolicitados(request,rol):
+#@coordinatorRequired
+def getScheduleByRequest(request,rol):
 	if request :
 		rol_pattern = rol.lower()
 		if rol_pattern == 'cc':
@@ -192,12 +192,8 @@ def getHorariosSolicitados(request,rol):
 			centro = Usuario.objects.get(usuario_id=request.user.pk).centro
 			
 			try:
-				'''Seleccionamos los usuarios que pertenecen al centro actual'''
-				center_user_list = Usuario.objects.filter(centro_id=centro.pk)
-				users = [e['id'] for e in center_user_list.values('id')]
-
-				'''Seleccionamos las Materias Solicitadas por estos usuario '''		
-				center_request_subject_list=MateriaSolicitada.objects.filter(usuario__in=users)
+				'''Seleccionamos las Materias Solicitadas por usuarios del centro actual '''		
+				center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk)
 				
 				requested_subject =[e['id'] for e in center_request_subject_list.values('id')]
 
@@ -229,7 +225,7 @@ def getHorariosSolicitados(request,rol):
 							
 				jsontmp.update({'length':counter})				
 					
-				return  HttpResponse(json.dumps(jsontmp), content_type="application/json")		
+				return  HttpResponse(json.dumps(jsontmp,sort_keys=True), content_type="application/json")		
 
 			except Exception, e:
 				raise e
@@ -243,10 +239,44 @@ def getHorariosSolicitados(request,rol):
 	else:
 		raise Http404;
 
-	return HttpResponse('Hello	World')
 
-def getUsuarioCentro(request,rol):
-	pass
+@login_required
+#@coordinatorRequired
+def getUserByCenter(request):
+	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+	center_user_list = Usuario.objects.filter(centro_id=centro.pk).values('usuario_id')
+	center_user_list = [e['usuario_id'] for e in center_user_list]
+	final_user_list = User.objects.filter(pk__in=center_user_list).order_by('first_name','last_name','username').values('username','first_name','last_name')
 
-def getMateriasSolicitadasCentro(request,rol):
-	pass
+	counter = 0
+	jsontemp = {}
+	for u in final_user_list:
+		jsontemp.update({
+			str(counter):{
+			'username':final_user_list[counter]['username'],
+			'name': final_user_list[counter]['first_name']+' '+final_user_list[counter]['last_name']}
+			})
+		counter +=1;
+
+	jsontemp.update({'length':counter})
+
+	return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")		
+
+
+@login_required
+#@coordinatorRequired
+def getSubjectByRequest(request):
+	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+	center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('materia__materia__nombre')
+	jsontemp = {}
+	counter = 0
+	for e in center_request_subject_list:
+		if e['materia__materia__nombre'] not in jsontemp.values():
+			jsontemp.update({str(counter):e['materia__materia__nombre']})
+			counter+=1
+	
+	jsontemp.update({'length':counter})
+
+	return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")		
+
+	
