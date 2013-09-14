@@ -1,37 +1,76 @@
 {% extends "Plantilla.html" %}
+{% load staticfiles %}
 
 {% block op_barra %}
-	<li class="active">
-		<a href="#"><i class="icon-home"></i> Principal</a>
-	</li>
-	<li>
-		<a href="LlenarProp_Prof.html"><i class="icon-pencil" id="Crear"></i> Editar Propuesta</a>
-	</li>
-	<li>
-		<a href="Perfil_Prof.html"><i class="icon-user"></i> Información de perfil</a>
-	</li>
+<li class="active">
+    <a href="#"><i class="icon-home"></i> Principal</a>
+</li>
+<li>
+    <a data-toggle="modal" href="#agregarMateria"><i class="icon-pencil" id="Crear"></i> Editar Propuesta</a>
+</li>
+<li>
+    <a href="Perfil_Prof.html"><i class="icon-user"></i> Información de perfil</a>
+</li>
 {% endblock %}
 
 {% block contenido_vista %}
-	<div class="container">
-		<table class="table">
-			<tbody>
-				<tr>
-					<td>
-						Materia
-					</td>
-					<td>
-						Horario
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<button type="submit" class="btn btn-warning">
-			Enviar Propuesta
-		</button>
-		<br>
-		<br>
-	</div>
+<div class="container">
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>
+                Materia
+            </td>
+            <td>
+                Horario
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-warning" id="ep">
+        Enviar Propuesta
+    </button>
+    <br>
+    <br>
+    <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria">
+        Agregar materia
+    </button>
+
+    <br>
+    <br>
+</div>
+<!-- -->
+<div id="agregarMateria" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            ×
+        </button>
+        <h3>
+            Agregar materia a la propuesta
+        </h3>
+    </div>
+    <div id="agregarMat_mb" class="modal-body">
+        <div id="pg_am" class="progress progress-striped active">
+            <div class="bar" style="width: 100%;"></div>
+        </div>
+        <form id="agregarMat" method="POST" action="/profile">{% csrf_token %}
+            <div class="control-group">
+            {{form}}
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+
+        <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
+
+        <a button="" type="submit" class="btn btn-primary" form="#agregarMat" >Guardar materia</a>
+
+    </div>
+</div>
 {% endblock %}
-		
+
+{% block scripts %}
+<script src="{% static "js/script_profesor.js" %}">
+</script>
+{% endblock %}
 

@@ -19,6 +19,8 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
       </script>
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
     <![endif]-->
     
     <!-- Le fav and touch icons 
@@ -61,11 +63,16 @@
     <script src="{% static "js/bootstrap.js" %}">
     </script>
 	
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js">
+    </script>
+
 	{% block script %}
     {% endblock %}
 	
     <script>
 
     </script>
+    {% block scripts %}
+    {% endblock %}
   </body>
 </html>

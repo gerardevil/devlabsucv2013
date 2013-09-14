@@ -4,9 +4,8 @@ from configuracion import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
-
-	url(r'^$', 'principal.views.inicio', name='home'), 
-	url(r'^login$', 'principal.views.loginUser', name='login'),
+    url(r'^$', 'principal.views.inicio', name='home'), 
+    url(r'^login$', 'principal.views.loginUser', name='login'),
     url(r'^logout$', 'principal.views.logoutUser', name='log'),
     url(r'^profile$', 'principal.views.profile', name='profile'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -21,17 +20,12 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/(?P<key>\d+)$', 'principal.views.leer', name='leer'), #Muestra todos los atributos de un objeto
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear$', 'principal.views.insertar', name='insertar'), # Permite insertar un Objeto
 
-     #Matria's views
-    url(r'^ppalCrudMaterias$', 'principal.views.ppalCrudMaterias', name='ppalCrudMaterias'),
-    url(r'^crearMateria$', 'principal.views.crearMateria', name='crearMateria'),
-    url(r'^modificarMateria$', 'principal.views.modificarMateria', name='modificiarMateria'),
-    url(r'^listarMaterias$', 'principal.views.listarMaterias', name='listarMaterias'),
-    url(r'^obtenerMateria$', 'principal.views.obtenerMateria', name='obtenerMateria'),
-    url(r'^guardarMateria$', 'principal.views.guardarMateria', name='guardarMateria'),
-    url(r'^eliminarMateria$', 'principal.views.eliminarMateria', name='eliminarMateria'),
-	
-	url(r'^horario$', 'principal.views.horario', name='horario'),
+    url(r'^horario$', 'principal.views.horario', name='horario'),
     url(r'^prueba/(?P<rol>[^/]+)$', 'principal.views.getHorariosSolicitados', name='prueba'),
+
+    #Agregar Materia
+    #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
+    url(r'^horarios_materia$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
 )
 
 '''
