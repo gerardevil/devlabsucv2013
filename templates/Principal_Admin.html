@@ -46,7 +46,11 @@
 					</a>
 					<a href="/admins/modelos/{{modelo}}/editar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
 						<i class="icon-edit"></i>
-					</a></td>
+					</a>
+					<a href="/admins/modelos/{{modelo}}/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
+						<i class="icon-reorder"></i>
+					</a>
+				  </td>
 				</tr>
 
 				{% endfor %}
