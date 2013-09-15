@@ -6,7 +6,7 @@ Esquema nano(pane(slider()))(content)
   float: left;
   position : relative;
   background: transparent; 
-  min-width: 300px; 
+  min-width: 100%; 
   min-height: 200px; 
   overflow : hidden;
 }

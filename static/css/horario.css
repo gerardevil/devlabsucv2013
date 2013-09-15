@@ -30,7 +30,6 @@
 .profesores, .materias {
 	width: 100%;
 	text-align: left;
-	margin-right: 10px;
 }
 
 .profesores th, .materias th{
@@ -49,9 +48,15 @@
 
 .profesoresDiv, .materiasDiv{position:relative;}
 
-.profesoresDiv{	float:left; }
+.profesoresDiv{	
+	width:50%;
+	float:left; }
 
-.materiasDiv{	float:right; }
+.materiasDiv{	
+	width:50%;
+	float:right; 
+	padding-left: 0;
+}
 
 
 
