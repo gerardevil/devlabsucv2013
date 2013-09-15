@@ -47,7 +47,7 @@
   	border-top: 1px solid #dddddd;
 }
 
-.profesoresDiv, .materiasSiv{position:relative;}
+.profesoresDiv, .materiasDiv{position:relative;}
 
 .profesoresDiv{	float:left; }
 
