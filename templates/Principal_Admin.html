@@ -40,16 +40,17 @@
 				{% for elem in lista %}
 				<tr>
 				  <td><strong>{{elem.toString}}</strong></td>
-				  <td> 				
-					<a href="/admins/modelos/{{modelo}}/borrar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
-						<i class="icon-trash"></i>
+				  <td> 	
+					<a href="/admins/modelos/{{modelo}}/{{elem.pk}}" class="btn btn-mini" style="modelosargin-left:50px">
+						<i class="icon-tasks"></i>
 					</a>
 					<a href="/admins/modelos/{{modelo}}/editar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
 						<i class="icon-edit"></i>
+					</a>			
+					<a href="/admins/modelos/{{modelo}}/borrar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
+						<i class="icon-trash"></i>
 					</a>
-					<a href="/admins/modelos/{{modelo}}/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
-						<i class="icon-reorder"></i>
-					</a>
+
 				  </td>
 				</tr>
 
