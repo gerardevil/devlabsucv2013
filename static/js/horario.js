@@ -4,6 +4,10 @@ $(function(){
 	cargarHorario();
 	//cargarProfesores();
 	//cargarMaterias();
+	$(".nano").nanoScroller();
+	$(".submenu").addClass("hidden");
+	$(".pane").css("display","block");
+	$(".slider").css("display","block");
 
 });
 
