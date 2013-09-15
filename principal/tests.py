@@ -1672,13 +1672,13 @@ class NotificacionTest(TestCase):
 		self.notificacion = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'as' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		self.notificacion.save()
 
-	def normalTest(self):
+	def test_normalTest(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'astdfjhsagdfha' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		form = FormFactory.genForm('notificacion' , model_object)
 		self.assertEqual(True,form.is_valid())
 
-	def tooLongAsunto(self):
+	def test_tooLongAsunto(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = Notificacion(fecha = 'wrenj', asunto = RandomGenerator.genRandomString(especific_long=150) , contenido = 'gsdjgdsaf' , estatus = 'agsd' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		form = FormFactory.genForm('notificacion' , model_object)
@@ -1712,7 +1712,8 @@ class NotificacionTest(TestCase):
 	def test_BorrarNotificacion(self):
 		self.client.login(username='brucewayne',password='batman')
 		response = self.client.post("/admins/modelos/notificacion/borrar/"+str(self.notificacion.pk))
-		self.assertEqual(response.status_code,200)	
+		self.assertRedirects(response,'/admins/modelos/notificacion',302,200)	
+        #self.assertRedirects(response,'/admins/modelos/tipo%20contrato',302,200)
 
 	def test_CrearNotificacion(self):
 		self.client.login(username='brucewayne',password='batman')
@@ -1737,7 +1738,7 @@ class UsuarioRolTest(TestCase):
 		self.UsuarioRol.save()
 		
 
-	def normalTest(self):
+	def test_normalTest(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = UsuarioRol(rol_id=1, cedula = self.usuario)
 		form = FormFactory.genForm('usuario rol' , model_object)
@@ -1756,7 +1757,7 @@ class UsuarioRolTest(TestCase):
 	def test_BorrarUsuarioRol(self):
 		self.client.login(username='brucewayne',password='batman')
 		response = self.client.post("/admins/modelos/usuario%20rol/borrar/"+str(self.UsuarioRol.pk))
-		self.assertEqual(response.status_code,200)	
+		self.assertRedirects(response,'/admins/modelos/usuario%20rol',302,200)	
 
 	def test_CrearUsuarioRol(self):
 		self.client.login(username='brucewayne',password='batman')
@@ -1789,67 +1790,67 @@ class HorarioSolicitadoTest(TestCase):
 		self.horarioS = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		self.horarioS.save()
 
-	def normalCase(self):
+	def test_normalCase(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(True,form.is_valid())
 
-	def wrongDiaSemana(self):
+	def test_wrongDiaSemana(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='dfsasuth',hora_inicio='7:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def wrongHoraInicio(self):
+	def test_wrongHoraInicio(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='30:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def invalidHoraInicio(self):
+	def test_invalidHoraInicio(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='astdfjhsagdfha',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def wrongFormatHoraInicio(self):
+	def test_wrongFormatHoraInicio(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7>00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def wrongFormatHoraFin(self):
+	def test_wrongFormatHoraFin(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='9/00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def wrongHoraFin(self):
+	def test_wrongHoraFin(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='90:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def invalidHoraFin(self):
+	def test_invalidHoraFin(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='7:00',hora_fin='asfd', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def emptyDiaSemana(self):
+	def test_emptyDiaSemana(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='',hora_inicio='7:00',hora_fin='asfd', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def emptyHoraInicio(self):
+	def test_emptyHoraInicio(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='',hora_fin='asfd', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def emptyHoraFin(self):
+	def test_emptyHoraFin(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Martes',hora_inicio='7:00',hora_fin='', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
@@ -1868,7 +1869,7 @@ class HorarioSolicitadoTest(TestCase):
 	def test_BorrarHorarioSolicitado(self):
 		self.client.login(username='brucewayne',password='batman')
 		response = self.client.post("/admins/modelos/horario%20solicitado/borrar/"+str(self.horarioS.pk))
-		self.assertEqual(response.status_code,200)	
+		self.assertRedirects(response,'/admins/modelos/horario%20solicitado',302,200)	
 
 	def test_CrearHorarioSolicitado(self):
 		self.client.login(username='brucewayne',password='batman')
@@ -1890,21 +1891,21 @@ class MateriaOfertadaTest(TestCase):
 			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
 		self.materiaO.save()
 
-	def normalCase(self):
+	def test_normalCase(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = MateriaOfertada(nro_estudiantes_estimados=40,nro_secciones_teoria=2,nro_secciones_practica=2,nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, 
 			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
 		form = FormFactory.genForm('materia ofertada' , model_object)
 		self.assertEqual(True,form.is_valid())
 
-	def negativeNroEstudiantes(self):
+	def test_negativeNroEstudiantes(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = MateriaOfertada(nro_estudiantes_estimados=-40,nro_secciones_teoria=2,nro_secciones_practica=2,nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, 
 			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
 		form = FormFactory.genForm('materia ofertada' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def invalidNroEstudiantes(self):
+	def test_invalidNroEstudiantes(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = MateriaOfertada(nro_estudiantes_estimados='asfd',nro_secciones_teoria=2,nro_secciones_practica=2,nro_secciones_laboratorio=2,nro_preparadores1=2,nro_preparadores2=0, 
 			nro_estudiantes_inscritos=30, periodo_academico= self.periodo_academico, materia = self.materia)
@@ -1924,7 +1925,7 @@ class MateriaOfertadaTest(TestCase):
 	def test_BorrarMateriaOfertada(self):
 		self.client.login(username='brucewayne',password='batman')
 		response = self.client.post("/admins/modelos/materia%20ofertada/borrar/"+str(self.materiaO.pk))
-		self.assertEqual(response.status_code,200)	
+		self.assertRedirects(response,'/admins/modelos/materia%20ofertada',302,200)
 
 	def test_CrearMateriaOfertada(self):
 		self.client.login(username='brucewayne',password='batman')
@@ -1956,25 +1957,25 @@ class MateriaSolicitadaTest(TestCase):
 		self.materiaS = MateriaSolicitada( estatus='A', usuario = self.usuario, materia = self.materiaOfertada)
 		self.materiaS.save()
 
-	def normalCase(self):
+	def test_normalCase(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = MateriaSolicitada( estatus='A', usuario = self.usuario, materia = self.materiaOfertada)
 		form = FormFactory.genForm('materia solicitada' , model_object)
 		self.assertEqual(True,form.is_valid())
 
-	def wrongEstatus(self):
+	def test_wrongEstatus(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = MateriaSolicitada( estatus=17845, usuario = self.usuario, materia = self.materiaOfertada)
 		form = FormFactory.genForm('materia solicitada' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def emptyEstatus(self):
+	def test_emptyEstatus(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = MateriaSolicitada( estatus='', usuario = self.usuario, materia = self.materiaOfertada)
 		form = FormFactory.genForm('materia solicitada' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def notValidEstatus(self):
+	def test_notValidEstatus(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = MateriaSolicitada( estatus='Q', usuario = self.usuario, materia = self.materiaOfertada)
 		form = FormFactory.genForm('materia solicitada' , model_object)
@@ -1993,7 +1994,7 @@ class MateriaSolicitadaTest(TestCase):
 	def test_BorrarMateriaSolicitada(self):
 		self.client.login(username='brucewayne',password='batman')
 		response = self.client.post("/admins/modelos/materia%20solicitada/borrar/"+str(self.materiaS.pk))
-		self.assertEqual(response.status_code,200)	
+		self.assertRedirects(response,'/admins/modelos/materia%20solicitada',302,200)
 
 	def test_CrearMateriaSolicitada(self):
 		self.client.login(username='brucewayne',password='batman')
