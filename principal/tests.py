@@ -1672,13 +1672,13 @@ class NotificacionTest(TestCase):
 		self.notificacion = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'as' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		self.notificacion.save()
 
-	def normalTest(self):
+	def test_normalTest(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = Notificacion(fecha = '2013-1-4', asunto = 'wgejf' , contenido = 'gsdjgdsaf' , estatus = 'astdfjhsagdfha' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		form = FormFactory.genForm('notificacion' , model_object)
 		self.assertEqual(True,form.is_valid())
 
-	def tooLongAsunto(self):
+	def test_tooLongAsunto(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = Notificacion(fecha = 'wrenj', asunto = RandomGenerator.genRandomString(especific_long=150) , contenido = 'gsdjgdsaf' , estatus = 'agsd' , usuario_emisor = self.usuarioE , usuario_receptor = self.usuarioR)
 		form = FormFactory.genForm('notificacion' , model_object)
@@ -1802,7 +1802,7 @@ class HorarioSolicitadoTest(TestCase):
 		form = FormFactory.genForm('horario solicitado' , model_object)
 		self.assertEqual(False,form.is_valid())
 
-	def wrongHoraInicio(self):
+	def test_wrongHoraInicio(self):
 		self.client.login(username='brucewayne',password='batman')
 		model_object = HorarioSolicitado(dia_semana='Lunes',hora_inicio='30:00',hora_fin='9:00', horario_solicitado = self.materiaSolicitada , aula = self.aula)
 		form = FormFactory.genForm('horario solicitado' , model_object)
