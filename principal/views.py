@@ -187,7 +187,7 @@ def horario(request):
 	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 @login_required
-#@coordinatorRequired
+@coordinatorRequired
 def getScheduleByRequest(request,rol):
 	if request :
 		rol_pattern = rol.lower()
@@ -245,7 +245,7 @@ def getScheduleByRequest(request,rol):
 
 
 @login_required
-#@coordinatorRequired
+@coordinatorRequired
 def getUserByCenter(request):
 	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
 	center_user_list = Usuario.objects.filter(centro_id=centro.pk).values('usuario_id')
