@@ -218,13 +218,15 @@ class Usuario(models.Model):
 		db_table = 'usuario'
 
 	def __unicode__(self):
-		return u'usuario: %s | nombre: %s | apellido: %s | dedicacion: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.dedicacion)
+		return u'usuario: %s | nombre: %s | apellido: %s | centro: %s' % ( self.usuario_id.username, self.usuario_id.first_name, self.usuario_id.last_name, self.centro.nombre)
 
 	def toJson(self,minify=True):
-		retorno = {'usuario_id':self.usuario_id.username,
+		retorno = {
+				'pk': self.pk,
+				'usuario_id':self.usuario_id.username,
 				'nombre':self.usuario_id.first_name,
 				'apellido':self.usuario_id.last_name,
-				'password':'non displayable',
+				'password':self.usuario_id.password,
 				'correo_Electronico':self.usuario_id.email}
 
 		if not minify:
@@ -260,7 +262,7 @@ class Materia(models.Model):
 		db_table = 'materia'
 
 	def __unicode__(self):
-		return u'codigo: %d | nombre: %s | tipo_materia: %s | semestre: %d' % (self.codigo, self.nombre, self.tipo_materia, self.semestre)
+		return u'codigo: %d | nombre: %s | tipo_materia: %s ' % (self.codigo, self.nombre, self.tipo_materia,)
 
 	def toJson(self,minify=True):
 		retorno = {'codigo':self.codigo,
@@ -299,9 +301,10 @@ class HorarioMateria(models.Model):
 		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin))
 
 	def toJson(self,minify=True):
-		retorno = {'dia_semana':self.dia_semana,
-				'hora_inicio':self.hora_inicio,
-				'hora_fin':self.hora_fin
+		retorno = {'dia_semana':str(self.dia_semana),
+				'hora_inicio':str(self.hora_inicio),
+				'hora_fin':str(self.hora_fin),
+                'valor':str(self.pk)
 				}
 		if not minify:
 			if self.materia != None:
@@ -420,7 +423,7 @@ class MateriaOfertada(models.Model):
 		db_table = 'materia_ofertada'
 
 	def __unicode__(self):
-		return u'materia: %s | periodo_academico: %s - %s ' % (str(self.materia.nombre), str(self.periodo_academico.semestre), str(self.periodo_academico.periodo_lectivo))
+		return u'materia: %s | periodo_academico: %s - %s ' % (self.materia.nombre, str(self.periodo_academico.semestre), str(self.periodo_academico.periodo_lectivo))
 
 	def toJson(self,minify=True):
 		retorno = {'periodo_academico':self.periodo_academico.pk,
@@ -445,7 +448,7 @@ class MateriaOfertada(models.Model):
 		return self.pk
 		
 class MateriaSolicitada(models.Model):
-	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada')))
+	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada')),editable=False)
 	usuario = models.ForeignKey('Usuario')
 	materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
 
@@ -453,10 +456,12 @@ class MateriaSolicitada(models.Model):
 		db_table = 'materia_solicitada'
 
 	def __unicode__(self):
-		return u'materia: %s | usuario: %s ' % (str(self.materia), str(self.usuario))
+		return u'materia: %s | usuario: %s ' % (self.materia.toString(), self.usuario.toString())
 
 	def toJson(self,minify=True):
-		retorno = {'materia':self.materia.pk}
+		retorno = {
+		'pk': self.pk,
+		'materia':self.materia.pk}
 		if not minify:
 			retorno.update(
 				{'estatus':self.estatus,
@@ -465,7 +470,7 @@ class MateriaSolicitada(models.Model):
 		return retorno
 
 	def toString(self):
-		return self.materia.nombre + ' ' + self.materia.toString()
+		return self.materia.materia.nombre + ' ' + self.materia.toString()
 
 	def get_pk(self):
 		return self.pk
@@ -484,7 +489,9 @@ class HorarioSolicitado(models.Model):
 		return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin), str(self.horario_solicitado), str(self.aula))
 
 	def toJson(self,minify=True):
-		retorno = {'dia_semana':self.dia_semana,
+		retorno = {
+				'pk': self.pk,
+				'dia_semana':self.dia_semana,
 				'hora_inicio':self.hora_inicio,
 				'hora_fin':self.hora_fin
 				}

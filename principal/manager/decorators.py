@@ -4,11 +4,12 @@
 # Custom Decorators bellow #
 ############################
 
-from principal.models import *
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import get_app, get_models, get_model
 from django.http import Http404
+from principal.models import *
 
 def validateInputCrudData(view):
 	def wrapper(request, modelo, key=None):
@@ -23,3 +24,20 @@ def validateInputCrudData(view):
 		else:
 			raise Http404
 	return wrapper
+
+
+def coordinatorRequired(view):
+	def wrapper(request,rol=None):
+		try:
+			roles = UsuarioRol.objects.filter(cedula__usuario_id__pk = request.user.pk).values('rol__rol_id')
+			print map((lambda e : e.values()),roles)
+			if [u'CC'] in map((lambda e : e.values()),roles):
+				if rol is not None:
+					return view(request,rol)
+				else:
+					return view(request)
+			else:				
+				raise Http404
+		except Exception, e:
+			raise Http404
+	return wrapper	

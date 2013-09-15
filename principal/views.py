@@ -2,19 +2,22 @@
 
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
-import sys
 from principal.manager.decorators import *
 from principal.manager import entity
 from principal.models import *
+import sys
 
 # Imports for validation or any other thing bellow
+from principal.manager.converters import convertDatetimeToString
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.core import serializers
+from django.http import Http404
 from principal.forms import *
 import json
 import os
@@ -39,7 +42,12 @@ def loginUser(request):
 				login(request, user)
 
 				if request.GET and 'next' in request.GET:
-					return HttpResponseRedirect(request.GET['next']) 
+
+					try:
+						return HttpResponseRedirect(request.GET['next']) 
+					except Exception, e:
+						raise Http404
+						
 				else:
 					return HttpResponseRedirect('/profile')
 			else:
@@ -47,7 +55,8 @@ def loginUser(request):
 
 		else:
 			return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
-	else:	
+	else:
+		login_form =  LoginForm()
 		return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
 
 # Logout view
@@ -56,57 +65,35 @@ def logoutUser(request):
 	logout(request)
 	return render_to_response('Home.html')
 
+
 @login_required
 def profile(request):
-	return render_to_response('Principal_Prof.html')	
+    try:
+        if request.method == 'POST':
+            form = AgregarMateriaForm(request.POST)
+            cant_hor = int(request.POST['cantidad_hor'])
+            if form.is_valid() and cant_hor:
+                u = Usuario.objects.get(usuario_id=request.user)
+                cse = MateriaSolicitada.objects.filter(estatus='R',usuario=u,materia=form.cleaned_data['materia']).count()
+                if (cse == 0):
+                    ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+                    ms.save()
+                else:
+                    ms = MateriaSolicitada.objects.get(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+                for ind in range(1,cant_hor+1):
+                    cad = 'horario'+str(ind)
+                    h = HorarioMateria.objects.get(pk=request.POST[cad])
+                    HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
 
-	
-# CRUD Materia Begin:
-def ppalCrudMaterias(request):
-	materias = Materia.objects.all().order_by('nombre')
-	return render_to_response('PpalMaterias_Admin.html', {'listaMaterias':materias})
-
-def crearMateria(request):
-	centros = Centro.objects.all().order_by('nombre')
-	return render_to_response('CrearMateria_Admin.html', {'listaCentros':centros})
-
-def modificarMateria(request):
-	return render_to_response('ModificarMateria_Admin.html')
-
-def listarMaterias(request):
-	materias = Materia.objects.all()
-	#json = serializers.serialize('json',materias)
-	temp = [m.toJson() for m in materias]
-	return HttpResponse(json.dumps(temp), content_type="application/json")
-	
-def obtenerMateria(request):
-	materia = Materia.objects.get(pk=request.GET['id'])
-	return HttpResponse(json.dumps(materia.toJson(False)), content_type="application/json")
-	
-def guardarMateria(request):
-
-	if 'centro' in request.GET:
-		centro = Centro.objects.get(pk=request.GET['centro'])
-	else:
-		centro=None
-	materia = Materia(materia_id=request.GET['id'],
-					  nombre = request.GET['nombre'],
-					  tipo_materia = request.GET['tipo'],
-					  unidades_credito_teoria = request.GET['uct'],
-					  unidades_credito_practica = request.GET['ucp'],
-					  unidades_credito_laboratorio = request.GET['ucl'],
-					  estatus = request.GET['estatus'],
-					  semestre=request.GET['semestre'],
-					  centro=centro)
-	materia.save()
-	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')
-	
-def eliminarMateria(request):
-	materia = Materia.objects.get(pk=request.GET['id'])
-	materia.delete()
-	return HttpResponse('<h2>Operaci&oacute;n realizada satisfactoriamente</h2>')
-
-# CRUD Materia End.
+                form = AgregarMateriaForm()
+                return render_to_response('Principal_Prof.html' ,{'form':form,'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
+            else:
+                return render_to_response('Principal_Prof.html' ,{'form' : form,'error':'El formulario no es valido :('},context_instance=RequestContext(request))
+        else:
+            form = AgregarMateriaForm()
+        return render_to_response('Principal_Prof.html' ,{'form' : form},context_instance=RequestContext(request))
+    except Warning as w:
+        return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
 
 # Admin principal views :
 
@@ -181,3 +168,121 @@ def leer(request,modelo,key):
 	return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
 
 #END CRUD Generico
+
+#Profesor
+@login_required
+def horarios_materia(request):
+    if request.is_ajax():
+        key = request.POST['mat_sel']
+        mat = MateriaOfertada.objects.get(pk=int(key)).materia
+        lista_horarios = HorarioMateria.objects.filter(materia=mat)
+        lista_horarios_json = [h.toJson() for h in lista_horarios]
+        return HttpResponse(json.dumps(lista_horarios_json), mimetype='application/javascript')
+    else:
+        return HttpResponse('Fallo en AJAX')
+
+
+@login_required
+def horario(request):
+	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+
+@login_required
+#@coordinatorRequired
+def getScheduleByRequest(request,rol):
+	if request :
+		rol_pattern = rol.lower()
+		if rol_pattern == 'cc':
+			'''Obtenemos a que centro pertenece el Coordinador'''			
+			centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+			
+			try:
+				'''Seleccionamos las Materias Solicitadas por usuarios del centro actual '''		
+				center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk)
+				
+				requested_subject =[e['id'] for e in center_request_subject_list.values('id')]
+
+				'''Seleccionamos los horarios solicitados para estas Materias '''
+				center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__in=requested_subject) 
+
+				'''
+				Formato Posicional Json de Retorno:
+				[0]materia_id, [1]materia_solicitada_id, [2]username , 
+				[3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin				
+				'''
+				jsontmp = {}
+				counter = 0
+				for h in center_schedule_list:
+					jsontmp.update(
+					{
+					counter:	{
+					 'materia_id': h.horario_solicitado.materia.materia.pk,
+					 'materia_solicitada':h.pk,
+					 'horario_solicitado':h.horario_solicitado.pk,
+					 'username':h.horario_solicitado.usuario.usuario_id.username,
+					 'nombre':h.horario_solicitado.materia.materia.nombre,
+					 'dia_semana':h.dia_semana,
+					 'hora_inicio':convertDatetimeToString(h.hora_inicio),
+					 'hora_fin':convertDatetimeToString(h.hora_fin)}
+					}
+					)
+					counter +=1		
+							
+				jsontmp.update({'length':counter})				
+					
+				return  HttpResponse(json.dumps(jsontmp,sort_keys=True), content_type="application/json")		
+
+			except Exception, e:
+				raise e
+
+		elif  rol_pattern == 'jdd':
+			'''El usuario es un Jefe de Departamento obtiene todos los horarios 
+			de la Escuela de Computacion'''
+			pass
+		else:
+			raise Http404
+	else:
+		raise Http404;
+
+
+@login_required
+#@coordinatorRequired
+def getUserByCenter(request):
+	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+	center_user_list = Usuario.objects.filter(centro_id=centro.pk).values('usuario_id')
+	center_user_list = [e['usuario_id'] for e in center_user_list]
+	final_user_list = User.objects.filter(pk__in=center_user_list).order_by('first_name','last_name','username').values('username','first_name','last_name')
+
+	counter = 0
+	jsontemp = {}
+	for u in final_user_list:
+		jsontemp.update({
+			counter:{
+			'username':final_user_list[counter]['username'],
+			'name': final_user_list[counter]['first_name']+' '+final_user_list[counter]['last_name']}
+			})
+		counter +=1;
+
+	jsontemp.update({'length':counter})
+
+	return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")		
+
+
+@login_required
+@coordinatorRequired
+def getSubjectByRequest(request):
+	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+	center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('id','materia__materia__nombre')
+	jsontemp = {}
+	counter = 0
+	names = []
+	for e in center_request_subject_list:
+		if e['materia__materia__nombre'] not in names:
+			jsontemp.update({counter:{'id':e['id'],'nombre':e['materia__materia__nombre']}})
+			names.append(e['materia__materia__nombre'])
+			counter+=1
+	
+	jsontemp.update({'length':counter})
+
+	return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")		
+
+	

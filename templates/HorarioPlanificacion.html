@@ -1,0 +1,127 @@
+{% extends "Plantilla.html" %}
+{% load staticfiles %}
+
+{% block contenido_vista %}
+<link href="{% static "css/horario.css" %}" rel="stylesheet">
+<link href="{% static "css/showLoading.css" %}" rel="stylesheet">
+<table class="horario table table-hover" id="tablaHorario">
+	<!--<caption> -->
+		<!--<b>Listado de Materias</b> -->
+	<!--</caption> -->
+	<thead>
+		<tr>
+			<th>Horario</th>
+			<th>Lunes</th>
+			<th>Martes</th>
+			<th>Mi&eacute;rcoles</th>
+			<th>Jueves</th>
+			<th>Viernes</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for hora in listaHorarios %}
+		<tr>
+		  <td>{{ hora }}:00 - {{ hora }}:59</td>
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+
+</table>
+
+<table class="profesores table table-hover" id="tablaProfesores">
+	<thead>
+		<tr>
+			<th>Profesores</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Naruto Uzumaki</td>
+			<td style="width:100px;"> 				
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-eye-open" id="eliminarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-remove" id="modificarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-ok" id="modificarMateria"></i>
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td>Sasuke Uchiha</td>
+			<td style="width:100px;"> 				
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-eye-open" id="eliminarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-remove" id="modificarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-ok" id="modificarMateria"></i>
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td>Roronoa Zoro</td>
+			<td style="width:100px;"> 				
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-eye-open" id="eliminarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-remove" id="modificarMateria"></i>
+				</button>
+				<button id="modificarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-ok" id="modificarMateria"></i>
+				</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<table class="materias table table-hover" id="tablaMaterias">
+	<thead>
+		<tr>
+			<th>Materias</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Algoritmos y Programaci&oacute;n</td>
+			<td style="width:30px;"> 				
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-eye-open" id="eliminarMateria"></i>
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td>Introducci&oacute;n a la Inform&aacute;tica</td>
+			<td style="width:30px;"> 				
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-eye-open" id="eliminarMateria"></i>
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td>Estructura de Datos</td>
+			<td style="width:30px;"> 				
+				<button id="eliminarMateria" type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">
+					<i class="icon-eye-open" id="eliminarMateria"></i>
+				</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+{% endblock %}	
+
+{% block script %}   
+	<script src="{% static "js/horario.js" %}"></script>
+	<script src="{% static "js/jquery.showLoading.min.js" %}"></script>
+{% endblock %}

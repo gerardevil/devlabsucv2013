@@ -29,12 +29,11 @@ class Manager:
 		else:
 			form_class = get_object_form(type_id)
 			if case == 0:
-				return form_class(request.POST, None)
+				return form_class(request.POST)
 			elif case == 1:
 				return form_class(request.POST, instance=inst)
 			elif case == 2:
 				return form_class(instance=inst)
-		return None
 
 	def borrar(self, modelo, key):
 		model = get_model('principal',str(modelo).replace(' ',''))
