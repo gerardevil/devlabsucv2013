@@ -50,17 +50,11 @@ td.conflicto{
   	border-top: 1px solid #dddddd;
 }
 
-.profesoresDiv, .materiasDiv{position:relative;}
+.profesoresDiv, .materiasDiv{ width:50%; position:relative; }
 
-.profesoresDiv{	
-	width:50%;
-	float:left; }
+.profesoresDiv{	float:left; }
 
-.materiasDiv{	
-	width:50%;
-	float:right; 
-	padding-left: 0;
-}
+.materiasDiv{ float:right; }
 
 
 
