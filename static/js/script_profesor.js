@@ -25,14 +25,12 @@ $(document).ready(function() {
                     //alert(data)
 
                     if(data.length > 0){
-                        $("#agregarMat").append('<tr><th><label id="horario1" class="horariosl" for="horarios">Horario: </label></th><td><select class="horarios" name="horario1">')
+                        $("#cg").append('<label class="horarios" for="horario1">Horario:</label><select id="horario1" class="horarios" name="horario1">')
                         for (var i = 0;i < data.length;i++){
                             d = data[i]
-                            //alert(d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin)
-                            //alert('<option value="'+i+'">'+d.dia_semana+" "+d.hora_inicio+" "+ d.hora_fin+'</option>')
-                            $(".horarios").append('<option value="'+ d.valor+'">'+d.dia_semana+" "+d.hora_inicio+"-"+ d.hora_fin+'</option>')
+                            $("#horario1").append('<option value="'+ d.valor+'">'+d.dia_semana+" "+d.hora_inicio+"-"+ d.hora_fin+'</option>')
                         }
-                        $("#agregarMat").append('</select></td></tr>')
+                        $("#cg").append('</select>')
                         $('#cantidad_hor').prop('value',1);
                         $("#enviar_am").prop('disabled',false)
                     }else{
@@ -40,6 +38,7 @@ $(document).ready(function() {
                         $("#enviar_am").prop('disabled',true)
                     }
                     $("#pg_am").hide()
+                    //console.log($("html").html())
                 },
                 error : function(xhr,errmsg,err) {
                     alert(xhr.status + ": " + xhr.responseText);

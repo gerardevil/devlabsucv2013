@@ -66,7 +66,7 @@
             <div class="bar" style="width: 100%;"></div>
         </div>
         <form action="/profile" id="agregarMat" method="POST">{% csrf_token %}
-            <div class="control-group">
+            <div id="cg" class="control-group">
                 <input name="cantidad_hor" id="cantidad_hor" hidden="true" value="0"/>
                 {{form}}
             </div>
