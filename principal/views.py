@@ -245,7 +245,7 @@ def getScheduleByRequest(request,rol):
 
 
 @login_required
-#@coordinatorRequired
+@coordinatorRequired
 def getUserByCenter(request):
 	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
 	center_user_list = Usuario.objects.filter(centro_id=centro.pk).values('usuario_id')
