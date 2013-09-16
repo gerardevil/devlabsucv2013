@@ -17,7 +17,7 @@ $(function(){
 function cargarHorario(){
 
 	$('#tablaHorario').hideLoading();
-	$('#tablaHorario').showLoading();
+	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
 	
 	var url = '/schedulexrequest/cc';
 	var param = '';
@@ -28,10 +28,17 @@ function cargarHorario(){
 		 dataType: 'json',
 		 //data: param,
 		 success: function(respuesta){
-			for(i=0;i<respuesta.length;i++){
+		 
+			try{
 			
-				insertarMateriaHorario(respuesta[i]);
+				for(i=0;i<respuesta.length;i++){
 				
+					insertarMateriaHorario(respuesta[i]);
+					
+				}
+			
+			}catch(ex){
+				console.error(ex.name + " - "+ex.message);
 			}
 			
 		 },
@@ -66,7 +73,7 @@ function cargarProfesores(){
 				html += '<tr><td>';
 				html += respuesta[i]['name'];
 				html += '</td><td style="width:100px;">';		
-				html += '<button type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">';
+				html += '<button type="submit" class="btn btn-mini profesor" profesorId="profesor'+respuesta[i]['username']+'" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-eye-open"></i>';
 				html += '</button>';
 				html += '<button type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">';
@@ -83,6 +90,20 @@ function cargarProfesores(){
 			}
 			
 			$('#tablaProfesores tbody').html(html);
+			
+			$('.profesor').click(function(){
+				var elem = $('.'+$(this).attr('profesorId'));
+				if(elem.hasClass('hidden')){
+					elem.removeClass('hidden');
+					$(this).children().removeClass('icon-eye-close');
+					$(this).children().addClass('icon-eye-open');
+				}else{
+					elem.addClass('hidden');
+					$(this).children().removeClass('icon-eye-open');
+					$(this).children().addClass('icon-eye-close');
+				}
+			
+			});
 			
 		 },
 		 complete: function(){
@@ -118,7 +139,7 @@ function cargarMaterias(){
 				html += '<tr><td>';
 				html += respuesta[i]['nombre'];
 				html += '</td><td style="width:30px;">';		
-				html += '<button type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">';
+				html += '<button type="submit" class="btn btn-mini materia" materiaId="materia'+respuesta[i]['id']+'" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-eye-open"></i>';
 				html += '</button></td></tr>';
 				
@@ -130,6 +151,19 @@ function cargarMaterias(){
 			
 			$('#tablaMaterias tbody').html(html);
 			
+			$('.materia').click(function(){
+				var elem = $('.'+$(this).attr('materiaId'));
+				if(elem.hasClass('hidden')){
+					elem.removeClass('hidden');
+					$(this).children().removeClass('icon-eye-close');
+					$(this).children().addClass('icon-eye-open');
+				}else{
+					elem.addClass('hidden');
+					$(this).children().removeClass('icon-eye-open');
+					$(this).children().addClass('icon-eye-close');
+				}
+			
+			});
 		 },
 		 complete: function(){
 			$('#tablaMaterias').hideLoading();
@@ -144,6 +178,28 @@ function cargarMaterias(){
 
 function insertarMateriaHorario(horario){
 
-	horario.fecha_inicia;
-
+	var horaIni = new Date('01/01/2012 '+horario.hora_inicio);
+	var horaFin = new Date('01/01/2012 '+horario.hora_fin);
+	
+	var dif = (horaFin.getTime()-horaIni.getTime())/1000/60/60;
+	
+	var id;
+	var celda;
+	var i = horaIni.getHours();
+	
+	while(dif>0){
+		id = horario.dia_semana.toLowerCase()+i;
+		celda = $('#'+id);
+		celda.append('<div class="materiaHorario materia'+horario.materia_id+' profesor'+horario.username+'">'+horario.nombre+'</div>');
+		
+		if(celda.children().size() > 1){
+			celda.addClass('conflicto');
+		}
+		
+		i++;
+		dif--;
+	}
+	
+	
+	
 }
