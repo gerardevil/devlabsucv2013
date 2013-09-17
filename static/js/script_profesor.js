@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $("#pg_am").hide()
     $("#agregarHor").remove()
-    var i = $('#agregarMat_mb select.horarios').size() + 2;
+    //var i = $('#agregarMat_mb select.horarios').size() + 2;
 
     $( "#id_materia" ).change(function() {
         $("#pg_am").show()
@@ -9,7 +9,6 @@ $(document).ready(function() {
         $(".horarios").remove()
         $(".horariosl").remove()
         $(".error_am").remove()
-        //$(".agregarMat").prepend('<div id="progressbar"></div>')
         var materia_sel = $("#id_materia option:selected").val()
         if (materia_sel != ""){
             $.ajax({
@@ -30,7 +29,7 @@ $(document).ready(function() {
                         }
                         $("#cg").append('</select>')
                         $("#cg").append('<button type="button" id="agregarHor" > + </button>')                       
-                        $('#cantidad_hor').prop('value',1);
+                        $('#cantidad_hor').attr('value',1);
                         $("#enviar_am").prop('disabled',false)
                     }else{
                         $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>La materia seleccionada no posee horarios asignados</div>')
@@ -50,6 +49,7 @@ $(document).ready(function() {
             $("#agregarHor").remove()
             $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>Debe seleccionar una materia</div>')
             $("#pg_am").hide()
+            $('#cantidad_hor').attr('value',0);
         }
 
     });
@@ -60,12 +60,18 @@ $(document).ready(function() {
         $(".error_am").remove()
         $('#id_materia').prop('selectedIndex',0);
         $('#id_aula').prop('selectedIndex',0);
+        $('#cantidad_hor').attr('value',0);
     });
 
     $('#agregarHor').live('click' , function() {
-        $('#horario1').clone().attr('id', 'horario'+i).appendTo('#agregarMat_mb');
+        var i = $('#cantidad_hor').attr('value')
+        i++
+        ch = parseInt(i)
+        $('#horario1').clone().attr('id', 'horario'+i).attr('name', 'horario'+i).appendTo('#cg');
         $('#horario'+i).append('<button type="button" id="eliminarHor" > - </button>'); // selecionar el combobox recien a;adido y agregar boton -
-        i++;
+        $('#cantidad_hor').attr('value',ch);
+        //i++;
+        //console.log($('#cantidad_hor').attr('value'))
     });
 
     $('#eliminarHor').live('click' , function() {
@@ -73,7 +79,7 @@ $(document).ready(function() {
         $(this).parents('.horarios').remove(); //elimminar el combobox
         $(this).parents('#horario'+i).remove();
 
-        i--;
+        //i--;
         }
     });
 });
