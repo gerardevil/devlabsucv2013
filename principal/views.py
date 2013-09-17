@@ -68,42 +68,43 @@ def logoutUser(request):
 
 @login_required
 def profile(request):	
-
     try:
-    #materiasS = MateriaSolicitada.objects.all().filter(usuario=request.user).order_by("id")
-    #horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado" '''Seleccionamos las Materias Solicitadas por usuarios del centro actual '''		
-	materiasS = MateriaSolicitada.objects.all().filter(usuario=request.user).order_by("id")
-	'''Seleccionamos los horarios solicitados para estas Materias '''
-	horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
-	jsontmp = {}
-	counter = 0
-	for h in horariosS:
-		jsontmp.update(
-		{
-		counter:	{
-		 'materia_id': h.horario_solicitado.materia.materia.pk,
-		 'materia_solicitada':h.pk,
-		 'horario_solicitado':h.horario_solicitado.pk,
-		 'username':h.horario_solicitado.usuario.usuario_id.username,
-		 'nombre':h.horario_solicitado.materia.materia.nombre,
-		 'dia_semana':h.dia_semana,
-		 'hora_inicio':convertDatetimeToString(h.hora_inicio),
-		 'hora_fin':convertDatetimeToString(h.hora_fin)}
-		}
-		)
-		counter +=1		
-				
-	jsontmp.update({'length':counter})
-	print "///////"
-	print jsontmp
-	print "///////"
-
+	    #materiasS = MateriaSolicitada.objects.all().filter(usuario=request.user).order_by("id")
+	    #horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado" '''Seleccionamos las Materias Solicitadas por usuarios del centro actual '''		
+		materiasS = MateriaSolicitada.objects.all().filter(usuario=request.user).order_by("id")
+		'''Seleccionamos los horarios solicitados para estas Materias '''
+		horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
+		jsontmp = {}
+		counter = 0
+		for h in horariosS:
+			jsontmp.update(
+			{
+			counter:	{
+			 'materia_id': h.horario_solicitado.materia.materia.pk,
+			 'materia_solicitada':h.pk,
+			 'horario_solicitado':h.horario_solicitado.pk,
+			 'username':h.horario_solicitado.usuario.usuario_id.username,
+			 'nombre':h.horario_solicitado.materia.materia.nombre,
+			 'dia_semana':h.dia_semana,
+			 'hora_inicio':convertDatetimeToString(h.hora_inicio),
+			 'hora_fin':convertDatetimeToString(h.hora_fin)}
+			}
+			)
+			counter +=1		
+					
+		jsontmp.update({'length':counter})
+		print "///////"
+		print jsontmp
+		print "///////"
+        u = Usuario.objects.get(usuario_id=request.user)
+        usr = u.toString()
+        centro = u.centro.toString()
         if request.method == 'POST':
             form = AgregarMateriaForm(request.POST)
             cant_hor = int(request.POST['cantidad_hor'])
 
             if form.is_valid() and cant_hor:
-                u = Usuario.objects.get(usuario_id=request.user)
+
                 cse = MateriaSolicitada.objects.filter(estatus='R',usuario=u,materia=form.cleaned_data['materia']).count()
                 if (cse == 0):
                     ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
@@ -124,6 +125,15 @@ def profile(request):
         return render_to_response('Principal_Prof.html' ,{'form' : form, 'listaHorarios' : json.dumps(jsontmp) },context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__ , 'listaHorarios' : json.dumps(jsontmp)} ,context_instance=RequestContext(request))
+
+
+@login_required
+def editar_profesor(request):
+    u = Usuario.objects.get(usuario_id=request.user)
+    usr = u.toString()
+    centro = u.centro.toString()
+    return render_to_response('Perfil_Prof.html',{'usuario':usr,'centro':centro},context_instance=RequestContext(request))
+>>>>>>> 6ffef2e8821cd75fe6450c5e4ab4084488a4c931
 
 # Admin principal views :
 
@@ -189,7 +199,7 @@ def editar(request,modelo,key):
 		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
 	except Warning as w:
 		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__},context_instance=RequestContext(request))
-	
+
 @login_required
 @validateInputCrudData	
 def leer(request,modelo,key):
@@ -217,7 +227,7 @@ def horario(request):
 	return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 @login_required
-#@coordinatorRequired
+@coordinatorRequired
 def getScheduleByRequest(request,rol):
 	if request :
 		rol_pattern = rol.lower()
@@ -275,7 +285,7 @@ def getScheduleByRequest(request,rol):
 
 
 @login_required
-#@coordinatorRequired
+@coordinatorRequired
 def getUserByCenter(request):
 	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
 	center_user_list = Usuario.objects.filter(centro_id=centro.pk).values('usuario_id')

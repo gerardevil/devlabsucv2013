@@ -28,13 +28,30 @@
 }
 
 .profesores, .materias {
-	float:left;
-	width: 48%;
+	width: 100%;
 	text-align: left;
-	margin-right: 10px;
 }
 
 .profesores th, .materias th{
 	font-weight: bold;
 }
+
+/*nanoScroller style aling bellow*/
+.profesores td, .materias td{
+	padding: 8px;
+  	line-height: 20px;
+  	text-align: left;
+	width: 50%;
+	vertical-align: top;
+  	border-top: 1px solid #dddddd;
+}
+
+.profesoresDiv, .materiasDiv{ width:50%; position:relative; }
+
+.profesoresDiv{	float:left; }
+
+.materiasDiv{ float:right; }
+
+
+
 

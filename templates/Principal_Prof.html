@@ -1,22 +1,31 @@
 {% extends "Plantilla.html" %}
 {% load staticfiles %}
 
+{% block rol%}Profesor(a):{% endblock %}
+
+{% block nombre %}{{usuario}}{% endblock %}
+
+{% block centro %}{{centro}}{% endblock %}
+
+{% block lista_roles %}
+<a href="/horario">Coordinador(a)</a>
+<a href="/horario">Jefe(a) de Departamento</a>
+{% endblock %}
+
 {% block op_barra %}
 <li class="active">
-    <a href="#"><i class="icon-home"></i> Principal</a>
+    <a href="/profile"><i class="icon-home"></i> Principal</a>
 </li>
 <li>
-    <a data-toggle="modal" href="#agregarMateria"><i class="icon-pencil" id="Crear"></i> Editar Propuesta</a>
-</li>
-<li>
-    <a href="Perfil_Prof.html"><i class="icon-user"></i> Información de perfil</a>
+    <a href="/profile/editar"><i class="icon-user"></i> Información de perfil</a>
 </li>
 {% endblock %}
 
 {% block contenido_vista %}
 <div class="container">
-    <table class="table">
-        <tbody>
+    <div class="span9">
+    <table class="table" id="propuestam">
+        <thead>
         <tr>
             <td>
                 Horario
@@ -25,6 +34,8 @@
                 Materia
             </td>
         </tr>
+    </thead>
+        <tbody>
         <tr>
              {% for materia in listaHorarios %}
             	<td> {{ materia}}</td>
@@ -33,6 +44,8 @@
           </tr>
         </tbody>
     </table>
+    </div>
+    <div class="span9">
     {% if info %}
         <div class="alert alert-success" style="width:70%" >
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -51,7 +64,7 @@
     </button>
     <br>
     <br>
-    <button type="submit" class="btn btn-warning" id="ep">
+    <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep">
         Enviar Propuesta
     </button>
     <br>
@@ -72,7 +85,7 @@
             <div class="bar" style="width: 100%;"></div>
         </div>
         <form action="/profile" id="agregarMat" method="POST">{% csrf_token %}
-            <div class="control-group">
+            <div id="cg" class="control-group">
                 <input name="cantidad_hor" id="cantidad_hor" hidden="true" value="0"/>
                 {{form}}
             </div>
@@ -83,10 +96,51 @@
         <input id="enviar_am" form="agregarMat" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
     </div>
 </div>
+
+<div id="confir_ep" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            ×
+        </button>
+        <h3>
+            Enviar propuesta
+        </h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            ¿Está seguro que desea enviar la propuesta al Coordinador de Centro?
+    </div>
+    <div class="modal-footer">
+
+        <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+
+        <a button="" class="btn btn-primary"  href="/logout">Enviar</a>
+
+    </div>
+</div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{% static "js/script_profesor.js" %}">
 </script>
+{% endblock %}
+
+{% block estilo %}
+<style>
+th{
+    width: 5%;
+    height: 25px;
+    color: white;
+    background-color: #006dcc;
+    background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+    background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+    background-image:-o-linear-gradient(top, #0088cc, #0044cc);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#0088cc', EndColorStr='#0044cc');
+    border: 1px solid #E0E0E0;
+    text-align: right;
+    vertical-align: middle!important;
+}
+</style>
 {% endblock %}
 

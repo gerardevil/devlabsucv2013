@@ -1,0 +1,67 @@
+
+/*
+Esquema nano(pane(slider()))(content)
+*/
+.nano {
+  float: left;
+  position : relative;
+  background: transparent; 
+  min-width: 100%; 
+  min-height: 200px; 
+  overflow : hidden;
+}
+
+/*Contenido que es mostrado usando el scroll */
+.nano .content {
+  padding: 10px;
+  position      : absolute;
+  overflow      : scroll;
+  overflow-x    : hidden;
+  top           : 0;
+  right         : 0;
+  bottom        : 0;
+  left          : 0;
+}
+
+.nano .content::-webkit-scrollbar {
+  visibility: hidden;
+}
+.has-scrollbar .content::-webkit-scrollbar {
+  visibility: visible;
+}
+
+/*nano > pane : controla el fondo y posicion de la capa contenedora 
+del slider -> pane*/
+.nano  .pane {
+  background : #BFDFFF;
+  position   : absolute;
+  width      : 9px;
+  right      : 0;
+  top        : 0;
+  bottom     : 0;
+  visibility : hidden\9; 
+  opacity    : .01; 
+  -webkit-transition    : .2s;
+  -moz-transition       : .2s;
+  -o-transition         : .2s;
+  transition            : .2s;
+  -moz-border-radius    : 5px;
+  -webkit-border-radius : 5px;  
+  border-radius         : 5px;
+}
+
+/* efecto hover sobre el pane*/
+.nano:hover .pane{
+  visibility : visible\9; 
+  opacity    : 0.99;
+}
+
+/*nano > pane > slider : controla el estilo y posicion del slider*/
+.nano  .pane .slider {
+  background: #360EF5;
+  position              : relative;
+  margin                : 0 1px;
+  -moz-border-radius    : 3px;
+  -webkit-border-radius : 3px;  
+  border-radius         : 3px;
+}
