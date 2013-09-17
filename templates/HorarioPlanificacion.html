@@ -8,7 +8,7 @@
 
 <div id="schedule">
 
-<table class="horario table table-hover" id="tablaHorario">
+<table class="horario table" id="tablaHorario">
 		<!--<caption> -->
 			<!--<b>Listado de Materias</b> -->
 		<!--</caption> -->
@@ -26,11 +26,11 @@
 			{% for hora in listaHorarios %}
 			<tr>
 			  <td>{{ hora }}:00 - {{ hora }}:59</td>
-			  <td></td>
-			  <td></td>
-			  <td></td>
-			  <td></td>
-			  <td></td>
+			  <td id="lunes{{ hora }}"></td>
+			  <td id="martes{{ hora }}"></td>
+			  <td id="miercoles{{ hora }}"></td>
+			  <td id="jueves{{ hora }}"></td>
+			  <td id="viernes{{ hora }}"></td>
 			</tr>
 			{% endfor %}
 		</tbody>

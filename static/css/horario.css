@@ -27,6 +27,10 @@
 	border: 1px solid #E0E0E0; 
 }
 
+td.conflicto{
+	background: #F5C1C1; 
+}
+
 .profesores, .materias {
 	width: 100%;
 	text-align: left;
