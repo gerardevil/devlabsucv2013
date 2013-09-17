@@ -48,6 +48,11 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_horario_solicitado').prop('disabled',true)
+    });
+</script>
 <script src="{% static "js/script_profesor.js" %}">
 </script>
 {% endblock %}
