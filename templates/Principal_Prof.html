@@ -23,18 +23,24 @@
 
 {% block contenido_vista %}
 <div class="container">
-    <table class="table">
-        <tbody>
+    <div class="span9">
+    <table class="table" id="propuestam">
+        <thead>
         <tr>
-            <td>
+            <th>
                 Materia
-            </td>
-            <td>
+            </th>
+            <th>
                 Horario
-            </td>
+            </th>
         </tr>
+        </thead>
+        <tbody>
+
         </tbody>
     </table>
+    </div>
+    <div class="span9">
     {% if info %}
         <div class="alert alert-success" style="width:70%" >
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -107,10 +113,29 @@
 
     </div>
 </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{% static "js/script_profesor.js" %}">
 </script>
+{% endblock %}
+
+{% block estilo %}
+<style>
+th{
+    width: 5%;
+    height: 25px;
+    color: white;
+    background-color: #006dcc;
+    background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+    background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+    background-image:-o-linear-gradient(top, #0088cc, #0044cc);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#0088cc', EndColorStr='#0044cc');
+    border: 1px solid #E0E0E0;
+    text-align: right;
+    vertical-align: middle!important;
+}
+</style>
 {% endblock %}
 

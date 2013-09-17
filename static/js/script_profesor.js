@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    var numero_horarios = 0
-
     $("#pg_am").hide()
 
     $( "#id_materia" ).change(function() {
@@ -10,7 +8,6 @@ $(document).ready(function() {
         $(".error_am").remove()
         //$(".agregarMat").prepend('<div id="progressbar"></div>')
         var materia_sel = $("#id_materia option:selected").val()
-        //alert(materia_sel)
         if (materia_sel != ""){
             $.ajax({
                 url : "/horarios_materia",
@@ -21,9 +18,6 @@ $(document).ready(function() {
                     csrfmiddlewaretoken:  document.getElementsByName('csrfmiddlewaretoken')[0].value
                 },
                 success : function(data) {
-//                    $('#result').append( 'Server Response: ' + json.server_response);
-                    //alert(data)
-
                     if(data.length > 0){
                         $("#cg").append('<label class="horarios" for="horario1">Horario:</label><select id="horario1" class="horarios" name="horario1">')
                         for (var i = 0;i < data.length;i++){
@@ -46,7 +40,6 @@ $(document).ready(function() {
             });
         }
         else{
-            //alert("Debe seleccionar una materia")
             $(".horarios").remove()
             $(".horariosl").remove()
             $("#agregarMat_mb").append('<div class="alert alert-error error_am"><button type="button" class="close" data-dismiss="alert">&times;</button>Debe seleccionar una materia</div>')
@@ -60,6 +53,5 @@ $(document).ready(function() {
         $(".error_am").remove()
         $('#id_materia').prop('selectedIndex',0);
         $('#id_aula').prop('selectedIndex',0);
-
     });
 });
