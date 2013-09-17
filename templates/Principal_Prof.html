@@ -24,107 +24,121 @@
 {% block contenido_vista %}
 <div class="container">
     <div class="span9">
-    <table class="table table-hover" id="propuestam">
-        <thead>
-        <tr>
-            <th>
-                Materia
-            </th>
-            <th>
-                Horario
-            </th>
-            <th>
-                Acciones
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for h in listaHorarios %}
-        <tr>
-            <td>{{h.horario_solicitado.materia.materia.nombre}}</td>
-            <td>{{h.dia_semana}} {{h.hora_inicio}} {{h.hora_fin}}</td>
-            <td><a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-edit"></i></a>
-                <a href="/propuesta/borrar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-trash"></i></a>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <table class="table table-hover" id="propuestam">
+            <thead>
+            <tr>
+                <th>
+                    <label class="tablehc" >Materia</label>
+                </th>
+                <th>
+                    <label class="tablehc" >Horario</label>
+                </th>
+                <th>
+                    <label class="tablehc" >Estado</label>
+                </th>
+                <th>
+                    <label class="tablehc" >Acciones</label>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for h in listaHorarios %}
+            <tr>
+                <td>{{h.horario_solicitado.materia.materia.nombre}}</td>
+                <td>{{h.dia_semana}} {{h.hora_inicio}}-{{h.hora_fin}}</td>
+                <td>
+                    {% if h.horario_solicitado.estatus == 'A' %}
+                    <span class="label label-success">Aceptada</span>
+                    {% else %}
+                    {% if h.horario_solicitado.estatus == 'R' %}
+                    <span class="label label-important">Rechazada</span>
+                    {% else %}
+                    <span class="label label-info">No enviada</span>
+                    {% endif %}
+                    {% endif %}
+                </td>
+                <td><a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-edit"></i></a>
+                    <a href="/propuesta/borrar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-trash"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
     <div class="span9">
-    {% if info %}
+        {% if info %}
         <div class="alert alert-success" style="width:70%" >
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             {{info}}
         </div>
-    {% endif %}
-    {% if error %}
-    <div class="alert alert-error" style="width:70%" >
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{error}}
-    </div>
-    {% endif %}
-
-    <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria">
-        Agregar materia
-    </button>
-    <br>
-    <br>
-    <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep">
-        Enviar Propuesta
-    </button>
-    <br>
-    <br>
-</div>
-
-<div id="agregarMateria" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-            ×
-        </button>
-        <h3>
-            Agregar materia a la propuesta
-        </h3>
-    </div>
-    <div id="agregarMat_mb" class="modal-body">
-        <div id="pg_am" class="progress progress-striped active">
-            <div class="bar" style="width: 100%;"></div>
+        {% endif %}
+        {% if error %}
+        <div class="alert alert-error" style="width:70%" >
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{error}}
         </div>
-        <form action="/profile" id="agregarMat" method="POST">{% csrf_token %}
-            <div id="cg" class="control-group">
-                <input name="cantidad_hor" id="cantidad_hor" hidden="true" />
-                {{form}}
-            </div>
-        </form>
-        <a id="agregarHor" class="btn btn-mini"><i class="icon-plus"></i>Agregar otro horario</a>
-    </div>
-    <div class="modal-footer">
-        <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
-        <input id="enviar_am" form="agregarMat" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
-    </div>
-</div>
+        {% endif %}
 
-<div id="confir_ep" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-            ×
+        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria">
+            Agregar materia
         </button>
-        <h3>
-            Enviar propuesta
-        </h3>
+        <br>
+        <br>
+        <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep">
+            Enviar Propuesta
+        </button>
+        <br>
+        <br>
     </div>
-    <div class="modal-body">
-        <p>
-            ¿Está seguro que desea enviar la propuesta al Coordinador de Centro?
+
+    <div id="agregarMateria" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3>
+                Agregar materia a la propuesta
+            </h3>
+        </div>
+        <div id="agregarMat_mb" class="modal-body">
+            <div id="pg_am" class="progress progress-striped active">
+                <div class="bar" style="width: 100%;"></div>
+            </div>
+            <form action="/profile" id="agregarMat" method="POST">{% csrf_token %}
+                <div id="cg" class="control-group">
+                    <input name="cantidad_hor" id="cantidad_hor" hidden="true" />
+                    {{form}}
+                </div>
+            </form>
+            <a id="agregarHor" class="btn btn-mini"><i class="icon-plus"></i>Agregar otro horario</a>
+        </div>
+        <div class="modal-footer">
+            <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
+            <input id="enviar_am" form="agregarMat" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
+        </div>
     </div>
-    <div class="modal-footer">
 
-        <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+    <div id="confir_ep" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3>
+                Enviar propuesta
+            </h3>
+        </div>
+        <div class="modal-body">
+            <p>
+                ¿Está seguro que desea enviar la propuesta al Coordinador de Centro?
+        </div>
+        <div class="modal-footer">
 
-        <a button="" class="btn btn-primary"  href="#">Enviar</a>
+            <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
 
+            <a button="" class="btn btn-primary"  href="#">Enviar</a>
+
+        </div>
     </div>
-</div>
 </div>
 
 <style>
@@ -138,17 +152,27 @@
         background-image:-o-linear-gradient(top, #0088cc, #0044cc);
         filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#0088cc', EndColorStr='#0044cc');
         border: 1px solid #E0E0E0;
-        text-align: right;
+        text-align: center;
         vertical-align: middle!important;
+    }
+
+    .statusl{
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        vertical-align: middle!important;
+
+    }
+
+    .tablehc{
+        text-align: center;
+        vertical-align: middle!important;
+        font-weight: bold;
     }
 </style>
 {% endblock %}
-
 
 {% block scripts %}
 <script src="{% static "js/script_profesor.js" %}">
 </script>
 {% endblock %}
-
-
-

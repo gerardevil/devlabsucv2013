@@ -65,9 +65,9 @@ def logoutUser(request):
     logout(request)
     return render_to_response('Home.html')
 
-
+#Profesor
 @login_required
-def profile(request):	
+def profile(request):
     try:
         u = Usuario.objects.get(usuario_id=request.user)
         usr = u.toString()
@@ -86,7 +86,7 @@ def profile(request):
                     ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
                     ms.save()
                 else:
-                    ms = MateriaSolicitada.objects.get(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+                    ms = MateriaSolicitada.objects.get(usuario=u,materia=form.cleaned_data['materia'])
                 for ind in range(1,cant_hor+1):
                     cad = 'horario'+str(ind)
                     h = HorarioMateria.objects.get(pk=request.POST[cad])
@@ -110,11 +110,41 @@ def borrar_propuesta(request,key):
     return HttpResponseRedirect('/profile')
 
 @login_required
+def editar_propuesta(request,key):
+    try:
+        u = Usuario.objects.get(usuario_id=request.user)
+        usr = u.toString()
+        centro = u.centro.toString()
+        model = get_model('principal','horariosolicitado')
+        o = model.objects.get(pk=key)
+        if request.method == 'POST':
+            form = m.generarFormulario(request,'horariosolicitado', o, 1)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect('/profile')
+        else:
+            form = m.generarFormulario(request,'horariosolicitado', o, 2)
+        return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro},context_instance=RequestContext(request))
+    except Warning as w:
+        return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__},context_instance=RequestContext(request))
+
+@login_required
 def editar_profesor(request):
     u = Usuario.objects.get(usuario_id=request.user)
     usr = u.toString()
     centro = u.centro.toString()
     return render_to_response('Perfil_Prof.html',{'usuario':usr,'centro':centro},context_instance=RequestContext(request))
+
+@login_required
+def horarios_materia(request):
+    if request.is_ajax():
+        key = request.POST['mat_sel']
+        mat = MateriaOfertada.objects.get(pk=int(key)).materia
+        lista_horarios = HorarioMateria.objects.filter(materia=mat)
+        lista_horarios_json = [h.toJson() for h in lista_horarios]
+        return HttpResponse(json.dumps(lista_horarios_json), mimetype='application/javascript')
+    else:
+        return HttpResponse('Fallo en AJAX')
 
 # Admin principal views :
 
@@ -189,19 +219,6 @@ def leer(request,modelo,key):
     return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
 
 #END CRUD Generico
-
-#Profesor
-@login_required
-def horarios_materia(request):
-    if request.is_ajax():
-        key = request.POST['mat_sel']
-        mat = MateriaOfertada.objects.get(pk=int(key)).materia
-        lista_horarios = HorarioMateria.objects.filter(materia=mat)
-        lista_horarios_json = [h.toJson() for h in lista_horarios]
-        return HttpResponse(json.dumps(lista_horarios_json), mimetype='application/javascript')
-    else:
-        return HttpResponse('Fallo en AJAX')
-
 
 @login_required
 def horario(request):

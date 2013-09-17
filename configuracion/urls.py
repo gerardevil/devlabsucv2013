@@ -28,8 +28,8 @@ urlpatterns = patterns('',
     #Agregar Materia
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
     url(r'^horarios_materia$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
-    url(r'^propuesta/borrar/(?P<key>\d+)$', 'principal.views.borrar_propuesta', name='horarios'), #Devuelve los horarios de una materia
-
+    url(r'^propuesta/borrar/(?P<key>\d+)$', 'principal.views.borrar_propuesta', name='bpropuesta'), #Borra un horario de la propuesta
+    url(r'^propuesta/editar/(?P<key>\d+)$', 'principal.views.editar_propuesta', name='epropuesta'), #Edita un horario de la propuesta
 
     #URLs para templates sin backend
     url(r'^profile/editar$', 'principal.views.editar_profesor', name='horarios'),
