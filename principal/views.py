@@ -104,6 +104,10 @@ def profile(request):
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'usuario':usr,'centro':centro,'form' : form,'error':w.__doc__ , 'listaHorarios' : horariosS} ,context_instance=RequestContext(request))
 
+@login_required
+def borrar_propuesta(request,key):
+    m.borrar('horario solicitado',key)
+    return HttpResponseRedirect('/profile')
 
 @login_required
 def editar_profesor(request):
