@@ -27,21 +27,20 @@
     <table class="table" id="propuestam">
         <thead>
         <tr>
-            <td>
-                Horario
-            </td>
-            <td>
+            <th>
                 Materia
-            </td>
+            </th>
+            <th>
+                Horario
+            </th>
         </tr>
-    </thead>
+        </thead>
         <tbody>
+        {% for h in listaHorarios %}
         <tr>
-             {% for materia in listaHorarios %}
-            	<td> {{ materia}}</td>
-            	{# <td> {{ materia.dia_semana  }}</td>	 #}
-             {% endfor %}
-          </tr>
+            <td>{{h.horario_solicitado.materia.materia.nombre}}</td><td>{{h.dia_semana}} {{h.hora_inicio}} {{h.hora_fin}}</td>
+        </tr>
+        {% endfor %}
         </tbody>
     </table>
     </div>
@@ -126,7 +125,6 @@
 </script>
 {% endblock %}
 
-{% block estilo %}
 <style>
 th{
     width: 5%;
@@ -142,5 +140,4 @@ th{
     vertical-align: middle!important;
 }
 </style>
-{% endblock %}
 
