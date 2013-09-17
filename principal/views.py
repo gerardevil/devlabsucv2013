@@ -98,6 +98,13 @@ def profile(request):
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'usuario':usr,'centro':centro,'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
 
+@login_required
+def editar_profesor(request):
+    u = Usuario.objects.get(usuario_id=request.user)
+    usr = u.toString()
+    centro = u.centro.toString()
+    return render_to_response('Perfil_Prof.html',{'usuario':usr,'centro':centro},context_instance=RequestContext(request))
+
 # Admin principal views :
 
 @login_required
@@ -162,7 +169,7 @@ def editar(request,modelo,key):
 		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
 	except Warning as w:
 		return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__},context_instance=RequestContext(request))
-	
+
 @login_required
 @validateInputCrudData	
 def leer(request,modelo,key):
