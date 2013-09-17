@@ -53,7 +53,7 @@
     </button>
     <br>
     <br>
-    <button type="submit" class="btn btn-warning" id="ep">
+    <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep">
         Enviar Propuesta
     </button>
     <br>
@@ -83,6 +83,28 @@
     <div class="modal-footer">
         <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
         <input id="enviar_am" form="agregarMat" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
+    </div>
+</div>
+
+<div id="confir_ep" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            ×
+        </button>
+        <h3>
+            Enviar propuesta
+        </h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            ¿Está seguro que desea enviar la propuesta al Coordinador de Centro?
+    </div>
+    <div class="modal-footer">
+
+        <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+
+        <a button="" class="btn btn-primary"  href="/logout">Enviar</a>
+
     </div>
 </div>
 {% endblock %}
