@@ -67,11 +67,41 @@ def logoutUser(request):
 
 
 @login_required
-def profile(request):
+def profile(request):	
+
     try:
+    #materiasS = MateriaSolicitada.objects.all().filter(usuario=request.user).order_by("id")
+    #horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado" '''Seleccionamos las Materias Solicitadas por usuarios del centro actual '''		
+	materiasS = MateriaSolicitada.objects.all().filter(usuario=request.user).order_by("id")
+	'''Seleccionamos los horarios solicitados para estas Materias '''
+	horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
+	jsontmp = {}
+	counter = 0
+	for h in horariosS:
+		jsontmp.update(
+		{
+		counter:	{
+		 'materia_id': h.horario_solicitado.materia.materia.pk,
+		 'materia_solicitada':h.pk,
+		 'horario_solicitado':h.horario_solicitado.pk,
+		 'username':h.horario_solicitado.usuario.usuario_id.username,
+		 'nombre':h.horario_solicitado.materia.materia.nombre,
+		 'dia_semana':h.dia_semana,
+		 'hora_inicio':convertDatetimeToString(h.hora_inicio),
+		 'hora_fin':convertDatetimeToString(h.hora_fin)}
+		}
+		)
+		counter +=1		
+				
+	jsontmp.update({'length':counter})
+	print "///////"
+	print jsontmp
+	print "///////"
+
         if request.method == 'POST':
             form = AgregarMateriaForm(request.POST)
             cant_hor = int(request.POST['cantidad_hor'])
+
             if form.is_valid() and cant_hor:
                 u = Usuario.objects.get(usuario_id=request.user)
                 cse = MateriaSolicitada.objects.filter(estatus='R',usuario=u,materia=form.cleaned_data['materia']).count()
@@ -86,14 +116,14 @@ def profile(request):
                     HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
 
                 form = AgregarMateriaForm()
-                return render_to_response('Principal_Prof.html' ,{'form':form,'info':'La materia ha sido agregada de manera exitosa'},context_instance=RequestContext(request))
+                return render_to_response('Principal_Prof.html' ,{'form':form,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : json.dumps(jsontmp)},context_instance=RequestContext(request))
             else:
-                return render_to_response('Principal_Prof.html' ,{'form' : form,'error':'El formulario no es valido :('},context_instance=RequestContext(request))
+                return render_to_response('Principal_Prof.html' ,{'form' : form,'error':'El formulario no es valido :(', 'listaHorarios' : json.dumps(jsontmp)},context_instance=RequestContext(request))
         else:
             form = AgregarMateriaForm()
-        return render_to_response('Principal_Prof.html' ,{'form' : form},context_instance=RequestContext(request))
+        return render_to_response('Principal_Prof.html' ,{'form' : form, 'listaHorarios' : json.dumps(jsontmp) },context_instance=RequestContext(request))
     except Warning as w:
-        return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
+        return render_to_response('Principal_Prof.html' ,{'form' : form,'error':w.__doc__ , 'listaHorarios' : json.dumps(jsontmp)} ,context_instance=RequestContext(request))
 
 # Admin principal views :
 

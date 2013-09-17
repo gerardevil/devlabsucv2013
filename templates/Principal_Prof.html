@@ -19,12 +19,18 @@
         <tbody>
         <tr>
             <td>
-                Materia
-            </td>
-            <td>
                 Horario
             </td>
+            <td>
+                Materia
+            </td>
         </tr>
+        <tr>
+             {% for materia in listaHorarios %}
+            	<td> {{ materia}}</td>
+            	{# <td> {{ materia.dia_semana  }}</td>	 #}
+             {% endfor %}
+          </tr>
         </tbody>
     </table>
     {% if info %}
