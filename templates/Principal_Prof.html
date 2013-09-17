@@ -1,6 +1,12 @@
 {% extends "Plantilla.html" %}
 {% load staticfiles %}
 
+{% block rol%}Profesor(a):{% endblock %}
+
+{% block nombre %}{{usuario}}{% endblock %}
+
+{% block centro %}{{centro}}{% endblock %}
+
 {% block op_barra %}
 <li class="active">
     <a href="#"><i class="icon-home"></i> Principal</a>

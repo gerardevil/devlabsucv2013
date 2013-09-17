@@ -6,13 +6,18 @@
     		<div class="navbar-inner">
     			<div class="container">
     				<div class="container-fluid pull-left">
+                        <label><h4>
+                            {% block rol %}
+                            {% endblock %}
+                            {% block nombre %}
+                            {% endblock %}
+                        </h4>
+                        </label>
     					<label>
-    						{% block rol %}
-							{% endblock %}
-						</label>
-    					<label>
+                            <h5>
     						{% block centro %}
 							{% endblock %}
+                            </h5>
     					</label> 
     				</div>
     				<div class="container-fluid pull-right">
