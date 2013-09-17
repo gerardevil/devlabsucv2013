@@ -35,7 +35,7 @@ $(document).ready(function() {
                             $(".horarios").append('<option value="'+ d.valor+'">'+d.dia_semana+" "+d.hora_inicio+"-"+ d.hora_fin+'</option>')
                         }
                         $("#agregarMat").append('</select>')
-                        $("#agregarMat").append('<button type="button" id="agregarHor" onclick=addHorario(this.data)> + </button></td></tr>')
+                        $("#agregarMat").append('<button type="button" id="agregarHor" onclick=addHorario(data)> + </button></td></tr>')
                         $('#cantidad_hor').prop('value',1);
                         $("#enviar_am").prop('disabled',false)
                     }else{
