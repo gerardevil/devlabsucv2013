@@ -220,9 +220,19 @@ def leer(request,modelo,key):
 
 #END CRUD Generico
 
+#Profesor
 @login_required
 def horario(request):
     return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+
+def editarPerfil(request):
+    form=CustomUserForm(request.POST)
+    return render_to_response('editarPerfil_Prof.html', {'form':form},context_instance=RequestContext(request))    
+    #return render_to_response('editarPerfil_Prof.html',context_instance=RequestContext(request))    
+
+def guardarPerfil(request):
+    #save()
+    return HttpResponseRedirect('/profile')
 
 @login_required
 @coordinatorRequired

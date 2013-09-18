@@ -17,7 +17,7 @@
     <a href="/profile"><i class="icon-home"></i> Principal</a>
 </li>
 <li>
-    <a href="/profile/editar"><i class="icon-user"></i> Información de perfil</a>
+    <a data-toggle="modal" href="#mostrarPerfil"><i class="icon-user"></i> Información de perfil</a>
 </li>
 {% endblock %}
 
@@ -115,6 +115,37 @@
         <div class="modal-footer">
             <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
             <input id="enviar_am" form="agregarMat" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
+        </div>
+    </div>
+
+    <div id="mostrarPerfil" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3> Datos de Perfil
+            </h3>
+        </div>
+        <div id="mostrarPerfil_mb" class="modal-body">
+            
+            Telefono Celular:
+            <br>
+            Telefono Oficina:
+            <br>
+            Telefono Casa:
+            <br>
+            Fecha ingreso:
+            <br>
+            Direccion:
+            <br>
+        </div>
+        <div class="modal-footer">
+           <!-- <button class="btn btn-primary" href="/perfil/editar">
+            Editar Perfil
+            </button>
+            -->
+            <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="" >Cancelar</a>
+            <a button="" class="btn btn-primary" id="edit" type="" class="btn" href="perfil/editar" >Editar perfil</a>
         </div>
     </div>
 

@@ -8,6 +8,8 @@ urlpatterns = patterns('',
     url(r'^login$', 'principal.views.loginUser', name='login'),
     url(r'^logout$', 'principal.views.logoutUser', name='log'),
     url(r'^profile$', 'principal.views.profile', name='profile'),
+    url(r'^perfil/editar$', 'principal.views.editarPerfil', name='editarPerfil'),
+    url(r'^guardarPerfil$', 'principal.views.guardarPerfil', name='guardarPerfil'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 

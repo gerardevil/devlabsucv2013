@@ -1,0 +1,19 @@
+{% extends "Plantilla.html" %}
+
+{% block op_barra %}
+{% endblock %}
+
+{% block contenido_vista %}
+	<h3>Editar Perfil</h3>
+	<br>
+	<br>
+    <form action="/guardarPerfil" id="editarPerfil" method="POST">{% csrf_token %}
+		
+		<div class="control-group">
+			{{form}}
+		</div>	
+		<a button="" class="btn btn-primary" id="cancelEdit" type="" class="btn" href="/profile" >Cancelar</a>			
+		<input id="guardarPerfil_am" form="editarPerfil" class="btn btn-primary" type="submit"  value="Guardar Perfil" />
+	</form>
+{% endblock %}	
+
