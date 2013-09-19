@@ -28,6 +28,9 @@ urlpatterns = patterns('',
     url(r'^schedulexrequest/(?P<rol>[^/]+)$', 'principal.views.getScheduleByRequest', name='schedulexrequest'),
     url(r'^subjectxrequest$', 'principal.views.getSubjectByRequest', name='subjectxrequest'),
     url(r'^userxcenter$', 'principal.views.getUserByCenter', name='userxcenter'),
+   
+    url(r'^editarperfil/(?P<rol>[^/]+)/(?P<key>\d+)$', 'principal.views.editarperfil', name='editProfile'),
+    url(r'^export$', 'principal.views.export', name='export'),
     
     #Agregar Materia
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia

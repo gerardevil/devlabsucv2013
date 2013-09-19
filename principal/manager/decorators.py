@@ -25,6 +25,17 @@ def validateInputCrudData(view):
 			raise Http404
 	return wrapper
 
+def validateInputCrudDataEdit(view):
+	def wrapper(request, rol, key):
+		if rol in ['p','cc','jdd']:
+			if key in map((lambda row: str(row.pk)),Usuario.objects.all()):
+				return view(request, rol, key)
+			else:
+					raise Http404
+		else:
+			raise Http404
+	return wrapper
+
 
 def coordinatorRequired(view):
 	def wrapper(request,rol=None):

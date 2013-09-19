@@ -1,100 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-  
-  <!--Head -->
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"    rel="stylesheet">  
+{% extends "Plantilla.html" %}
+{% load staticfiles %}
 
-    <link href="css/accordion.css" rel="stylesheet"></link >
-  </head>
-  <!--Head -->
- 
- <!--Body--> 
-<body>
+{% block rol%}Jefe(a) de Departamento:{% endblock %}
 
-  <!--Container-->
-  <div class="container">
+{% block nombre %}{{usuario}}{% endblock %}
 
-      <!-- Barra Superior-->
-      <div class="navbar-fixed-top">
-        <div class="navbar-inner">
-          <div class="container">
+{% block centro %}{{centro}}{% endblock %}
 
-            <div class="container-fluid pull-left">
-              <label>
-                Jefe de Departamento: Nombre Apellido
-              </label>
-              <label>
-                Nombre de centro
-              </label>
-            </div>
+{% block lista_roles %}
+	<a href="/profile">Profesor(a)</a>
+	<a href="/profilecc">Coordinador(a)</a>
+{% endblock %}
+	
+{% block op_barra %}    
 
-            <div class="container-fluid pull-right">
-              <div class="btn-group">
-                <button class="btn dropdown-toggle btn-primary" data-toggle="dropdown">
-                  Opciones
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a href="#">
-                      Cambiar Rol
-                    </a>
-                  </li>
-                  <li class="divider"></li>
-                  <li>
-                    <a data-toggle="modal" href="#MyModal">
-                      Cerrar sesión
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <!-- /btn-group -->
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Barra Superior-->
-      
-      <div class="container" style="margin-top: 150px;">
-        <div class="container-fluid">
-          
-          <!--Span2 . Menu Izquierdo-->
-          <div class="span2">
-          
-            <ul class="nav nav-pills nav-stacked">
+<li >
+<a href="/profilejdd"><i class="icon-home">
+  </i> Principal</a>
+</li>
 
-              <li >
-                <a href="#"><i class="icon-home">
-                  </i> Principal</a>
-              </li>
+<li>
+<a href="/editarperfil/jdd/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
+</li>
 
-              <li>
-                <a href=""><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
-              </li>
+<li>
+<a href="/horario/jdd"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a>
+</li>
 
-              <li>
-                <a href="#"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a>
-              </li>
+<li class="active">
+<a href="/export"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a>
+</li>       
 
-              <li class="active">
-                <a href="#"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a>
-              </li>
+{% endblock %}
+	
 
-            </ul>          
-          </div>
-          <!--Span2-->
-
-          
-          <div class="span3" style="padding-left:100px; width:60%;">
-
-            <span class="tittleLabel">Planificaciones Disponibles</span>
-
+{% block contenido_vista %}
+<link rel="stylesheet" href="{% static "css/accordion.css" %}" type="text/css" /> 
+        <span style="margin-right:50%;"><h4>Planificaciones Disponibles</h4></span>
           </br></br>
             <table class="table table-hover">          
               <thead>
@@ -105,7 +47,8 @@
                   <th id="color">
                     Creador
                   </th>
-                  <th>
+                  <th id="color">
+                    Acciones
                   </th>
                 </tr>
               </thead>
@@ -200,8 +143,9 @@
                   </td>
                 </tr>
               </tbody>
-            </table>          
-
+            </table>    
+ 
+			
           <div id="indices" class="pagination pagination-centered">
               <ul>
                 <li>
@@ -231,13 +175,6 @@
                 </li>
               </ul>
             </div>
-          </div>
-          <!--container-fliud-->
-      </div>
-      <!--container-->
-  </div>
-
-
         <!--Modal Opciones-->
         <div id="MyModal" class="modal hide fade">
           <div class="modal-header">
@@ -262,10 +199,10 @@
           </a>
           </div>
         </div>
-        <!--Modal Opciones-->
+{% endblock %}
+        
 
-      <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-      <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-  </body>
- 
-</html>
+{% block scripts %}
+      <script src="{% static "js/toggle_email_scripts.js" %}"></script>  
+{% endblock %}
+  

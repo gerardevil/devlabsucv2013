@@ -256,19 +256,48 @@ def listarm(request):
 @coordinatorRequired
 def profilecc(request):
     usr = Usuario.objects.get(usuario_id = request.user.pk)
-    return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre})
+    return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
 
 @login_required
 @bossRequired
 def profilejdd(request):
     usr = Usuario.objects.get(usuario_id = request.user.pk)
-    return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre})
+    return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
 
 @login_required
 @coordinatorOrbossRequired
 def horario(request,rol):
     usr = Usuario.objects.get(usuario_id = request.user.pk)
-    return render_to_response('HorarioPlanificacion.html',{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+    return render_to_response('HorarioPlanificacion.html',{'pk':usr.pk,'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+
+@login_required
+@bossRequired
+def export(request):
+    usr = Usuario.objects.get(usuario_id = request.user.pk)
+    return render_to_response("JD_exportar.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
+
+@login_required
+@validateInputCrudDataEdit
+def editarperfil(request,rol,key):
+    try:
+        o = Usuario.objects.get(pk=key)
+        if request.method == 'POST':
+            form = m.generarFormulario(request, 'usuario', o, 1)
+            if form.is_valid():
+                form.save(o.usuario_id.username)
+                if rol =='jdd':
+                    return HttpResponseRedirect('/profilejdd')
+                elif rol=='cc':
+                    return HttpResponseRedirect('/profilecc')
+                elif rol == 'p':
+                    return HttpResponseRedirect('/profile')
+                else:
+                    raise Http404
+        else:
+            form = m.generarFormulario(request, 'usuario', o, 2)
+        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form, 'rol':rol},context_instance=RequestContext(request))
+    except Warning as w:
+        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'error':w.__doc__},context_instance=RequestContext(request))
 
 @login_required
 @coordinatorOrbossRequired
