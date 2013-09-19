@@ -115,15 +115,21 @@ def editar_propuesta(request,key):
         u = Usuario.objects.get(usuario_id=request.user)
         usr = u.toString()
         centro = u.centro.toString()
-        model = get_model('principal','horariosolicitado')
-        o = model.objects.get(pk=key)
+        hs = HorarioSolicitado.objects.get(pk=key)
+        tipo_mat = hs.horario_solicitado.materia.materia.tipo_materia
         if request.method == 'POST':
-            form = m.generarFormulario(request,'horariosolicitado', o, 1)
+            if tipo_mat == 'Electiva':
+                form = m.generarFormulario(request,'horariosolicitado', hs, 1)
+            else:
+                form = EditarMateria(u)
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect('/profile')
         else:
-            form = m.generarFormulario(request,'horariosolicitado', o, 2)
+            if tipo_mat == 'Electiva':
+                form = m.generarFormulario(request,'horariosolicitado', hs, 2)
+            else:
+                form = EditarMateria(u)
         return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__},context_instance=RequestContext(request))

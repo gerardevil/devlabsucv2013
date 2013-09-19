@@ -82,9 +82,17 @@ class AgregarMateriaForm(forms.Form):
     aula = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
     materia = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects)
 
+class EditarMateria(forms.Form):
+    dia_semana = forms.ChoiceField(error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
+    hora_inicio = forms.TimeField
+    hora_fin = forms.TimeField
+    materia = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaSolicitada.objects.all())
 
+    def __init__(self,ukey):
+        self.materia = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaSolicitada.objects.filter(usuario=ukey))
 
-
+    def save(self):
+        HorarioSolicitado.objects.create(dia_semana=dia_semana,hora_inicio=hora_inicio,hora_fin=hora_fin,materia=materia)
 
 
 def get_object_form( type_id ):

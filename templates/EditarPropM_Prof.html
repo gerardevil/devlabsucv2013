@@ -24,6 +24,7 @@
 {% block contenido_vista %}
 <div class="container">
     <div class="span9">
+        <h3>Editar horario solicitado</h3>
         <form id="editarMat" method="POST">{% csrf_token %}
             {{form}}
         </form>
@@ -50,7 +51,12 @@
 {% block scripts %}
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#id_horario_solicitado').prop('disabled',true)
+        $('#id_horario_solicitado').prev().hide()
+        $('#id_horario_solicitado').hide()
+        var valor = $('#id_horario_solicitado option:selected').text()
+        $("#editarMat").before('<h4>'+valor+':</h4><br>')
+//        $('#id_horario_solicitado option[value='+valor+']').attr("selected",true);
+
     });
 </script>
 <script src="{% static "js/script_profesor.js" %}">
