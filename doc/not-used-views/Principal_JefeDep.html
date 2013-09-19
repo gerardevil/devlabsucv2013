@@ -1,0 +1,128 @@
+{% extends "Plantilla.html" %}
+
+
+{% block op_barra %}
+	<li class="active">
+		<a href="#"><i class="icon-home"></i> Principal</a>
+	</li>
+	<li>
+		<a href="EditarPlan_JefeDep.html"><i class="icon-file" id="Crear"></i> Nueva Planificación</a>
+	</li>
+	<li>
+		<a href="EditarPlan_JefeDep.html"><i class="icon-pencil" id="Crear"></i> Editar Planificación Actual</a>
+	</li>
+	<li>
+		<a href="EnviarMsj_JefeDep.html"><i class="icon-envelope"></i> Enviar Mensaje</a>
+	</li>
+	<li>
+		<a href="Perfil_JefeDep.html"><i class="icon-user"></i> Información de perfil</a>
+	</li>
+{% endblock %}
+
+{% block contenido_vista %}
+	<table class="table table-hover">
+		<caption>
+			<b>Planificaciones de semestres anteriores</b>
+		</caption>
+		<thead>
+			<tr>
+				<th id="color">
+					Semestre
+				</th>
+				<th id="color">
+					Creador
+				</th>
+				<th>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					Planificación docente I-2013
+				</td>
+				<td>
+					Nombre Apellido
+				</td>
+				<td>
+					<button id="exportar" type="submit" class="btn btn-mini" style="margin-left:50px">
+						<i class="icon-download-alt" id="descargar"></i>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Planificación docente II-2012
+				</td>
+				<td>
+					Nombre Apellido
+				</td>
+				<td>
+					<button id="exportar" type="submit" class="btn btn-mini" style="margin-left:50px">
+						<i class="icon-download-alt" id="descargar"></i>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Planificación docente I-2012
+				</td>
+				<td>
+					Nombre Apellido
+				</td>
+				<td>
+					<button id="exportar" type="submit" class="btn btn-mini" style="margin-left:50px">
+						<i class="icon-download-alt" id="descargar"></i>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Planificación docente II-2011
+				</td>
+				<td>
+					Nombre Apellido
+				</td>
+				<td>
+					<button id="exportar" type="submit" class="btn btn-mini" style="margin-left:50px">
+						<i class="icon-download-alt" id="descargar"></i>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Planificación docente I-2011
+				</td>
+				<td>
+					Nombre Apellido
+				</td>
+				<td>
+					<button id="exportar" type="submit" class="btn btn-mini" style="margin-left:50px">
+						<i class="icon-download-alt" id="descargar"></i>
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div id="indices" class="pagination pagination-centered" style="aling:center">
+		<ul>
+			<li>
+				<a href="#">Prev</a>
+			</li>
+			<li>
+				<a href="#">1</a>
+			</li>
+			<li>
+				<a href="#">2</a>
+			</li>
+			<li>
+				<a href="#">3</a>
+			</li>
+			<li>
+				<a href="#">Next</a>
+			</li>
+		</ul>
+	</div>
+{% endblock %}
+
+    	
