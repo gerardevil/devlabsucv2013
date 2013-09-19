@@ -40,3 +40,34 @@ def coordinatorRequired(view):
 		except Exception, e:
 			raise Http404
 	return wrapper	
+
+def bossRequired(view):
+	def wrapper(request,rol=None):
+		try:
+			roles = UsuarioRol.objects.filter(cedula__usuario_id__pk = request.user.pk).values('rol__rol_id')
+			if [u'JDD'] in map((lambda e : e.values()),roles):
+				if rol is not None:
+					return view(request,rol)
+				else:
+					return view(request)
+			else:				
+				raise Http404
+		except Exception, e:
+			raise Http404
+	return wrapper	
+
+def coordinatorOrbossRequired(view):
+	def wrapper(request,rol=None):
+		try:
+			roles = UsuarioRol.objects.filter(cedula__usuario_id__pk = request.user.pk).values('rol__rol_id')
+			roles_list = map((lambda e : e.values()),roles)
+			if [u'JDD'] in roles_list or [u'CC'] in roles_list:
+				if rol is not None:
+					return view(request,rol)
+				else:
+					return view(request)
+			else:				
+				raise Http404
+		except Exception, e:
+			raise Http404
+	return wrapper

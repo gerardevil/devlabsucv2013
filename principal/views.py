@@ -25,6 +25,10 @@ import os
 #Entity manager class' Unique instance of 
 m = entity.Manager()
 
+###########
+# General #
+###########
+
 def inicio(request):
     return render_to_response('Home.html')
 
@@ -65,7 +69,68 @@ def logoutUser(request):
     logout(request)
     return render_to_response('Home.html')
 
-#Profesor
+# CRUD Generico Begin
+
+@login_required
+@validateInputCrudData
+def insertar(request,modelo):
+    try:
+        '''Metodo generico para insertar'''
+        form = m.generarFormulario(request,modelo,None,0)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/admins/modelos/'+modelo)
+        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
+    except Warning as w:
+        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__} ,context_instance=RequestContext(request))
+
+@login_required
+@validateInputCrudData
+def listar(request,modelo):
+    '''Metodo que lista todos los objetos de un modelo'''
+    return render_to_response('Principal_Admin.html',{'lista': m.listar(str(modelo)), 'opc': 3, 'modelo' : modelo})
+
+@login_required
+@validateInputCrudData
+def borrar(request, modelo, key):
+    '''Metodo generico para borrar'''
+    m.borrar(modelo,key)
+    return HttpResponseRedirect('/admins/modelos/'+modelo)
+
+@login_required
+@validateInputCrudData
+def editar(request,modelo,key):
+    try:
+        '''Metodo generico para editar'''
+        model = get_model('principal',str(modelo).replace(' ',''))
+        o = model.objects.get(pk=key)
+        if request.method == 'POST':
+            form = m.generarFormulario(request, modelo, o, 1)
+            if form.is_valid():
+                if modelo=='usuario':
+                    form.save(o.usuario_id.username)
+                else:
+                    form.save()
+                return HttpResponseRedirect('/admins/modelos/'+modelo)
+        else:
+            form = m.generarFormulario(request, modelo, o, 2)
+        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
+    except Warning as w:
+        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__},context_instance=RequestContext(request))
+
+@login_required
+@validateInputCrudData  
+def leer(request,modelo,key):
+    '''Metodo generico para leer'''
+    objeto = m.leer(modelo,key)
+    return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
+
+#END CRUD Generico
+
+############
+# Profesor #
+############
+
 @login_required
 def profile(request):
     try:
@@ -119,7 +184,7 @@ def editar_propuesta(request,key):
         tipo_mat = hs.horario_solicitado.materia.materia.tipo_materia
         if request.method == 'POST':
             if tipo_mat == 'Electiva':
-                form = m.generarFormulario(request,'horariosolicitado', hs, 1)
+                form = m.generarFormulario(request,'horario solicitado', hs, 1)
             else:
                 form = EditarMateria(u)
             if form.is_valid():
@@ -127,7 +192,7 @@ def editar_propuesta(request,key):
                 return HttpResponseRedirect('/profile')
         else:
             if tipo_mat == 'Electiva':
-                form = m.generarFormulario(request,'horariosolicitado', hs, 2)
+                form = m.generarFormulario(request,'horario solicitado', hs, 2)
             else:
                 form = EditarMateria(u)
         return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro},context_instance=RequestContext(request))
@@ -142,6 +207,21 @@ def editar_profesor(request):
     return render_to_response('Perfil_Prof.html',{'usuario':usr,'centro':centro},context_instance=RequestContext(request))
 
 @login_required
+def horario(request):
+    return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+
+@login_required
+def editarPerfil(request):
+    form=CustomUserForm(request.POST)
+    return render_to_response('editarPerfil_Prof.html', {'form':form},context_instance=RequestContext(request))    
+    #return render_to_response('editarPerfil_Prof.html',context_instance=RequestContext(request))    
+
+@login_required
+def guardarPerfil(request):
+    #save()
+    return HttpResponseRedirect('/profile')
+
+@login_required
 def horarios_materia(request):
     if request.is_ajax():
         key = request.POST['mat_sel']
@@ -152,7 +232,9 @@ def horarios_materia(request):
     else:
         return HttpResponse('Fallo en AJAX')
 
-# Admin principal views :
+#########
+# Admin #
+#########
 
 @login_required
 def admins(request):
@@ -168,80 +250,22 @@ def listarm(request):
         clases_modelos.append({'nombre': mn,'nombre_se': mn.replace(' ','')})
     return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2})
 
-# CRUD Generico Begin
-
-@login_required
-@validateInputCrudData
-def insertar(request,modelo):
-    try:
-        '''Metodo generico para insertar'''
-        form = m.generarFormulario(request,modelo,None,0)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/admins/modelos/'+modelo)
-        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
-    except Warning as w:
-        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__} ,context_instance=RequestContext(request))
-
-@login_required
-@validateInputCrudData
-def listar(request,modelo):
-    '''Metodo que lista todos los objetos de un modelo'''
-    return render_to_response('Principal_Admin.html',{'lista': m.listar(str(modelo)), 'opc': 3, 'modelo' : modelo})
-
-@login_required
-@validateInputCrudData
-def borrar(request, modelo, key):
-    '''Metodo generico para borrar'''
-    m.borrar(modelo,key)
-    return HttpResponseRedirect('/admins/modelos/'+modelo)
-
-@login_required
-@validateInputCrudData
-def editar(request,modelo,key):
-    try:
-        '''Metodo generico para editar'''
-        model = get_model('principal',str(modelo).replace(' ',''))
-        o = model.objects.get(pk=key)
-        if request.method == 'POST':
-            form = m.generarFormulario(request, modelo, o, 1)
-            if form.is_valid():
-                if modelo=='usuario':
-                    form.save(o.usuario_id.username)
-                else:
-                    form.save()
-                return HttpResponseRedirect('/admins/modelos/'+modelo)
-        else:
-            form = m.generarFormulario(request, modelo, o, 2)
-        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo},context_instance=RequestContext(request))
-    except Warning as w:
-        return render_to_response('Insertar.html' ,{'form' : form,'opc':5,'modelo':modelo,'error':w.__doc__},context_instance=RequestContext(request))
-
-@login_required
-@validateInputCrudData	
-def leer(request,modelo,key):
-    '''Metodo generico para leer'''
-    objeto = m.leer(modelo,key)
-    return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
-
-#END CRUD Generico
-
-#Profesor
-@login_required
-def horario(request):
-    return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
-
-def editarPerfil(request):
-    form=CustomUserForm(request.POST)
-    return render_to_response('editarPerfil_Prof.html', {'form':form},context_instance=RequestContext(request))    
-    #return render_to_response('editarPerfil_Prof.html',context_instance=RequestContext(request))    
-
-def guardarPerfil(request):
-    #save()
-    return HttpResponseRedirect('/profile')
+######################################
+# Coordinador y Jefe de Departamento #
+######################################
 
 @login_required
 @coordinatorRequired
+def profilecc(request):
+    return render_to_response("CC_principal.html")
+
+@login_required
+@bossRequired
+def profilejdd(request):
+    return render_to_response("JD_principal.html")
+
+@login_required
+@coordinatorOrbossRequired
 def getScheduleByRequest(request,rol):
     if request :
         rol_pattern = rol.lower()
@@ -299,7 +323,7 @@ def getScheduleByRequest(request,rol):
 
 
 @login_required
-@coordinatorRequired
+@coordinatorOrbossRequired
 def getUserByCenter(request):
     centro = Usuario.objects.get(usuario_id=request.user.pk).centro
     center_user_list = Usuario.objects.filter(centro_id=centro.pk).values('usuario_id')
@@ -322,7 +346,7 @@ def getUserByCenter(request):
 
 
 @login_required
-@coordinatorRequired
+@coordinatorOrbossRequired
 def getSubjectByRequest(request):
 	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
 	center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')

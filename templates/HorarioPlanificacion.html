@@ -1,6 +1,11 @@
 {% extends "Plantilla.html" %}
 {% load staticfiles %}
 
+{% block lista_roles %}
+<a href="/profile">Profesor(a)</a>
+<a href="/profilejdd">Jefe(a) de Departamento</a>
+{% endblock %}
+
 {% block contenido_vista %}
 <link href="{% static "css/horario.css" %}" rel="stylesheet">
 <link href="{% static "css/showLoading.css" %}" rel="stylesheet">
