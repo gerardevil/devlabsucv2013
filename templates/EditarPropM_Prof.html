@@ -8,8 +8,8 @@
 {% block centro %}{{centro}}{% endblock %}
 
 {% block lista_roles %}
-<a href="/profilecc">Coordinador(a)</a>
-<a href="/profilejdd">Jefe(a) de Departamento</a>
+<a href="/horario">Coordinador(a)</a>
+<a href="/horario">Jefe(a) de Departamento</a>
 {% endblock %}
 
 {% block op_barra %}
@@ -25,13 +25,14 @@
 <div class="container">
     <div class="span9">
         <h3>Editar horario solicitado</h3>
+        <h4>{{nombre_mat}}</h4>
         <form id="editarMat" method="POST">{% csrf_token %}
             {{form}}
         </form>
         <a button="" id="cancelar_em" class="btn" href="/profile" >Cancelar</a>
         <input id="enviar_em" form="editarMat" class="btn btn-primary" type="submit" value="Guardar materia" />
     </div>
-    <div class="span10">
+    <div class="span9">
         {% if info %}
         <div class="alert alert-success" style="width:70%" >
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -49,15 +50,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#id_horario_solicitado').prev().hide()
-        $('#id_horario_solicitado').hide()
-        var valor = $('#id_horario_solicitado option:selected').text()
-        $("#editarMat").before('<h4>'+valor+':</h4><br>')
-//        $('#id_horario_solicitado option[value='+valor+']').attr("selected",true);
-});
-</script>
 <script src="{% static "js/script_profesor.js" %}">
 </script>
 {% endblock %}
