@@ -183,10 +183,12 @@ def editar_propuesta(request,key):
         hs = HorarioSolicitado.objects.get(pk=key)
         tipo_mat = hs.horario_solicitado.materia.materia.tipo_materia
         if request.method == 'POST':
+
             if tipo_mat == 'Electiva':
                 form = m.generarFormulario(request,'horario solicitado', hs, 1)
             else:
                 form = EditarMateria(u)
+
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect('/profile')
@@ -205,10 +207,6 @@ def editar_profesor(request):
     usr = u.toString()
     centro = u.centro.toString()
     return render_to_response('Perfil_Prof.html',{'usuario':usr,'centro':centro},context_instance=RequestContext(request))
-
-@login_required
-def horario(request):
-    return render_to_response('HorarioPlanificacion.html',{'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 @login_required
 def editarPerfil(request):
@@ -257,12 +255,20 @@ def listarm(request):
 @login_required
 @coordinatorRequired
 def profilecc(request):
-    return render_to_response("CC_principal.html")
+    usr = Usuario.objects.get(usuario_id = request.user.pk)
+    return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre})
 
 @login_required
 @bossRequired
 def profilejdd(request):
-    return render_to_response("JD_principal.html")
+    usr = Usuario.objects.get(usuario_id = request.user.pk)
+    return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre})
+
+@login_required
+@coordinatorOrbossRequired
+def horario(request,rol):
+    usr = Usuario.objects.get(usuario_id = request.user.pk)
+    return render_to_response('HorarioPlanificacion.html',{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
 
 @login_required
 @coordinatorOrbossRequired

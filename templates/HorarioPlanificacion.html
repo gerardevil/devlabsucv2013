@@ -1,9 +1,29 @@
 {% extends "Plantilla.html" %}
 {% load staticfiles %}
 
+{% block rol%}
+{% if rol == 'jdd' %}
+Jefe(a) de Departamento:
+{% endif%}
+{% if rol == 'cc' %}
+Coodinador(a):
+{% endif%}
+{% endblock %}
+
+{% block nombre %}{{usuario}}{% endblock %}
+
+{% block centro %}{{centro}}{% endblock %}
+
 {% block lista_roles %}
+{% if rol == 'cc' %}
 <a href="/profile">Profesor(a)</a>
 <a href="/profilejdd">Jefe(a) de Departamento</a>
+{% endif%}
+
+{% if rol == 'jdd' %}
+<a href="/profile">Profesor(a)</a>
+<a href="/profilecc">Coodinador(a)</a>
+{% endif%}
 {% endblock %}
 
 {% block contenido_vista %}

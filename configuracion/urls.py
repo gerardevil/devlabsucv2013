@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/(?P<key>\d+)$', 'principal.views.leer', name='leer'), #Muestra todos los atributos de un objeto
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear$', 'principal.views.insertar', name='insertar'), # Permite insertar un Objeto
 
-    url(r'^horario$', 'principal.views.horario', name='horario'),
+    url(r'^horario/(?P<rol>[^/]+)$', 'principal.views.horario', name='horario'),
     url(r'^schedulexrequest/(?P<rol>[^/]+)$', 'principal.views.getScheduleByRequest', name='schedulexrequest'),
     url(r'^subjectxrequest$', 'principal.views.getSubjectByRequest', name='subjectxrequest'),
     url(r'^userxcenter$', 'principal.views.getUserByCenter', name='userxcenter'),
