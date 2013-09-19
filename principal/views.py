@@ -182,24 +182,25 @@ def editar_propuesta(request,key):
         centro = u.centro.toString()
         hs = HorarioSolicitado.objects.get(pk=key)
         tipo_mat = hs.horario_solicitado.materia.materia.tipo_materia
+        nm = hs.horario_solicitado.materia.materia.nombre
         if request.method == 'POST':
-
-            if tipo_mat == 'Electiva':
-                form = m.generarFormulario(request,'horario solicitado', hs, 1)
+            if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
+                form = EditarMateriaE(request.POST,hkey=key)
             else:
-                form = EditarMateria(u)
-
+                form = EditarMateriaO(request.POST,hkey=key,ukey=u.pk)
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect('/profile')
-        else:
-            if tipo_mat == 'Electiva':
-                form = m.generarFormulario(request,'horario solicitado', hs, 2)
             else:
-                form = EditarMateria(u)
-        return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro},context_instance=RequestContext(request))
+                return render_to_response('EditarPropM_Prof.html' ,{'error':'Formulario no valido','nombre_mat':nm},context_instance=RequestContext(request))
+        else:
+            if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
+                form = EditarMateriaE(hkey=key)
+            else:
+                form = EditarMateriaO(hkey=key,ukey=u.pk)
+        return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro,'nombre_mat':nm},context_instance=RequestContext(request))
     except Warning as w:
-        return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__},context_instance=RequestContext(request))
+        return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__,'nombre_mat':nm},context_instance=RequestContext(request))
 
 @login_required
 def editar_profesor(request):
