@@ -58,8 +58,8 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px"><i class="icon-trash"></i></a>
-                    <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-edit"></i></a>
+                    <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px" title="Eliminar horario solicitado"><i class="icon-trash"></i></a>
+                    <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px" title="Editar horario solicitado"><i class="icon-edit"></i></a>
                 </td>
             </tr>
             {% endfor %}
@@ -80,12 +80,17 @@
         </div>
         {% endif %}
 
-        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria">
-            Agregar materia
+        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria" title="Añade una materia Obligatoria, Obligatoria Optativa o Laboratorio">
+            Agregar materia obligatoria
         </button>
         <br>
         <br>
-        <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep">
+        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria" title="Añade una materia Electiva o Complementaria">
+            Agregar materia electiva
+        </button>
+        <br>
+        <br>
+        <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep" title="Envía la propuesta al Coordinador de Centro">
             Enviar Propuesta
         </button>
         <br>

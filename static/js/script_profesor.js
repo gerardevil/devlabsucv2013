@@ -83,7 +83,7 @@ $(document).ready(function() {
         i--
         var ch = parseInt(i)
         $('#cantidad_hor').attr('value',ch);
-        console.log($('#cantidad_hor').attr('value'))
+        //console.log($('#cantidad_hor').attr('value'))
     });
 
     $('.bot_borrar').live('click',function() {

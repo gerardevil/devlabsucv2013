@@ -82,6 +82,10 @@ class AgregarMateriaForm(forms.Form):
     aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
     materia = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects.exclude(materia__in=Materia.objects.filter(tipo_materia='Electiva' or 'Complementaria')))
 
+class AgregarMateriaEForm(forms.Form):
+    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
+    materia = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects.filter(materia__in=Materia.objects.filter(tipo_materia='Electiva' or 'Complementaria')))
+
 
 class EditarMateriaE(forms.Form):
 
