@@ -88,7 +88,7 @@ $(document).ready(function() {
 
     $('.bot_borrar').live('click',function() {
         var valor = $(this).attr('value')
-        console.log("Hola "+valor)
+        //console.log("Hola "+valor)
         $("#bborrar").attr("href","/propuesta/borrar/"+valor)
 
     });
