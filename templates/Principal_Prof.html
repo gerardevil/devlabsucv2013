@@ -59,12 +59,7 @@
                 </td>
                 <td>
                     <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px"><i class="icon-trash"></i></a>
-                    {% if h.horario_solicitado.materia.materia.tipo_materia == 'Electiva' %}
                     <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-edit"></i></a>
-                    {% endif %}
-                    {% if h.horario_solicitado.materia.materia.tipo_materia == 'Complementaria' %}
-                    <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-edit"></i></a>
-                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

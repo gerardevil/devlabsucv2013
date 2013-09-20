@@ -181,23 +181,29 @@ def editar_propuesta(request,key):
         usr = u.toString()
         centro = u.centro.toString()
         hs = HorarioSolicitado.objects.get(pk=key)
-        tipo_mat = hs.horario_solicitado.materia.materia.tipo_materia
-        nm = hs.horario_solicitado.materia.materia.nombre
+        materia = hs.horario_solicitado.materia.materia
+        tipo_mat = materia.tipo_materia
+        nm = materia.nombre
+        #horarios_mat = HorarioMateria.objects.filter(materia=materia)
         if request.method == 'POST':
             if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
                 form = EditarMateriaE(request.POST,hkey=key)
             else:
-                form = EditarMateriaO(request.POST,hkey=key,ukey=u.pk)
+                form = EditarMateriaO(request.POST,hkey=key,ukey=u.pk,mat=materia)
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect('/profile')
             else:
-                return render_to_response('EditarPropM_Prof.html' ,{'error':'Formulario no valido','nombre_mat':nm},context_instance=RequestContext(request))
+                if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
+                    form = EditarMateriaE(request.POST,hkey=key)
+                else:
+                    form = EditarMateriaO(request.POST,hkey=key,ukey=u.pk,mat=materia)
+                return render_to_response('EditarPropM_Prof.html' ,{'form':form,'error':'Formulario no valido','nombre_mat':nm},context_instance=RequestContext(request))
         else:
             if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
                 form = EditarMateriaE(hkey=key)
             else:
-                form = EditarMateriaO(hkey=key,ukey=u.pk)
+                form = EditarMateriaO(hkey=key,ukey=u.pk,mat=materia)
         return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro,'nombre_mat':nm},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__,'nombre_mat':nm},context_instance=RequestContext(request))

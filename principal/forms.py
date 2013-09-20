@@ -79,16 +79,16 @@ class CustomUserForm(forms.Form):
 
 
 class AgregarMateriaForm(forms.Form):
-    aula = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
-    materia = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects)
+    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
+    materia = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects.exclude(materia__in=Materia.objects.filter(tipo_materia='Electiva' or 'Complementaria')))
 
 
 class EditarMateriaE(forms.Form):
 
-    dia_semana = forms.ChoiceField(error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
-    hora_inicio = forms.TimeField()
-    hora_fin = forms.TimeField()
-    aula = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'},queryset=Aula.objects.all())
+    dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
+    hora_inicio = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
+    hora_fin = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
+    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=Aula.objects.all())
 
     def __init__(self, *args, **kwargs):
         self.hkey = kwargs.pop('hkey')
@@ -110,31 +110,26 @@ class EditarMateriaE(forms.Form):
 
 class EditarMateriaO(forms.Form):
 
-    dia_semana = forms.ChoiceField(error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
-    #    mat_sol = MateriaSolicitada.objects.filter(usuario=self.ukey)
-    #    mat_ofer = MateriaOfertada.objects.filter()
-    #    materias = Materia.objects.filter()
-    #    hor_mat = HorarioMateria.objects.filter(materia__in=materias)
-    hora_inicio = forms.TimeField()
-    hora_fin = forms.TimeField()
-    aula = forms.ModelChoiceField(error_messages={'required': 'Campo Obligatorio'},queryset=Aula.objects.all())
+    horario = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=HorarioMateria.objects.filter())
+    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=Aula.objects.all())
 
     def __init__(self, *args, **kwargs):
         self.hkey = kwargs.pop('hkey')
         self.ukey = kwargs.pop('ukey')
+        x = kwargs.pop('mat')
+        self.m = Materia.objects.all()[:1]
         hs = HorarioSolicitado.objects.get(pk=self.hkey)
-        super(EditarMateriaE, self).__init__(*args, **kwargs)
-        self.fields['dia_semana'].initial=hs.dia_semana
-        self.fields['hora_inicio'].initial=hs.hora_inicio
-        self.fields['hora_fin'].initial=hs.hora_fin
+        super(EditarMateriaO, self).__init__(*args, **kwargs)
+        self.fields['horario'] = forms.ModelChoiceField(queryset=HorarioMateria.objects.filter(materia=x))
         self.fields['aula'].initial=hs.aula
 
     def save(self):
         #datos = self.cleaned_data
         hs = HorarioSolicitado.objects.get(pk=self.hkey)
-        hs.dia_semana=self.cleaned_data['dia_semana']
-        hs.hora_inicio=self.cleaned_data['hora_inicio']
-        hs.hora_fin=self.cleaned_data['hora_fin']
+        h = self.cleaned_data['horario']
+        hs.dia_semana= h.dia_semana
+        hs.hora_inicio = h.hora_inicio
+        hs.hora_fin = h.hora_fin
         hs.aula = self.cleaned_data['aula']
         hs.save()
 
