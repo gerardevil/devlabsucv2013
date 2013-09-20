@@ -58,7 +58,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="/propuesta/borrar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-trash"></i></a>
+                    <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px"><i class="icon-trash"></i></a>
                     {% if h.horario_solicitado.materia.materia.tipo_materia == 'Electiva' %}
                     <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px"><i class="icon-edit"></i></a>
                     {% endif %}
@@ -176,6 +176,29 @@
 
         </div>
     </div>
+
+    <div id="confir_borrar" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3>
+                Borrar horario propuesto
+            </h3>
+        </div>
+        <div class="modal-body">
+            <p>
+                ¿Está seguro que desea borrar el horario propuesto?
+        </div>
+        <div class="modal-footer">
+
+            <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+
+            <a id="bborrar" button="" class="btn btn-primary"  href="">Borrar</a>
+
+        </div>
+    </div>
+
 </div>
 
 <style>

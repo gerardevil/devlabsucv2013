@@ -72,7 +72,7 @@ $(document).ready(function() {
         $('#horario1').clone().attr('id', 'horario'+i).attr('name', 'horario'+i).appendTo('#cg')
         $('#cg').append('<a class="btn btn-mini eliminarHor"><i class="icon-remove"></i></a><br>') // selecionar el combobox recien a;adido y agregar boton -
         $('#cantidad_hor').attr('value',ch);
-        console.log($('#cantidad_hor').attr('value'))
+        //console.log($('#cantidad_hor').attr('value'))
     });
 
     $('.eliminarHor').live('click' , function() {
@@ -84,6 +84,13 @@ $(document).ready(function() {
         var ch = parseInt(i)
         $('#cantidad_hor').attr('value',ch);
         console.log($('#cantidad_hor').attr('value'))
+    });
+
+    $('.bot_borrar').live('click',function() {
+        var valor = $(this).attr('value')
+        console.log("Hola "+valor)
+        $("#bborrar").attr("href","/propuesta/borrar/"+valor)
+
     });
 });
 
