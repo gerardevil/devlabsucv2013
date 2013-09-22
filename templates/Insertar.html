@@ -1,4 +1,5 @@
 {% extends 'Principal_Admin.html' %}
+{% load staticfiles %}
 
 {% block contenido_vista %}
 
@@ -19,3 +20,13 @@
 {% endif %}
 
 {% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/datePickers.js" %}"></script>
+<script src="{% static "js/bootstrap-datepicker.js" %}"></script>
+{% endblock %}
+
+{% block estilo %}
+<link rel="stylesheet" href="{% static "css/datepicker.css" %}">
+{% endblock %}
+
