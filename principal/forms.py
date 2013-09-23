@@ -82,6 +82,7 @@ class AgregarMateriaForm(forms.Form):
     #aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
     materia = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects.filter(materia__in=Materia.objects.filter(tipo_materia='Obligatoria')))
 
+
 class AgregarMateriaEForm(forms.Form):
     aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
     materia = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects.filter(materia__in=Materia.objects.filter(tipo_materia='Electiva' or 'Complementaria')))
@@ -112,9 +113,10 @@ class EditarMateriaE(forms.Form):
         hs.aula = self.cleaned_data['aula']
         hs.save()
 
+
 class EditarMateriaO(forms.Form):
 
-    horario = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=HorarioMateria.objects.filter())
+    horario = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=HorarioMateria.objects.all())
     aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=Aula.objects.all())
 
     def __init__(self, *args, **kwargs):

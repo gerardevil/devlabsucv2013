@@ -298,7 +298,7 @@ class HorarioMateria(models.Model):
 		db_table = 'horario_materia'
 
 	def __unicode__(self):
-		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (str(self. materia), self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin))
+		return u'materia: %s |dia_semana: %s | inicio: %s | fin: %s ' % (self.materia.nombre, self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin))
 
 	def toJson(self,minify=True):
 		retorno = {'dia_semana':str(self.dia_semana),
