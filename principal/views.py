@@ -342,7 +342,8 @@ def getScheduleByRequest(request,rol):
                      'nombre':h.horario_solicitado.materia.materia.nombre,
                      'dia_semana':h.dia_semana,
                      'hora_inicio':convertDatetimeToString(h.hora_inicio),
-                     'hora_fin':convertDatetimeToString(h.hora_fin)}
+                     'hora_fin':convertDatetimeToString(h.hora_fin),
+                     'estatus': h.horario_solicitado.estatus}
                     }
                     )
                     counter +=1
