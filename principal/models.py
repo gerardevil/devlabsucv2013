@@ -448,7 +448,7 @@ class MateriaOfertada(models.Model):
 		return self.pk
 		
 class MateriaSolicitada(models.Model):
-	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada')),editable=False)
+	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada'),('P','Procesando'),('N','No Enviada')),editable=False,default='N')
 	usuario = models.ForeignKey('Usuario')
 	materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
 
