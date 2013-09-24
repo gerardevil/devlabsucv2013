@@ -146,9 +146,9 @@ def profile(request):
 
             if form.is_valid() and cant_hor:
 
-                cse = MateriaSolicitada.objects.filter(estatus='R',usuario=u,materia=form.cleaned_data['materia']).count()
+                cse = MateriaSolicitada.objects.filter(estatus='N',usuario=u,materia=form.cleaned_data['materia']).count()
                 if (cse == 0):
-                    ms = MateriaSolicitada(estatus='R',usuario=u,materia=form.cleaned_data['materia'])
+                    ms = MateriaSolicitada(estatus='N',usuario=u,materia=form.cleaned_data['materia'])
                     ms.save()
                 else:
                     ms = MateriaSolicitada.objects.get(usuario=u,materia=form.cleaned_data['materia'])
