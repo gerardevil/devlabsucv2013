@@ -316,18 +316,12 @@ def getScheduleByRequest(request,rol):
             centro = Usuario.objects.get(usuario_id=request.user.pk).centro
 
             try:
-                '''Seleccionamos las Materias Solicitadas por usuarios del centro actual '''
-                center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk)
-
-                requested_subject =[e['id'] for e in center_request_subject_list.values('id')]
-
-                '''Seleccionamos los horarios solicitados para estas Materias '''
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__in=requested_subject)
-
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__estatus')
                 '''
                 Formato Posicional Json de Retorno:
                 [0]materia_id, [1]materia_solicitada_id, [2]username ,
-                [3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin
+                [3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin,
+                [7]estatus
                 '''
                 jsontmp = {}
                 counter = 0
@@ -335,16 +329,16 @@ def getScheduleByRequest(request,rol):
                     jsontmp.update(
                     {
                     counter:	{
-                     'materia_id': h.horario_solicitado.materia.materia.pk,
-                     'materia_solicitada':h.pk,
-                     'horario_solicitado':h.horario_solicitado.pk,
-                     'username':h.horario_solicitado.usuario.usuario_id.username,
-                     'nombre':h.horario_solicitado.materia.materia.nombre,
-                     'dia_semana':h.dia_semana,
-                     'hora_inicio':convertDatetimeToString(h.hora_inicio),
-                     'hora_fin':convertDatetimeToString(h.hora_fin),
-                     'estatus': h.horario_solicitado.estatus}
-                    }
+                     'materia_id': h['horario_solicitado__materia__materia_id'],
+                     'materia_solicitada':h['horario_solicitado_id'],
+                     'horario_solicitado':h['id'],
+                     'username':h['horario_solicitado__usuario__usuario_id__username'],
+                     'nombre':h['horario_solicitado__materia__materia__nombre'],
+                     'dia_semana':h['dia_semana'],
+                     'hora_inicio':convertDatetimeToString(h['hora_inicio']),
+                     'hora_fin':convertDatetimeToString(h['hora_fin']),
+                     'estatus': h['horario_solicitado__estatus']}
+                        }
                     )
                     counter +=1
 
