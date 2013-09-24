@@ -155,7 +155,7 @@ def profile(request):
                 for ind in range(1,cant_hor+1):
                     cad = 'horario'+str(ind)
                     h = HorarioMateria.objects.get(pk=request.POST[cad])
-                    HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms,aula=form.cleaned_data['aula'])
+                    HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms)
 
                 form = AgregarMateriaForm()
                 materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")

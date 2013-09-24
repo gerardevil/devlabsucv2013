@@ -117,7 +117,7 @@ class EditarMateriaE(forms.Form):
 class EditarMateriaO(forms.Form):
 
     horario = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=HorarioMateria.objects.all())
-    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=Aula.objects.all())
+    #aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},queryset=Aula.objects.all())
 
     def __init__(self, *args, **kwargs):
         self.hkey = kwargs.pop('hkey')
@@ -127,7 +127,7 @@ class EditarMateriaO(forms.Form):
         hs = HorarioSolicitado.objects.get(pk=self.hkey)
         super(EditarMateriaO, self).__init__(*args, **kwargs)
         self.fields['horario'] = forms.ModelChoiceField(queryset=HorarioMateria.objects.filter(materia=x))
-        self.fields['aula'].initial=hs.aula
+        #self.fields['aula'].initial=hs.aula
 
     def save(self):
         #datos = self.cleaned_data
@@ -136,7 +136,7 @@ class EditarMateriaO(forms.Form):
         hs.dia_semana= h.dia_semana
         hs.hora_inicio = h.hora_inicio
         hs.hora_fin = h.hora_fin
-        hs.aula = self.cleaned_data['aula']
+        #hs.aula = self.cleaned_data['aula']
         hs.save()
 
 
