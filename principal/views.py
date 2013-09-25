@@ -302,88 +302,89 @@ def editarperfil(request,rol,key):
                     raise Http404
         else:
             form = m.generarFormulario(request, 'usuario', o, 2)
-        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form, 'rol':rol},context_instance=RequestContext(request))
+        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form, 'rol':rol,'pk':key},context_instance=RequestContext(request))
     except Warning as w:
-        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'error':w.__doc__},context_instance=RequestContext(request))
+        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
 
+'''Obtener el horario de solicitudes del sistema'''
 @login_required
 @coordinatorOrbossRequired
 def getScheduleByRequest(request,rol):
     if request :
         rol_pattern = rol.lower()
         if rol_pattern == 'cc':
-            '''Obtenemos a que centro pertenece el Coordinador'''
-            centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-
             try:
+                centro = Usuario.objects.get(usuario_id=request.user.pk).centro
                 center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__estatus')
-                '''
-                Formato Posicional Json de Retorno:
-                [0]materia_id, [1]materia_solicitada_id, [2]username ,
-                [3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin,
-                [7]estatus
-                '''
-                jsontmp = {}
-                counter = 0
-                for h in center_schedule_list:
-                    jsontmp.update(
-                    {
-                    counter:	{
-                     'materia_id': h['horario_solicitado__materia__materia_id'],
-                     'materia_solicitada':h['horario_solicitado_id'],
-                     'horario_solicitado':h['id'],
-                     'username':h['horario_solicitado__usuario__usuario_id__username'],
-                     'nombre':h['horario_solicitado__materia__materia__nombre'],
-                     'dia_semana':h['dia_semana'],
-                     'hora_inicio':convertDatetimeToString(h['hora_inicio']),
-                     'hora_fin':convertDatetimeToString(h['hora_fin']),
-                     'estatus': h['horario_solicitado__estatus']}
-                        }
-                    )
-                    counter +=1
-
-                jsontmp.update({'length':counter})
-
-                return  HttpResponse(json.dumps(jsontmp,sort_keys=True), content_type="application/json")
-
             except Exception, e:
                 raise e
-
         elif  rol_pattern == 'jdd':
-            '''El usuario es un Jefe de Departamento obtiene todos los horarios
-            de la Escuela de Computacion'''
-            pass
+            try:
+                center_schedule_list = HorarioSolicitado.objects.all().values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__estatus')
+            except Exception, e:
+                raise e
         else:
             raise Http404
+
+        '''
+        Formato Posicional Json de Retorno:
+        [0]materia_id, [1]materia_solicitada_id, [2]username ,
+        [3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin,
+        [7]estatus
+        '''
+        jsontmp = {}
+        counter = 0
+        for h in center_schedule_list:
+            jsontmp.update(
+            {
+            counter:    {
+             'materia_id': h['horario_solicitado__materia__materia_id'],
+             'materia_solicitada':h['horario_solicitado_id'],
+             'horario_solicitado':h['id'],
+             'username':h['horario_solicitado__usuario__usuario_id__username'],
+             'nombre':h['horario_solicitado__materia__materia__nombre'],
+             'dia_semana':h['dia_semana'],
+             'hora_inicio':convertDatetimeToString(h['hora_inicio']),
+             'hora_fin':convertDatetimeToString(h['hora_fin']),
+             'estatus': h['horario_solicitado__estatus']}
+                }
+            )
+            counter +=1
+
+        jsontmp.update({'length':counter})
+
+        return  HttpResponse(json.dumps(jsontmp,sort_keys=True), content_type="application/json")
     else:
         raise Http404;
 
 
+'''Usuarios que realizaron solicitudes de materias de un centro'''
 @login_required
-@coordinatorOrbossRequired
+@coordinatorRequired
 def getUserByCenter(request):
     centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-    center_user_list = Usuario.objects.filter(centro_id=centro.pk).values('usuario_id')
-    center_user_list = [e['usuario_id'] for e in center_user_list]
-    final_user_list = User.objects.filter(pk__in=center_user_list).order_by('first_name','last_name','username').values('username','first_name','last_name')
-
+    final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+    name = []
     counter = 0
     jsontemp = {}
     for u in final_user_list:
-        jsontemp.update({
-            counter:{
-            'username':final_user_list[counter]['username'],
-            'name': final_user_list[counter]['first_name']+' '+final_user_list[counter]['last_name']}
-            })
-        counter +=1;
+        if u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'] not in name:
+            jsontemp.update({
+                counter:{
+                'username':u['horario_solicitado__usuario__usuario_id__username'],
+                'name': u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name']}
+                })
+            counter +=1;
+            name.append(u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'])            
 
     jsontemp.update({'length':counter})
 
     return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")
 
 
+'''Materias solicitadas por usuarios de un centro'''
 @login_required
-@coordinatorOrbossRequired
+@coordinatorRequired
 def getSubjectByRequest(request):
 	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
 	center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
@@ -399,3 +400,47 @@ def getSubjectByRequest(request):
 	jsontemp.update({'length':counter})
 
 	return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")		
+
+
+'''Todos los usuarios que realizaron solicitudes de materias'''
+@login_required
+@bossRequired
+def getUserByCenterAll(request):
+    final_user_list = HorarioSolicitado.objects.all().order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+    name = []
+    counter = 0
+    jsontemp = {}
+    for u in final_user_list:
+        if u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'] not in name:
+            jsontemp.update({
+                counter:{
+                'username':u['horario_solicitado__usuario__usuario_id__username'],
+                'name': u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name']}
+                })
+            counter +=1;
+            name.append(u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'])            
+
+    jsontemp.update({'length':counter})
+
+    return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")
+
+
+'''Todas las materias solicitadas de la escuela'''
+@login_required
+@bossRequired
+def getSubjectByRequestAll(request):
+    center_request_subject_list=MateriaSolicitada.objects.all().order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
+    jsontemp = {}
+    counter = 0
+    names = []
+    for e in center_request_subject_list:
+        if e['materia__materia__nombre'] not in names:
+            jsontemp.update({counter:{'id':e['materia__materia__pk'],'nombre':e['materia__materia__nombre']}})
+            names.append(e['materia__materia__nombre'])
+            counter+=1
+    
+    jsontemp.update({'length':counter})
+
+    return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")       
+
+

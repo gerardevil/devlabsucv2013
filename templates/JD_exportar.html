@@ -1,7 +1,7 @@
 {% extends "Plantilla.html" %}
 {% load staticfiles %}
 
-{% block rol%}Jefe(a) de Departamento:{% endblock %}
+{% block rol%}Jefe(a) de Departamento{% endblock %}
 
 {% block nombre %}{{usuario}}{% endblock %}
 
@@ -29,8 +29,11 @@
 
 <li class="active">
 <a href="/export"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a>
-</li>       
+</li>
 
+<li>
+    <a href="Perfil_Prof.html"><i class="icon-repeat"></i> Olvidar Contraseña</a>
+</li>      
 {% endblock %}
 	
 

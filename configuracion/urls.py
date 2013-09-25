@@ -24,15 +24,17 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/(?P<key>\d+)$', 'principal.views.leer', name='leer'), #Muestra todos los atributos de un objeto
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear$', 'principal.views.insertar', name='insertar'), # Permite insertar un Objeto
 
+    #Coordinador y Jefe de Departamento views:
     url(r'^horario/(?P<rol>[^/]+)$', 'principal.views.horario', name='horario'),
     url(r'^schedulexrequest/(?P<rol>[^/]+)$', 'principal.views.getScheduleByRequest', name='schedulexrequest'),
     url(r'^subjectxrequest$', 'principal.views.getSubjectByRequest', name='subjectxrequest'),
     url(r'^userxcenter$', 'principal.views.getUserByCenter', name='userxcenter'),
-   
+    url(r'^subjectxrequestall$', 'principal.views.getSubjectByRequestAll', name='subjectxrequestall'),
+    url(r'^userxcenterall$', 'principal.views.getUserByCenterAll', name='userxcenterall'),   
     url(r'^editarperfil/(?P<rol>[^/]+)/(?P<key>\d+)$', 'principal.views.editarperfil', name='editProfile'),
     url(r'^export$', 'principal.views.export', name='export'),
     
-    #Agregar Materia
+    #Profesor views:
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
     url(r'^horarios_materia$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
     url(r'^propuesta/borrar/(?P<key>\d+)$', 'principal.views.borrar_propuesta', name='bpropuesta'), #Borra un horario de la propuesta

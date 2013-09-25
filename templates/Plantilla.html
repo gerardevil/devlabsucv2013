@@ -6,19 +6,25 @@
     		<div class="navbar-inner">
     			<div class="container">
     				<div class="container-fluid pull-left">
-                        <label><h4>
+                        <label id="rol_usuario" style="display:inline-block;"><h4>
                             {% block rol %}
-                            {% endblock %}
+                            {% endblock %}:
+                        </h4>
+                        </label>
+
+                        <label id="nombre" style="display:inline-block;"><h4>
                             {% block nombre %}
                             {% endblock %}
                         </h4>
                         </label>
-    					<label>
-                            <h5>
+
+    					<label id="centro">
+                            <h5 style="color:#4380D3;">
     						{% block centro %}
 							{% endblock %}
                             </h5>
     					</label> 
+
     				</div>
     				<div class="container-fluid pull-right">
     					<div class="btn-group">
