@@ -1,3 +1,4 @@
+
 #views.py
 
 # Imports for Objects and Managers bellow
@@ -160,14 +161,14 @@ def profile(request):
                 form = AgregarMateriaForm()
                 materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
                 horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
-                return render_to_response('Principal_Prof.html' ,{'usuario':usr,'centro':centro,'form':form,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
+                return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form':form,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
             else:
-                return render_to_response('Principal_Prof.html' ,{'usuario':usr,'centro':centro,'form' : form,'error':'El formulario no es valido', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
+                return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form' : form,'error':'El formulario no es valido', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
         else:
             form = AgregarMateriaForm()
-        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'centro':centro,'form' : form, 'listaHorarios' : horariosS },context_instance=RequestContext(request))
+        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'pk':u.pk, 'centro':centro,'form' : form, 'listaHorarios' : horariosS },context_instance=RequestContext(request))
     except Warning as w:
-        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'centro':centro,'form' : form,'error':w.__doc__ , 'listaHorarios' : horariosS} ,context_instance=RequestContext(request))
+        return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form' : form,'error':w.__doc__ , 'listaHorarios' : horariosS} ,context_instance=RequestContext(request))
 
 @login_required
 def borrar_propuesta(request,key):
@@ -207,24 +208,6 @@ def editar_propuesta(request,key):
         return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro,'nombre_mat':nm},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__,'nombre_mat':nm},context_instance=RequestContext(request))
-
-@login_required
-def editar_profesor(request):
-    u = Usuario.objects.get(usuario_id=request.user)
-    usr = u.toString()
-    centro = u.centro.toString()
-    return render_to_response('Perfil_Prof.html',{'usuario':usr,'centro':centro},context_instance=RequestContext(request))
-
-@login_required
-def editarPerfil(request):
-    form=CustomUserForm(request.POST)
-    return render_to_response('editarPerfil_Prof.html', {'form':form},context_instance=RequestContext(request))    
-    #return render_to_response('editarPerfil_Prof.html',context_instance=RequestContext(request))    
-
-@login_required
-def guardarPerfil(request):
-    #save()
-    return HttpResponseRedirect('/profile')
 
 @login_required
 def horarios_materia(request):
