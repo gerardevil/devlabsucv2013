@@ -1,3 +1,4 @@
+
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from configuracion import settings
@@ -10,8 +11,6 @@ urlpatterns = patterns('',
     url(r'^profile$', 'principal.views.profile', name='profile'),
     url(r'^profilecc$', 'principal.views.profilecc', name='profilecc'),
     url(r'^profilejdd$', 'principal.views.profilejdd', name='profilejdd'),
-    url(r'^perfil/editar$', 'principal.views.editarPerfil', name='editarPerfil'),
-    url(r'^guardarPerfil$', 'principal.views.guardarPerfil', name='guardarPerfil'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 

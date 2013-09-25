@@ -1,0 +1,31 @@
+{% extends 'Principal_Prof.html' %}
+
+{% block op_barra %}
+<li>
+    <a href="/profile"><i class="icon-home"></i> Principal</a>
+</li>
+<li class="active">
+  <a href="/editarperfil/p/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
+</li>
+{% endblock %}
+
+{% block contenido_vista %}
+
+<form method='POST'>
+	{% csrf_token %}
+	<table>
+	{{ form.as_p}}
+	</table>
+	</br>
+	<a button="" id="cancelEdit" type="" class="btn" href="/profile" >Cancelar</a>	
+	<input type='submit' class="btn btn-primary" value="Guardar">
+</form>
+{% if error %}
+<div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <h4>¡Error!</h4>
+    {{error}}
+</div>
+{% endif %}
+
+{% endblock %}
