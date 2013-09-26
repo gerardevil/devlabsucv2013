@@ -1,6 +1,7 @@
 {% extends 'Plantilla.html' %}
+{% load staticfiles %}
 
-{% block rol%}Coordinador(a):{% endblock %}
+{% block rol%}Coordinador(a){% endblock %}
 
 {% block nombre %}{{usuario}}{% endblock %}
 
@@ -24,6 +25,9 @@
 <li>
   <a href="/horario/cc"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a>
 </li>
+<li>
+    <a href="Perfil_Prof.html"><i class=" icon-repeat"></i> Olvidar Contraseña</a>
+</li>
 {% endblock %}
 
 {% block contenido_vista %}
@@ -33,7 +37,7 @@
 	{{ form.as_p}}
 	</table>
 	</br>
-    <input class="btn btn-primary" type="submit" value="Terminar Edicion" />
+    <input class="btn btn-primary" type="submit" value="Terminar Edición" />
 </form>
 
 {% if error %}
@@ -44,4 +48,8 @@
 </div>
 {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/hidePassword.js" %}"></script>
 {% endblock %}

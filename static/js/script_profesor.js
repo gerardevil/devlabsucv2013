@@ -53,6 +53,7 @@ $(document).ready(function() {
         }
 
     });
+
     $( "#salir_am" ).click(function() {
         $(".horarios").remove()
         $(".horariosl").remove()
@@ -91,6 +92,10 @@ $(document).ready(function() {
         //console.log("Hola "+valor)
         $("#bborrar").attr("href","/propuesta/borrar/"+valor)
 
+    });
+
+    $( "#salirE_am" ).click(function() {
+        $('#agregarMatE select').prop('selectedIndex',0);
     });
 });
 

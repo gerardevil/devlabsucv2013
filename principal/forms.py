@@ -89,7 +89,6 @@ class AgregarMateriaEForm(forms.Form):
 
 
 class EditarMateriaE(forms.Form):
-
     dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
     hora_inicio = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
     hora_fin = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
@@ -138,6 +137,22 @@ class EditarMateriaO(forms.Form):
         hs.hora_fin = h.hora_fin
         #hs.aula = self.cleaned_data['aula']
         hs.save()
+
+
+class CambiarContrasena(forms.Form):
+	contrasenaVieja = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña actual')
+	contrasenaNueva = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña nueva')
+	confirmarContrasena = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Confirmar contraseña')
+
+	#def __init__(self, *args, **kwargs):
+	#	super(EditarMateriaO, self).__init__(*args, **kwargs)
+	#	self.fields['contrasenaVieja'].initial=hs.dia_semana
+	#	self.fields['contrasenaNueva'].initial=hs.dia_semana
+	#	self.fields['contrasenaNueva2'].initial=hs.dia_semana
+
+	#def save(self)
+
+
 
 
 def get_object_form( type_id ):

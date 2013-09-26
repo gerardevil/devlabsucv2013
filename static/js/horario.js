@@ -19,7 +19,16 @@ function cargarHorario(){
 	$('#tablaHorario').hideLoading();
 	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
 	
-	var url = '/schedulexrequest/cc';
+	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
+	{
+		var url = '/schedulexrequest/cc';
+	}else if(~$('#rol_usuario').text().indexOf('Jefe(a) de Departamento')){
+
+		var url = '/schedulexrequest/jdd';
+	}else{
+		console.error($('#rol_usuario').text()+" is not a valid rol");
+	}
+	
 	var param = '';
 	
 	$.ajax({  
@@ -55,8 +64,17 @@ function cargarProfesores(){
 
 	$('#tablaProfesores').hideLoading();
 	$('#tablaProfesores').showLoading();
-	
-	var url = '/userxcenter';
+
+	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
+	{
+		var url = '/userxcenter';
+	}else if(~$('#rol_usuario').text().indexOf('Jefe(a) de Departamento')){
+
+		var url = '/userxcenterall';
+	}else{
+		console.error($('#rol_usuario').text()+" is not a valid rol");
+	}	
+
 	var param = '';
 	
 	$.ajax({  
@@ -121,8 +139,17 @@ function cargarMaterias(){
 
 	$('#tablaMaterias').hideLoading();
 	$('#tablaMaterias').showLoading();
-	
-	var url = '/subjectxrequest';
+
+	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
+	{
+		var url = '/subjectxrequest';
+	}else if(~$('#rol_usuario').text().indexOf('Jefe(a) de Departamento')){
+
+		var url = '/subjectxrequestall';
+	}else{
+		console.error($('#rol_usuario').text()+" is not a valid rol");
+	}	
+
 	var param = '';
 	
 	$.ajax({  

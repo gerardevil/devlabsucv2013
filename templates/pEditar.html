@@ -1,4 +1,13 @@
-{% extends 'CC_principal.html' %}
+{% extends 'Principal_Prof.html' %}
+
+{% block op_barra %}
+<li>
+    <a href="/profile"><i class="icon-home"></i> Principal</a>
+</li>
+<li class="active">
+  <a href="/editarperfil/p/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
+</li>
+{% endblock %}
 
 {% block contenido_vista %}
 
@@ -8,7 +17,8 @@
 	{{ form.as_p}}
 	</table>
 	</br>
-	<input type='submit' value="Submit">
+	<a button="" id="cancelEdit" type="" class="btn" href="/profile" >Cancelar</a>	
+	<input type='submit' class="btn btn-primary" value="Guardar">
 </form>
 {% if error %}
 <div class="alert alert-error">

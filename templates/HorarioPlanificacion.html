@@ -3,10 +3,10 @@
 
 {% block rol%}
 {% if rol == 'jdd' %}
-Jefe(a) de Departamento:
+Jefe(a) de Departamento
 {% endif%}
 {% if rol == 'cc' %}
-Coordinador(a):
+Coordinador(a)
 {% endif%}
 {% endblock %}
 
@@ -45,6 +45,9 @@ Coordinador(a):
 <li>
   <a href="/export"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a>
 </li>
+<li>
+    <a href="Perfil_Prof.html"><i class=" icon-repeat"></i> Olvidar Contraseña</a>
+</li>
 {% endif %}
 
 {% if rol == 'cc' %}
@@ -59,6 +62,9 @@ Coordinador(a):
 
 <li class="active">
   <a href="/horario/cc"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a>
+</li>
+<li>
+    <a href="Perfil_Prof.html"><i class=" icon-repeat"></i> Olvidar Contraseña</a>
 </li>
 {% endif %}
 
