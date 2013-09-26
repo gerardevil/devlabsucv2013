@@ -21,7 +21,7 @@
     <a href="/editarperfil/p/{{pk}}"><i class="icon-edit"></i>Editar perfil</a>
 </li>
 <li>
-    <a href="Perfil_Prof.html"><i class="icon-repeat"></i> Olvidar Contraseña</a>
+    <a href="/cambiarContrasena/p/{{pk}}"><i class="icon-repeat"></i> Cambiar Contraseña</a>
 </li>
 {% endblock %}
 
@@ -93,7 +93,7 @@
         <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria" title="Añade una materia Obligatoria, Obligatoria Optativa o Laboratorio">
             Agregar materia obligatoria
         </button>
-        <button class="btn btn-warning" data-toggle="modal" title="Añade una materia Electiva o Complementaria">
+        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateriaE" title="Añade una materia Electiva o Complementaria">
             Agregar materia electiva
         </button>
         <br>
@@ -129,6 +129,28 @@
         <div class="modal-footer">
             <a button="" id="salir_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMat" >Cancelar</a>
             <input id="enviar_am" form="agregarMat" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
+        </div>
+    </div>
+
+    <div id="agregarMateriaE" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3>
+                Agregar materia a la propuesta
+            </h3>
+        </div>
+        <div id="agregarMatE_mb" class="modal-body">
+            <form action="/profile" id="agregarMatE" method="POST">{% csrf_token %}
+                <div id="cge" class="control-group">
+                    {{form_e}}
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a button="" id="salirE_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMatE" >Cancelar</a>
+            <input id="enviarE_am" form="agregarMatE" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
         </div>
     </div>
 

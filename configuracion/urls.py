@@ -41,6 +41,7 @@ urlpatterns = patterns('',
 
     #URLs para templates sin backend
     url(r'^profile/editar$', 'principal.views.editar_profesor', name='horarios'),
+    url(r'^cambiarContrasena/(?P<rol>[^/]+)/(?P<key>\d+)$', 'principal.views.cambiarContrasena', name='cambiarContrasena'),
 
 )
 

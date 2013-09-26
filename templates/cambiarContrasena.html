@@ -1,0 +1,112 @@
+{% extends 'Plantilla.html' %}
+{% load staticfiles %}
+
+{% block rol%}
+  {% if rol == "p" %}
+    Profesor(a)
+  {%endif%}
+
+  {% if rol == "cc" %}
+    Coordinador(a)
+  {%endif%}
+
+  {% if rol == "jdd" %}
+    Jefe(a) de Departamento
+  {%endif%}
+
+{% endblock %}
+
+{% block nombre %}{{usuario}}{% endblock %}
+
+{% block centro %}{{centro}}{% endblock %}
+
+{% block lista_roles %}
+  {% if rol == "p" %}
+    <a href="/profilecc">Coordinador(a)</a>
+    <a href="/profilejdd">Jefe(a) de Departamento</a>
+  {%endif%}
+
+  {% if rol == "cc" %}
+    <a href="/profile">Profesor(a)</a>
+    <a href="/profilejdd">Jefe(a) de Departamento</a>
+  {%endif%}
+
+  {% if rol == "jdd" %}
+    <a href="/profile">Profesor(a)</a>
+    <a href="/profilecc">Coordinador(a)</a>
+  {%endif%}
+
+{% endblock %}
+
+{% block op_barra %}
+  
+  {% if rol == "p" %}
+    <li>
+      <a href="/profile"><i class="icon-home"></i> Principal</a>
+    </li>
+    <li>
+      <a href="/editarperfil/p/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
+    </li>
+    <li class="active">
+      <a href="/cambiarContrasena/p/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a>
+    </li>
+  {%endif%}
+
+  {% if rol == "cc" %}
+    <li>
+      <a href="/profilecc"><i class="icon-home"></i> Principal</a>
+    </li>
+    <li>
+      <a href="/editarperfil/cc/{{pk}}"><i class="icon-edit"></i>Editar perfil</a>
+    </li>
+    <li>
+      <a href="/horario/cc"><i class="icon-calendar"></i> Horario de Solicitudes</a>
+    </li>
+    <li class="active">
+        <a href="/cambiarContrasena/cc/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a>
+    </li>
+  {%endif%}
+
+  {% if rol == "jdd" %}
+    <li >
+      <a href="/profilejdd"><i class="icon-home"></i> Principal</a>
+    </li>
+    <li>
+      <a href="/editarperfil/jdd/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
+    </li>
+    <li>
+      <a href="/horario/jdd"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a>
+    </li>
+
+    <li>
+      <a href="/export"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a>
+    </li>
+    <li class="active">
+        <a href="/cambiarContrasena/jdd/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a>
+    </li>
+  {%endif%}
+{% endblock %}
+
+{% block contenido_vista %}
+
+<form method='POST'>
+	{% csrf_token %}
+	<table>
+	{{ form.as_p}}
+	</table>
+	</br>
+    <input class="btn btn-primary" type="submit" value="Guardar Cambios" />
+</form>
+{% if error %}
+<div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <h4>¡Error!</h4>
+    {{error}}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/hidePassword.js" %}"></script>
+{% endblock %}
