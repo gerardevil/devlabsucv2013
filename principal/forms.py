@@ -89,7 +89,6 @@ class AgregarMateriaEForm(forms.Form):
 
 
 class EditarMateriaE(forms.Form):
-
     dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
     hora_inicio = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
     hora_fin = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})

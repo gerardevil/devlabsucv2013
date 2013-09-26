@@ -142,31 +142,33 @@ def profile(request):
         horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
 
         if request.method == 'POST':
-            form = AgregarMateriaForm(request.POST)
-            cant_hor = int(request.POST['cantidad_hor'])
+            if (request.POST['cantidad_hor']):
+                form = AgregarMateriaForm(request.POST)
+                cant_hor = int(request.POST['cantidad_hor'])
 
-            if form.is_valid() and cant_hor:
+                if form.is_valid() and cant_hor:
 
-                cse = MateriaSolicitada.objects.filter(estatus='N',usuario=u,materia=form.cleaned_data['materia']).count()
-                if (cse == 0):
-                    ms = MateriaSolicitada(estatus='N',usuario=u,materia=form.cleaned_data['materia'])
-                    ms.save()
+                    cse = MateriaSolicitada.objects.filter(estatus='N',usuario=u,materia=form.cleaned_data['materia']).count()
+                    if (cse == 0):
+                        ms = MateriaSolicitada(estatus='N',usuario=u,materia=form.cleaned_data['materia'])
+                        ms.save()
+                    else:
+                        ms = MateriaSolicitada.objects.get(usuario=u,materia=form.cleaned_data['materia'])
+                    for ind in range(1,cant_hor+1):
+                        cad = 'horario'+str(ind)
+                        h = HorarioMateria.objects.get(pk=request.POST[cad])
+                        HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms)
+
+                    form = AgregarMateriaForm()
+                    materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
+                    horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
+                    return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form':form,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
                 else:
-                    ms = MateriaSolicitada.objects.get(usuario=u,materia=form.cleaned_data['materia'])
-                for ind in range(1,cant_hor+1):
-                    cad = 'horario'+str(ind)
-                    h = HorarioMateria.objects.get(pk=request.POST[cad])
-                    HorarioSolicitado.objects.create(dia_semana=h.dia_semana,hora_inicio=h.hora_inicio,hora_fin=h.hora_fin,horario_solicitado=ms)
-
-                form = AgregarMateriaForm()
-                materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
-                horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
-                return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form':form,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
-            else:
-                return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form' : form,'error':'El formulario no es valido', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
+                    return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form' : form,'error':'El formulario no es valido', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
         else:
             form = AgregarMateriaForm()
-        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'pk':u.pk, 'centro':centro,'form' : form, 'listaHorarios' : horariosS },context_instance=RequestContext(request))
+            form_e = AgregarMateriaEForm()
+        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'pk':u.pk, 'centro':centro,'form' : form,'form_e':form_e, 'listaHorarios' : horariosS },context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form' : form,'error':w.__doc__ , 'listaHorarios' : horariosS} ,context_instance=RequestContext(request))
 
