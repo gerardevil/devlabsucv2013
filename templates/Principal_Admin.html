@@ -1,4 +1,5 @@
 {% extends "Plantilla.html" %}
+{% load staticfiles %}
 
 {% block op_barra %}
 <li {% if opc == 1 %} class="active" {% endif %}>
@@ -45,8 +46,11 @@
 					</a>
 					<a href="/admins/modelos/{{modelo}}/editar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
 						<i class="icon-edit"></i>
-					</a>			
-					<a href="/admins/modelos/{{modelo}}/borrar/{{elem.pk}}" class="btn btn-mini" style="margin-left:50px">
+					</a>
+						
+					<a class="btn btn-mini" style="margin-left:50px" onclick='Mostrar_modal_eliminar(this)'
+					id = "/admins/modelos/{{modelo}}/borrar/{{elem.pk}}"
+					name="{{ modelo }}">
 						<i class="icon-trash"></i>
 					</a>
 
@@ -87,9 +91,13 @@
     <br>
     {{objeto}}
     <br>
-
     {% endif %}
+
 <!--</div>-->
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/Confirmar_eliminar.js"%}"></script>
 {% endblock %}
 		
 

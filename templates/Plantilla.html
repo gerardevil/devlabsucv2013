@@ -6,19 +6,25 @@
     		<div class="navbar-inner">
     			<div class="container">
     				<div class="container-fluid pull-left">
-                        <label><h4>
+                        <label id="rol_usuario" style="display:inline-block;"><h4>
                             {% block rol %}
-                            {% endblock %}
+                            {% endblock %}:
+                        </h4>
+                        </label>
+
+                        <label id="nombre" style="display:inline-block;"><h4>
                             {% block nombre %}
                             {% endblock %}
                         </h4>
                         </label>
-    					<label>
-                            <h5>
+
+    					<label id="centro">
+                            <h5 style="color:#4380D3;">
     						{% block centro %}
 							{% endblock %}
                             </h5>
     					</label> 
+
     				</div>
     				<div class="container-fluid pull-right">
     					<div class="btn-group">
@@ -84,6 +90,27 @@
     		
             </div>
     	</div>
+
+<!--Modal Eliminar-->
+    <div id="modal_eliminar" class="modal hide fade">
+        <div class="modal-header" id="modalEliminarHeader">
+        </div>
+
+        <div class="modal-body" id="bodyModalEliminar"> 
+        <h5>
+            ¿Está seguro de que quiere eliminar este elemento?
+        </h5>
+        </div>
+
+        <div class="modal-footer">
+
+            <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+
+            <a id="eliminar_obj" button="" class="btn btn-primary"  href="#">Borrar</a>
+        </div>
+    </div>      
+<!--Modal Eliminar-->
+
 {% endblock %}
 
 {% block estilo %}
