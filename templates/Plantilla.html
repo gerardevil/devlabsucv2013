@@ -91,30 +91,26 @@
             </div>
     	</div>
 
-        <!--Modal Eliminar-->
+<!--Modal Eliminar-->
     <div id="modal_eliminar" class="modal hide fade">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                ×
-            </button>
-            <h3>
-                Borrar {{elem.pk}}
-            </h3>
+        <div class="modal-header" id="modalEliminarHeader">
         </div>
-        <div class="modal-body">
-            <p>
-                ¿Está seguro que desea borrar el {{elem.pk}}?
+
+        <div class="modal-body" id="bodyModalEliminar"> 
+        <h5>
+            Está seguro de que quiere eliminar este elemento?
+        </h5>
         </div>
+
         <div class="modal-footer">
 
             <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
 
-            <a id="borrar" button="" class="btn btn-primary"  href="">Borrar</a>
-
+            <a id="eliminar_obj" button="" class="btn btn-primary"  href="#">Borrar</a>
         </div>
-    </div>
-      
+    </div>      
 <!--Modal Eliminar-->
+
 {% endblock %}
 
 {% block estilo %}
