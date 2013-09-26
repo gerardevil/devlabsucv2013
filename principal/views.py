@@ -296,6 +296,12 @@ def cambiarContrasena(request,rol, key):
         if request.method == 'POST':
             form=CambiarContrasena(request.POST)
             if form.is_valid():
+                contrasenaVieja = request.POST['contrasenaVieja']
+                contrasenaNueva = request.POST['contrasenaNueva']
+                confirmarContrasena = request.POST['confirmarContrasena']
+
+                #if User.objects.filter(username=username).exists() :
+
                 if rol =='jdd':
                     return HttpResponseRedirect('/profilejdd')
                 elif rol=='cc':

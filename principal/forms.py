@@ -143,7 +143,7 @@ class EditarMateriaO(forms.Form):
 class CambiarContrasena(forms.Form):
 	contrasenaVieja = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña actual')
 	contrasenaNueva = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña nueva')
-	contrasenaNueva2 = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña nueva nuevamente')
+	confirmarContrasena = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Confirmar contraseña')
 
 	#def __init__(self, *args, **kwargs):
 	#	super(EditarMateriaO, self).__init__(*args, **kwargs)
