@@ -1,6 +1,10 @@
 {% extends "Plantilla.html" %}
 {% load staticfiles %}
 
+{% block rol%}Rol{% endblock %}
+
+{% block nombre %}Administrador{% endblock %}
+
 {% block op_barra %}
 <li {% if opc == 1 %} class="active" {% endif %}>
     <a href="/admins"><i class="icon-home"></i> Principal</a>
