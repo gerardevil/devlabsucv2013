@@ -1,4 +1,5 @@
 {% extends 'Principal_Prof.html' %}
+{% load staticfiles %}
 
 {% block op_barra %}
 <li>
@@ -28,4 +29,8 @@
 </div>
 {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/hidePassword.js" %}"></script>
 {% endblock %}

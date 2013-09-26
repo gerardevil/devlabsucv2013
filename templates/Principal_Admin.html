@@ -1,9 +1,10 @@
 {% extends "Plantilla.html" %}
 {% load staticfiles %}
 
-{% block rol%}Rol{% endblock %}
+{% block rol%}Administrador{% endblock %}
 
-{% block nombre %}Administrador{% endblock %}
+{% block nombre %} [Sitio Administrativo] {% endblock %}
+
 
 {% block op_barra %}
 <li {% if opc == 1 %} class="active" {% endif %}>
