@@ -5,21 +5,26 @@ function toggle(source) {
   }
 }
 
-function isAnyCheckSelected(source)
+function isAnyCheckSelected()
 {
-  var checkboxes = $("input[type=checkbox]:checked");
+  var checkboxes = $("input[type=checkbox]:checked").not( "[value='none']" ).map(function() {return $(this).val();});
   if(checkboxes.size())
   {
-    to="";
-    for(var i =0; i< checkboxes.size();++i)
-    {
-      if(checkboxes[i].value!="none"){
-        to+=checkboxes[i].value+";"
-      }
-    }
-    to_temp= document.getElementById('to');
-    to_temp.value=to;
-    $('#modalContacto').modal('show');
+    $.ajax({
+        type: 'GET',
+        url: '/getemaillist',
+        data: {
+          'keys': (checkboxes.toArray()).toString(),
+        },
+        success: function(emails) {
+            var to_temp= document.getElementById('to');
+            to_temp.value=emails;
+            $('#modalContacto').modal('show');
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            alert('Please report this error: '+errorThrown+xhr.status+xhr.responseText);
+        }
+    });
   }
 }
 

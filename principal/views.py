@@ -247,26 +247,100 @@ def listarm(request):
 @login_required
 @coordinatorRequired
 def profilecc(request):
-    usr = Usuario.objects.get(usuario_id = request.user.pk)
-    return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
+    try:
+        if request :
+            usr = Usuario.objects.get(usuario_id = request.user.pk)
+            usrcenter = Usuario.objects.filter(centro=usr.centro).order_by('usuario_id__first_name','usuario_id__last_name').values('id','usuario_id__first_name','usuario_id__last_name') 
+            return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk, 'usrlist':usrcenter})
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
+
 
 @login_required
 @bossRequired
 def profilejdd(request):
-    usr = Usuario.objects.get(usuario_id = request.user.pk)
-    return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
+    try:
+        if request :
+            usr = Usuario.objects.get(usuario_id = request.user.pk)
+            usrcenter = Usuario.objects.all().order_by('centro__nombre','usuario_id__first_name','usuario_id__last_name').values('id','centro__nombre','usuario_id__first_name','usuario_id__last_name') 
+
+            newCenter = ''
+            headingCount = 1
+            genericAccordionDiv = '<div class="acordion" style="margin-left:10%;margin-right:20%;"><div class="acordionCentros" style="min-width:400px;"><div class="accordion" id="accordion2">'
+            accordionGroup= '<div class="accordion-group">'
+            accordionHeading = '<div class="accordion-heading" >'
+            todosCheckBox = '<div class="pull-right custom-align"><input type="checkbox" <name> onClick="toggle(this)" value="none"> Todos</div>'
+            nameCenter = '<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-toggle="false" <href> > <centerName> </a>'
+            accordionBody = '<div <id> class="accordion-body collapse"><div class="accordion-inner">'
+            tableHead= '<table><tbody><thead><tr><td><h5>Profesores</h5></td></tr></thead>'
+            trContent = '<tr><td><input type="checkbox" <name> <value> ><a data-toggle="modal" href="#modalPerfil"> <teacherName> </a></td></tr>'
+            buttonContact = '<button onclick="isAnyCheckSelected()" class="btn btn-primary" type="button" style="float:left;"><i class="icon-envelope icon-white"></i> Contactar Seleccionados</button>'
+            endTable = '</table>'
+            endTbody = '</tbody>'
+            endDiv = '</div>'
+
+            html = genericAccordionDiv
+            for u in usrcenter:
+                if newCenter != u['centro__nombre']:
+                    if html != genericAccordionDiv:
+                        html+= endTbody+endTable+ 3*endDiv
+                    newCenter = u['centro__nombre']
+                    html+= accordionGroup+accordionHeading
+                    html+= todosCheckBox.replace('<name>',('name="'+newCenter+'Check"'))
+                    html += nameCenter.replace('<href>','href="#'+str(headingCount)+'"').replace('<centerName>',newCenter)
+                    html+= endDiv
+                    html += accordionBody.replace('<id>' , 'id='+str(headingCount))
+                    html+= tableHead
+                    headingCount+=1
+                html+= trContent.replace('<name>',('name="'+newCenter+'Check"')).replace('<value>','value="'+str(u['id'])+'"').replace('<teacherName>',u['usuario_id__first_name']+' '+u['usuario_id__last_name'])
+            html+= endTbody+endTable+ 5*endDiv+buttonContact+endDiv
+            return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk,'html':html})
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
+
+@login_required
+@coordinatorOrbossRequired
+def getEmailList(request):
+    try:
+        if request.is_ajax() and request and request.method=='GET':
+            keys = map((lambda x : int(x)),request.GET['keys'].split(","))
+            final = Usuario.objects.filter(id__in=keys).values('usuario_id__email')
+            emails = ''
+            for f in final:
+                emails+=f['usuario_id__email']+';'
+            return HttpResponse(emails)
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
 
 @login_required
 @coordinatorOrbossRequired
 def horario(request,rol):
-    usr = Usuario.objects.get(usuario_id = request.user.pk)
-    return render_to_response('HorarioPlanificacion.html',{'pk':usr.pk,'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+    try:
+        if request:
+            usr = Usuario.objects.get(usuario_id = request.user.pk)
+            return render_to_response('HorarioPlanificacion.html',{'pk':usr.pk,'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+        else:
+            raise Http404            
+    except Exception, e:
+        raise e
 
 @login_required
 @bossRequired
 def export(request):
-    usr = Usuario.objects.get(usuario_id = request.user.pk)
-    return render_to_response("JD_exportar.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
+    try:
+        if request :
+            usr = Usuario.objects.get(usuario_id = request.user.pk)
+            return render_to_response("JD_exportar.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
 
 @login_required
 @validateInputCrudDataEdit
@@ -323,7 +397,7 @@ def cambiarContrasena(request,rol, key):
 @login_required
 @coordinatorOrbossRequired
 def getScheduleByRequest(request,rol):
-    if request :
+    if request.is_ajax() and request and request.method=='GET' :
         rol_pattern = rol.lower()
         if rol_pattern == 'cc':
             try:
@@ -375,85 +449,109 @@ def getScheduleByRequest(request,rol):
 @login_required
 @coordinatorRequired
 def getUserByCenter(request):
-    centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-    final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
-    name = []
-    counter = 0
-    jsontemp = {}
-    for u in final_user_list:
-        if u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'] not in name:
-            jsontemp.update({
-                counter:{
-                'username':u['horario_solicitado__usuario__usuario_id__username'],
-                'name': u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name']}
-                })
-            counter +=1;
-            name.append(u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'])            
+    try:
+        if request.is_ajax() and request and request.method=='GET' :
+            centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+            name = []
+            counter = 0
+            jsontemp = {}
+            for u in final_user_list:
+                if u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'] not in name:
+                    jsontemp.update({
+                        counter:{
+                        'username':u['horario_solicitado__usuario__usuario_id__username'],
+                        'name': u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name']}
+                        })
+                    counter +=1;
+                    name.append(u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'])            
 
-    jsontemp.update({'length':counter})
+            jsontemp.update({'length':counter})
 
-    return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")
-
+            return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")
+        else:
+            raise Http404        
+    except Exception, e:
+        raise e
+ 
 
 '''Materias solicitadas por usuarios de un centro'''
 @login_required
 @coordinatorRequired
 def getSubjectByRequest(request):
-	centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-	center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
-	jsontemp = {}
-	counter = 0
-	names = []
-	for e in center_request_subject_list:
-		if e['materia__materia__nombre'] not in names:
-			jsontemp.update({counter:{'id':e['materia__materia__pk'],'nombre':e['materia__materia__nombre']}})
-			names.append(e['materia__materia__nombre'])
-			counter+=1
-	
-	jsontemp.update({'length':counter})
+    try:
+        if request.is_ajax() and request and request.method=='GET' :
+            centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+            center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
+            jsontemp = {}
+            counter = 0
+            names = []
+            for e in center_request_subject_list:
+                if e['materia__materia__nombre'] not in names:
+                    jsontemp.update({counter:{'id':e['materia__materia__pk'],'nombre':e['materia__materia__nombre']}})
+                    names.append(e['materia__materia__nombre'])
+                    counter+=1
+            
+            jsontemp.update({'length':counter})
 
-	return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")		
+            return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")       
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
 
 
 '''Todos los usuarios que realizaron solicitudes de materias'''
 @login_required
 @bossRequired
 def getUserByCenterAll(request):
-    final_user_list = HorarioSolicitado.objects.all().order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
-    name = []
-    counter = 0
-    jsontemp = {}
-    for u in final_user_list:
-        if u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'] not in name:
-            jsontemp.update({
-                counter:{
-                'username':u['horario_solicitado__usuario__usuario_id__username'],
-                'name': u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name']}
-                })
-            counter +=1;
-            name.append(u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'])            
+    try:
+        if request.is_ajax() and request and request.method=='GET' :
+            final_user_list = HorarioSolicitado.objects.all().order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+            name = []
+            counter = 0
+            jsontemp = {}
+            for u in final_user_list:
+                if u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'] not in name:
+                    jsontemp.update({
+                        counter:{
+                        'username':u['horario_solicitado__usuario__usuario_id__username'],
+                        'name': u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name']}
+                        })
+                    counter +=1;
+                    name.append(u['horario_solicitado__usuario__usuario_id__first_name']+' '+u['horario_solicitado__usuario__usuario_id__last_name'])            
 
-    jsontemp.update({'length':counter})
+            jsontemp.update({'length':counter})
 
-    return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")
+            return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")
+        else:
+            raise Http404        
+    except Exception, e:
+        raise e
 
 
 '''Todas las materias solicitadas de la escuela'''
 @login_required
 @bossRequired
 def getSubjectByRequestAll(request):
-    center_request_subject_list=MateriaSolicitada.objects.all().order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
-    jsontemp = {}
-    counter = 0
-    names = []
-    for e in center_request_subject_list:
-        if e['materia__materia__nombre'] not in names:
-            jsontemp.update({counter:{'id':e['materia__materia__pk'],'nombre':e['materia__materia__nombre']}})
-            names.append(e['materia__materia__nombre'])
-            counter+=1
-    
-    jsontemp.update({'length':counter})
+    try:
+        if request.is_ajax() and request and request.method=='GET' :
+            center_request_subject_list=MateriaSolicitada.objects.all().order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
+            jsontemp = {}
+            counter = 0
+            names = []
+            for e in center_request_subject_list:
+                if e['materia__materia__nombre'] not in names:
+                    jsontemp.update({counter:{'id':e['materia__materia__pk'],'nombre':e['materia__materia__nombre']}})
+                    names.append(e['materia__materia__nombre'])
+                    counter+=1
+            
+            jsontemp.update({'length':counter})
 
-    return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")       
+            return HttpResponse(json.dumps(jsontemp, sort_keys=True),content_type="application/json")       
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
 
 

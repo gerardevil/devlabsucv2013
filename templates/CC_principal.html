@@ -33,50 +33,33 @@
                     <thead>
                       <tr>
                         <th>
-                          Profesores del Nombre_de_centro
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-
+                          Listado de Profesores del {{centro}}
                           <div class="pull-right custom-align">
                             <input type="checkbox" name="Check" onclick="toggle(this)" value="none">
                             <b> Todos</b>
                           </div>
-
-                        </td>
+                        </th>
                       </tr>
+                    </thead>
+                    
+                    <tbody>
+                    {% for u in usrlist %}   
                       <tr>
                         <td>
                           <label class="checkbox">
-                            <input type="checkbox" name="Check" value="example1@domain.com">
-                            <a data-toggle="modal" href="#modalPerfil">Nombre_profesor_1</a>
+                            <input type="checkbox" name="Check" value="{{u.id}}">
+                            <a data-toggle="modal" href="#modalPerfil">
+                            {{u.usuario_id__first_name}} {{u.usuario_id__last_name}}
+                            </a>
                           </label>
                         </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <label class="checkbox">
-                            <input type="checkbox" name="Check" value="example2@domain.com">
-                            <a data-toggle="modal" href="#modalPerfil">Nombre_profesor_2</a>
-                          </label>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <label class="checkbox">
-                            <input type="checkbox" name="Check" value="example3@domain.com">
-                            <a data-toggle="modal" href="#modalPerfil"> Nombre_profesor_3</a>
-                          </label>
-                        </td>
-                      </tr>
+                      </tr> 
+                      {% endfor %}                    
                     </tbody>
                   </table>
 
 
-                  <button onclick="isAnyCheckSelected(this)" class="btn btn-primary" type="button"
+                  <button onclick="isAnyCheckSelected()" class="btn btn-primary" type="button"
                   style="float:right;">
                     <i class="icon-envelope icon-white"></i>
                     Contactar Seleccionados
