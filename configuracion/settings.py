@@ -4,7 +4,7 @@ import os, sys
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (('Gerardo Linares', 'gerardevil@gmail.com'), ('Jesus Gomez', 'jesus.igp009@gmail.com'), ('Junior Pe_a', 'example@domain.com'))
+ADMINS = (('Gerardo Linares', 'gerardevil@gmail.com'), ('Jesus Gomez', 'jesus.igp009@gmail.com'))
 
 MANAGERS = ADMINS
 
@@ -187,3 +187,9 @@ LOGGING = {
         },
     }
 }
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ejemplo@gmail.com'
+EMAIL_HOST_PASSWORD = '1234'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
