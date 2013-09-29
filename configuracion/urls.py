@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r'^export$', 'principal.views.export', name='export'),
     url(r'^getemaillist$', 'principal.views.getEmailList', name='getemaillist'),
     url(r'^getprofileinfo/(?P<key>\d+)$', 'principal.views.getProfileInfo', name='getprofileinfo'),
+
     
     #Profesor views:
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
@@ -42,9 +43,7 @@ urlpatterns = patterns('',
     url(r'^propuesta/editar/(?P<key>\d+)$', 'principal.views.editar_propuesta', name='epropuesta'), #Edita un horario de la propuesta
 
     #URLs para templates sin backend
-    url(r'^profile/editar$', 'principal.views.editar_profesor', name='horarios'),
     url(r'^cambiarContrasena/(?P<rol>[^/]+)/(?P<key>\d+)$', 'principal.views.cambiarContrasena', name='cambiarContrasena'),
-
 )
 
 '''
