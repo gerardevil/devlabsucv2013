@@ -69,7 +69,9 @@
                 </td>
                 <td>
                     <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px" title="Eliminar horario solicitado"><i class="icon-trash"></i></a>
-                    <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px" title="Editar horario solicitado"><i class="icon-edit"></i></a>
+                    {% if h.horario_solicitado.estatus == 'R' or h.horario_solicitado.estatus == 'N' %}
+                        <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px" title="Editar horario solicitado"><i class="icon-edit"></i></a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

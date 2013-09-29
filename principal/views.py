@@ -222,8 +222,10 @@ def profile(request):
                 form_e = AgregarMateriaEForm(request.POST,ukey=u.pk)
                 if form_e.is_valid():
                     form_e.save()
+                    form_e = AgregarMateriaEForm(ukey=u.pk)
                     return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
                 else:
+                    form_e = AgregarMateriaEForm(ukey=u.pk)
                     return render_to_response('Principal_Prof.html' ,{'usuario':usr, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'error':'El formulario no es valido', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
         else:
             form = AgregarMateriaForm()
@@ -249,30 +251,33 @@ def editar_propuesta(request,key):
         usr = u.toString()
         centro = u.centro.toString()
         hs = HorarioSolicitado.objects.get(pk=key)
-        materia = hs.horario_solicitado.materia.materia
-        tipo_mat = materia.tipo_materia
-        nm = materia.nombre
-        #horarios_mat = HorarioMateria.objects.filter(materia=materia)
-        if request.method == 'POST':
-            if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
-                form = EditarMateriaE(request.POST,hkey=key)
-            else:
-                form = EditarMateriaO(request.POST,hkey=key,ukey=u.pk,mat=materia)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('/profile')
-            else:
+        if hs.horario_solicitado.estatus == 'N' or hs.horario_solicitado.estatus == 'R':
+            materia = hs.horario_solicitado.materia.materia
+            tipo_mat = materia.tipo_materia
+            nm = materia.nombre
+            #horarios_mat = HorarioMateria.objects.filter(materia=materia)
+            if request.method == 'POST':
                 if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
                     form = EditarMateriaE(request.POST,hkey=key)
                 else:
                     form = EditarMateriaO(request.POST,hkey=key,ukey=u.pk,mat=materia)
-                return render_to_response('EditarPropM_Prof.html' ,{'form':form,'error':'Formulario no valido','nombre_mat':nm},context_instance=RequestContext(request))
-        else:
-            if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
-                form = EditarMateriaE(hkey=key)
+                if form.is_valid():
+                    form.save()
+                    return HttpResponseRedirect('/profile')
+                else:
+                    if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
+                        form = EditarMateriaE(request.POST,hkey=key)
+                    else:
+                        form = EditarMateriaO(request.POST,hkey=key,ukey=u.pk,mat=materia)
+                    return render_to_response('EditarPropM_Prof.html' ,{'form':form,'error':'Formulario no valido','nombre_mat':nm},context_instance=RequestContext(request))
             else:
-                form = EditarMateriaO(hkey=key,ukey=u.pk,mat=materia)
-        return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro,'nombre_mat':nm},context_instance=RequestContext(request))
+                if tipo_mat == 'Electiva' or tipo_mat == 'Complementaria':
+                    form = EditarMateriaE(hkey=key)
+                else:
+                    form = EditarMateriaO(hkey=key,ukey=u.pk,mat=materia)
+            return render_to_response('EditarPropM_Prof.html' ,{'form':form,'usuario':usr,'centro':centro,'nombre_mat':nm},context_instance=RequestContext(request))
+        else:
+            return HttpResponseRedirect('/profile')
     except Warning as w:
         return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__,'nombre_mat':nm},context_instance=RequestContext(request))
 
