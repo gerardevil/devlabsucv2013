@@ -234,7 +234,12 @@ def profile(request):
 
 @login_required
 def borrar_propuesta(request,key):
+    hs = HorarioSolicitado.objects.get(pk=key)
+    ms = hs.horario_solicitado
+    hsc = HorarioSolicitado.objects.filter(horario_solicitado=ms).count()
     m.borrar('horario solicitado',key)
+    if hsc < 2:
+        m.borrar('materia solicitada',ms.pk)
     return HttpResponseRedirect('/profile')
 
 @login_required
