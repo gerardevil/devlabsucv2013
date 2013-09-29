@@ -20,6 +20,7 @@ from django.shortcuts import render_to_response
 from django.core import serializers
 from django.http import Http404
 from principal.forms import *
+import datetime
 import json
 import os
 
@@ -127,6 +128,35 @@ def leer(request,modelo,key):
     return render_to_response('Principal_Admin.html' ,{'objeto':objeto,'modelo':modelo,'opc':4,'modelo':modelo},context_instance=RequestContext(request))
 
 #END CRUD Generico
+
+@login_required
+@validateInputCrudDataEdit
+def cambiarContrasena(request,rol, key):
+    try:
+        o = Usuario.objects.get(pk=key)
+        if request.method == 'POST':
+            form=CambiarContrasena(request.POST)
+            if form.is_valid():
+                contrasenaVieja = request.POST['contrasenaVieja']
+                contrasenaNueva = request.POST['contrasenaNueva']
+                confirmarContrasena = request.POST['confirmarContrasena']
+
+                #if User.objects.filter(username=username).exists() :
+
+                if rol =='jdd':
+                    return HttpResponseRedirect('/profilejdd')
+                elif rol=='cc':
+                    return HttpResponseRedirect('/profilecc')
+                elif rol == 'p':
+                    return HttpResponseRedirect('/profile')
+                else:
+                    raise Http404   
+        else:
+            form=CambiarContrasena()
+            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
+    except Warning as w:
+        return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
+
 
 ############
 # Profesor #
@@ -257,7 +287,6 @@ def profilecc(request):
     except Exception, e:
         raise e
 
-
 @login_required
 @bossRequired
 def profilejdd(request):
@@ -275,7 +304,7 @@ def profilejdd(request):
             nameCenter = '<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-toggle="false" <href> > <centerName> </a>'
             accordionBody = '<div <id> class="accordion-body collapse"><div class="accordion-inner">'
             tableHead= '<table><tbody><thead><tr><td><h5>Profesores</h5></td></tr></thead>'
-            trContent = '<tr><td><input type="checkbox" <name> <value> ><a data-toggle="modal" href="#modalPerfil"> <teacherName> </a></td></tr>'
+            trContent = '<tr><td><label type="checkbox"><input type="checkbox" <name> <value> onclick = "untoggleAllCheck(this)"><a data-toggle="modal" onclick="getSelectedProfile(<uid>)"> <teacherName> </a></input></label></td></tr>'
             buttonContact = '<button onclick="isAnyCheckSelected()" class="btn btn-primary" type="button" style="float:left;"><i class="icon-envelope icon-white"></i> Contactar Seleccionados</button>'
             endTable = '</table>'
             endTbody = '</tbody>'
@@ -294,7 +323,7 @@ def profilejdd(request):
                     html += accordionBody.replace('<id>' , 'id='+str(headingCount))
                     html+= tableHead
                     headingCount+=1
-                html+= trContent.replace('<name>',('name="'+newCenter+'Check"')).replace('<value>','value="'+str(u['id'])+'"').replace('<teacherName>',u['usuario_id__first_name']+' '+u['usuario_id__last_name'])
+                html+= trContent.replace('<name>',('name="'+newCenter+'Check"')).replace('<value>','value="'+str(u['id'])+'"').replace('<teacherName>',u['usuario_id__first_name']+' '+u['usuario_id__last_name']).replace('<uid>',str(u['id']))
             html+= endTbody+endTable+ 5*endDiv+buttonContact+endDiv
             return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk,'html':html})
         else:
@@ -311,8 +340,22 @@ def getEmailList(request):
             final = Usuario.objects.filter(id__in=keys).values('usuario_id__email')
             emails = ''
             for f in final:
-                emails+=f['usuario_id__email']+';'
+                if(f['usuario_id__email']!=''):
+                    emails+=f['usuario_id__email']+';'
             return HttpResponse(emails)
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
+
+@login_required
+@coordinatorOrbossRequired
+def getProfileInfo(request,key):
+    try:
+        if request.is_ajax() and request and request.method=='GET':
+            usrprofile = Usuario.objects.filter(id=int(key)).values('usuario_id__username','usuario_id__email','usuario_id__first_name','usuario_id__last_name','telefono_celular','telefono_oficina','telefono_casa','fecha_ingreso','direccion','dedicacion','estatus','tipo_contrato__nombre')
+            castedDates = [{ key : convertDatetimeToString(value) if isinstance(value,datetime.date) else value  for key,value in usrprofile[0].items()}]
+            return HttpResponse(json.dumps(castedDates[0]), content_type="application/json")
         else:
             raise Http404
     except Exception, e:
@@ -364,33 +407,6 @@ def editarperfil(request,rol,key):
         return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form, 'rol':rol,'pk':key},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
-
-@login_required
-def cambiarContrasena(request,rol, key):
-    try:
-        o = Usuario.objects.get(pk=key)
-        if request.method == 'POST':
-            form=CambiarContrasena(request.POST)
-            if form.is_valid():
-                contrasenaVieja = request.POST['contrasenaVieja']
-                contrasenaNueva = request.POST['contrasenaNueva']
-                confirmarContrasena = request.POST['confirmarContrasena']
-
-                #if User.objects.filter(username=username).exists() :
-
-                if rol =='jdd':
-                    return HttpResponseRedirect('/profilejdd')
-                elif rol=='cc':
-                    return HttpResponseRedirect('/profilecc')
-                elif rol == 'p':
-                    return HttpResponseRedirect('/profile')
-                else:
-                    raise Http404   
-        else:
-            form=CambiarContrasena()
-            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
-    except Warning as w:
-        return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
 
 
 '''Obtener el horario de solicitudes del sistema'''

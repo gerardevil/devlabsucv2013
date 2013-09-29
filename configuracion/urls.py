@@ -33,7 +33,7 @@ urlpatterns = patterns('',
     url(r'^editarperfil/(?P<rol>[^/]+)/(?P<key>\d+)$', 'principal.views.editarperfil', name='editProfile'),
     url(r'^export$', 'principal.views.export', name='export'),
     url(r'^getemaillist$', 'principal.views.getEmailList', name='getemaillist'),
-
+    url(r'^getprofileinfo/(?P<key>\d+)$', 'principal.views.getProfileInfo', name='getprofileinfo'),
     
     #Profesor views:
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia

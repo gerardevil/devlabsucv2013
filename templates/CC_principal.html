@@ -47,10 +47,12 @@
                       <tr>
                         <td>
                           <label class="checkbox">
-                            <input type="checkbox" name="Check" value="{{u.id}}">
-                            <a data-toggle="modal" href="#modalPerfil">
+                            <input type="checkbox" name="Check" value="{{u.id}}"
+                            onclick = "untoggleAllCheck(this)">
+                            <a data-toggle="modal" onclick="getSelectedProfile({{u.id}})">
                             {{u.usuario_id__first_name}} {{u.usuario_id__last_name}}
                             </a>
+                          </input>
                           </label>
                         </td>
                       </tr> 
@@ -63,128 +65,7 @@
                   style="float:right;">
                     <i class="icon-envelope icon-white"></i>
                     Contactar Seleccionados
-                  </button>    
-
-    <div id="modalPerfil" class="modal hide fade">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-          ×
-        </button>
-        <h3>
-          Información de Perfil
-        </h3>
-      </div>
-      <div class="modal-body">
-        <h5>
-          Cedula:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Nombre:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Apellido:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Correo electronico:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Telefono Celular:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Telefono Oficina:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Telefono Casa:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Fecha ingreso:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Direccion:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Tipo contrato:
-        </h5>
-        <p>
-          Datos
-        </p>
-        <h5>
-          Dedicacion:
-        </h5>
-        <p>
-          Datos
-        </p>
-      </div>
-    </div>
-    <!--Modal perfil-->
-
-    <!--Modal Contactar-->
-    <div id="modalContacto" class="modal hide fade">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-          ×
-        </button>
-        <h3>
-          Contactar
-        </h3>
-      </div>
-      <div class="modal-body">
-        <div id="destinatarios">
-          <p>
-            <b>Para</b>
-          </p>
-          <input type="text" id="to">
-        </div>
-        <hr>
-        <div id="asunto">
-          <p>
-            <b>Asunto</b>
-          </p>
-          <input type="text" id="matter">
-        </div>
-        <hr>
-        <div id="contenido">
-          <textarea style="width:90%;heigth:90%;" id="content"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-danger" data-dismiss="modal">
-          Cancelar
-        </button>
-        <button class="btn btn-success" type="button">
-          Enviar
-        </button>
-      </div>
-    </div>
-    <!--Modal Contactar-->
-
+                  </button>  
 {%endblock%}
 
 {% block scripts %}

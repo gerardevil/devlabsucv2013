@@ -68,13 +68,17 @@ def bossRequired(view):
 	return wrapper	
 
 def coordinatorOrbossRequired(view):
-	def wrapper(request,rol=None):
+	def wrapper(request,rol=None,key=None):
 		try:
 			roles = UsuarioRol.objects.filter(cedula__usuario_id__pk = request.user.pk).values('rol__rol_id')
 			roles_list = map((lambda e : e.values()),roles)
 			if [u'JDD'] in roles_list or [u'CC'] in roles_list:
-				if rol is not None:
+				if rol and key:
+					return view(request,rol,key)
+				elif rol:
 					return view(request,rol)
+				elif key :
+					return view(request,key)
 				else:
 					return view(request)
 			else:				
