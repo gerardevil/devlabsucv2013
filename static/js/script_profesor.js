@@ -96,6 +96,7 @@ $(document).ready(function() {
 
     $( "#salirE_am" ).click(function() {
         $('#agregarMatE select').prop('selectedIndex',0);
+        $('#agregarMatE input').attr('value',"");
     });
 });
 

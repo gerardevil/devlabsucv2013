@@ -88,6 +88,7 @@ class AgregarMateriaEForm(forms.Form):
     dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices= (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
     hora_inicio = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
     hora_fin = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
+    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
 
     def __init__(self, *args, **kwargs):
         self.ukey = kwargs.pop('ukey')
@@ -106,7 +107,8 @@ class AgregarMateriaEForm(forms.Form):
         dia_semana=self.cleaned_data['dia_semana'],
         hora_inicio=self.cleaned_data['hora_inicio'],
         hora_fin=self.cleaned_data['hora_fin'],
-        horario_solicitado=ms)
+        horario_solicitado=ms,
+        aula=self.cleaned_data['aula'])
 
 class EditarMateriaE(forms.Form):
     dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
