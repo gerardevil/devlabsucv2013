@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     url(r'^$', 'principal.views.inicio', name='home'), 
     url(r'^login$', 'principal.views.loginUser', name='login'),
     url(r'^logout$', 'principal.views.logoutUser', name='log'),
+    url(r'^resetrequest$', 'principal.views.resetPasswordRequest',name='resetrequest'),
     url(r'^profile$', 'principal.views.profile', name='profile'),
     url(r'^profilecc$', 'principal.views.profilecc', name='profilecc'),
     url(r'^profilejdd$', 'principal.views.profilejdd', name='profilejdd'),
@@ -35,7 +36,6 @@ urlpatterns = patterns('',
     url(r'^getemaillist$', 'principal.views.getEmailList', name='getemaillist'),
     url(r'^getprofileinfo/(?P<key>\d+)$', 'principal.views.getProfileInfo', name='getprofileinfo'),
 
-    
     #Profesor views:
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
     url(r'^horarios_materia$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia

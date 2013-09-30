@@ -3,11 +3,10 @@
 
 from django import forms
 from principal.models import *
-from principal.manager.formValidators import validateUniqueUser
-from django.db.models.loading import get_app, get_models, get_model
-from django.contrib.contenttypes.models import ContentType 
 from django.contrib.auth.hashers import *
-
+from django.contrib.contenttypes.models import ContentType 
+from django.db.models.loading import get_app, get_models, get_model
+from principal.manager.formValidators import validateUniqueUser,validateIntegerField,validateExistUser
 
 class LoginForm(forms.Form):
 	user = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, min_value = 1, label = "Usuario")
@@ -15,7 +14,7 @@ class LoginForm(forms.Form):
 
 class CustomUserForm(forms.Form):
 	# Fields for User Django model
-	usuario_id = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, validators = [validateUniqueUser], min_value = 1, label = "Cedula")
+	usuario_id = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, validators = [validateUniqueUser,validateIntegerField], min_value = 1, label = "Cedula")
 	nombre = forms.CharField(error_messages={'required': 'Campo Obligatorio'})
 	apellido = forms.CharField(error_messages={'required': 'Campo Obligatorio'})
 	password = forms.CharField(error_messages={'required': 'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña')
@@ -137,6 +136,9 @@ class EditarMateriaO(forms.Form):
         hs.hora_fin = h.hora_fin
         #hs.aula = self.cleaned_data['aula']
         hs.save()
+
+class ResetPasswordRequestForm(forms.Form):
+	username = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, validators = [validateIntegerField,validateExistUser], min_value = 1, label = "Cédula")
 
 
 class CambiarContrasena(forms.Form):
