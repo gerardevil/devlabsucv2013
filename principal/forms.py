@@ -172,15 +172,6 @@ class CambiarContrasena(forms.Form):
 	contrasenaNueva = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña nueva')
 	confirmarContrasena = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Confirmar contraseña')
 
-	#def __init__(self, *args, **kwargs):
-	#	super(EditarMateriaO, self).__init__(*args, **kwargs)
-	#	self.fields['contrasenaVieja'].initial=hs.dia_semana
-	#	self.fields['contrasenaNueva'].initial=hs.dia_semana
-	#	self.fields['contrasenaNueva2'].initial=hs.dia_semana
-
-	#def save(self)
-
-
 
 
 def get_object_form( type_id ):

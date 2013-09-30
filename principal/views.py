@@ -138,23 +138,25 @@ def leer(request,modelo,key):
 def cambiarContrasena(request,rol, key):
     try:
         o = Usuario.objects.get(pk=key)
+        usr = User.objects.get(username=request.user)
+
         if request.method == 'POST':
             form=CambiarContrasena(request.POST)
             if form.is_valid():
                 contrasenaVieja = request.POST['contrasenaVieja']
                 contrasenaNueva = request.POST['contrasenaNueva']
                 confirmarContrasena = request.POST['confirmarContrasena']
-
-                #if User.objects.filter(username=username).exists() :
-
-                if rol =='jdd':
-                    return HttpResponseRedirect('/profilejdd')
-                elif rol=='cc':
-                    return HttpResponseRedirect('/profilecc')
-                elif rol == 'p':
-                    return HttpResponseRedirect('/profile')
-                else:
-                    raise Http404   
+                if (usr.password == contrasenaVieja) and (contrasenaNueva == confirmarContrasena):               
+                    usr.set_password(confirmarContrasena)
+                    usr.save()
+                    if rol =='jdd':
+                        return HttpResponseRedirect('/profilejdd')
+                    elif rol=='cc':
+                        return HttpResponseRedirect('/profilecc')
+                    elif rol == 'p':
+                        return HttpResponseRedirect('/profile')
+                    else:
+                        raise Http404   
         else:
             form=CambiarContrasena()
             return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
@@ -531,33 +533,6 @@ def export(request):
     except Exception, e:
         raise e
 
-@login_required
-def cambiarContrasena(request,rol, key):
-    try:
-        o = Usuario.objects.get(pk=key)
-        if request.method == 'POST':
-            form=CambiarContrasena(request.POST)
-            if form.is_valid():
-                contrasenaVieja = request.POST['contrasenaVieja']
-                contrasenaNueva = request.POST['contrasenaNueva']
-                confirmarContrasena = request.POST['confirmarContrasena']
-
-                #if User.objects.filter(username=username).exists() :
-
-                if rol =='jdd':
-                    return HttpResponseRedirect('/profilejdd')
-                elif rol=='cc':
-                    return HttpResponseRedirect('/profilecc')
-                elif rol == 'p':
-                    return HttpResponseRedirect('/profile')
-                else:
-                    raise Http404   
-        else:
-            form=CambiarContrasena()
-            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form':form,'rol':rol,'pk':key},context_instance=RequestContext(request))
-    except Warning as w:
-        return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form':form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
-
 '''Obtener el horario de solicitudes del sistema'''
 @login_required
 @coordinatorOrbossRequired
@@ -567,12 +542,12 @@ def getScheduleByRequest(request,rol):
         if rol_pattern == 'cc':
             try:
                 centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
             except Exception, e:
                 raise e
         elif  rol_pattern == 'jdd':
             try:
-                center_schedule_list = HorarioSolicitado.objects.all().values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.all().values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
             except Exception, e:
                 raise e
         else:
@@ -594,6 +569,7 @@ def getScheduleByRequest(request,rol):
              'materia_solicitada':h['horario_solicitado_id'],
              'horario_solicitado':h['id'],
              'username':h['horario_solicitado__usuario__usuario_id__username'],
+			 'usuario':h['horario_solicitado__usuario__usuario_id__first_name']+' '+h['horario_solicitado__usuario__usuario_id__last_name'],
              'nombre':h['horario_solicitado__materia__materia__nombre'],
              'dia_semana':h['dia_semana'],
              'hora_inicio':convertDatetimeToString(h['hora_inicio']),

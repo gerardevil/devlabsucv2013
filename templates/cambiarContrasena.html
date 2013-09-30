@@ -53,7 +53,7 @@
 
 {% block contenido_vista %}
 
-  <form action="" method="POST">{% csrf_token %}
+  <form action="/cambiarContrasena/{{rol}}/{{pk}}" method="POST"> {% csrf_token %}
     <div class="control-group">
       {{form.as_p}} 
       </br>
