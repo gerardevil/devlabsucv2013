@@ -97,6 +97,27 @@ $(document).ready(function() {
     $( "#salirE_am" ).click(function() {
         $('#agregarMatE select').prop('selectedIndex',0);
         $('#agregarMatE input').attr('value',"");
+        $("#enviarE_am").prop('disabled',true)
+    });
+
+    function activarBoton(){
+        si1 = $("#agregarMateriaE #id_materia").prop('selectedIndex')
+        si2 = $("#agregarMateriaE #id_aula").prop('selectedIndex')
+        it1 = $("#agregarMateriaE #id_hora_inicio").val()
+        it2 = $("#agregarMateriaE #id_hora_fin").val()
+        if((si1 != 0) && (si2 != 0) && (it1 != '') && (it2 != '')){
+            $("#enviarE_am").prop('disabled',false)
+        }else{
+            $("#enviarE_am").prop('disabled',true)
+        }
+    }
+
+    $("#agregarMateriaE select").change(function(){
+            activarBoton()
+    });
+
+    $("#agregarMateriaE input").keyup(function(){
+            activarBoton()
     });
 });
 
