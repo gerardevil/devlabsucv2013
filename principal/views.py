@@ -677,7 +677,7 @@ def getUserByCenterAll(request):
 def getSubjectByRequestAll(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
-            center_request_subject_list=HorarioSolicitado.objects.all(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
+            center_request_subject_list=HorarioSolicitado.objects.all().order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
             jsontemp = {}
             counter = 0
             names = []
