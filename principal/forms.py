@@ -83,9 +83,31 @@ class AgregarMateriaForm(forms.Form):
 
 
 class AgregarMateriaEForm(forms.Form):
-    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
     materia = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=MateriaOfertada.objects.filter(materia__in=Materia.objects.filter(tipo_materia='Electiva' or 'Complementaria')))
+    dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices= (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
+    hora_inicio = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
+    hora_fin = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
+    aula = forms.ModelChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'}, queryset=Aula.objects)
 
+    def __init__(self, *args, **kwargs):
+        self.ukey = kwargs.pop('ukey')
+        super(AgregarMateriaEForm, self).__init__(*args, **kwargs)
+
+    def save(self):
+        u = Usuario.objects.get(pk=self.ukey)
+        cse = MateriaSolicitada.objects.filter(estatus='N',usuario=u,materia=self.cleaned_data['materia']).count()
+        if (cse == 0):
+            ms = MateriaSolicitada(estatus='N',usuario=u,materia=self.cleaned_data['materia'])
+            ms.save()
+        else:
+            ms = MateriaSolicitada.objects.get(usuario=u,materia=self.cleaned_data['materia'])
+
+        HorarioSolicitado.objects.create(
+        dia_semana=self.cleaned_data['dia_semana'],
+        hora_inicio=self.cleaned_data['hora_inicio'],
+        hora_fin=self.cleaned_data['hora_fin'],
+        horario_solicitado=ms,
+        aula=self.cleaned_data['aula'])
 
 class EditarMateriaE(forms.Form):
     dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))

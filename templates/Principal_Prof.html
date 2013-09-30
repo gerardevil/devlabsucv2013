@@ -68,8 +68,10 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px" title="Eliminar horario solicitado"><i class="icon-trash"></i></a>
-                    <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px" title="Editar horario solicitado"><i class="icon-edit"></i></a>
+                    {% if h.horario_solicitado.estatus == 'R' or h.horario_solicitado.estatus == 'N' %}
+                        <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px" title="Eliminar horario solicitado"><i class="icon-trash"></i></a>
+                        <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px" title="Editar horario solicitado"><i class="icon-edit"></i></a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -138,7 +140,7 @@
                 ×
             </button>
             <h3>
-                Agregar materia a la propuesta
+                Agregar materia electiva a la propuesta
             </h3>
         </div>
         <div id="agregarMatE_mb" class="modal-body">
@@ -150,7 +152,7 @@
         </div>
         <div class="modal-footer">
             <a button="" id="salirE_am" type="reset" class="btn" data-dismiss="modal" aria-hidden="true" form="#agregarMatE" >Cancelar</a>
-            <input id="enviarE_am" form="agregarMatE" class="btn btn-primary" type="submit" disabled="true" value="Guardar materia" />
+            <input id="enviarE_am" form="agregarMatE" class="btn btn-primary" type="submit" value="Guardar materia" />
         </div>
     </div>
 
