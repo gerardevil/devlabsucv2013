@@ -1,8 +1,10 @@
+#encoding:utf-8
 
 #views.py
 
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
+from django.contrib.auth.models import User
 from principal.manager.decorators import *
 from principal.manager import entity
 from principal.models import *
@@ -11,7 +13,6 @@ import sys
 # Imports for validation or any other thing bellow
 from principal.manager.converters import convertDatetimeToString
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -134,23 +135,25 @@ def leer(request,modelo,key):
 def cambiarContrasena(request,rol, key):
     try:
         o = Usuario.objects.get(pk=key)
+        usr = User.objects.get(username=request.user)
+
         if request.method == 'POST':
             form=CambiarContrasena(request.POST)
             if form.is_valid():
                 contrasenaVieja = request.POST['contrasenaVieja']
                 contrasenaNueva = request.POST['contrasenaNueva']
                 confirmarContrasena = request.POST['confirmarContrasena']
-
-                #if User.objects.filter(username=username).exists() :
-
-                if rol =='jdd':
-                    return HttpResponseRedirect('/profilejdd')
-                elif rol=='cc':
-                    return HttpResponseRedirect('/profilecc')
-                elif rol == 'p':
-                    return HttpResponseRedirect('/profile')
-                else:
-                    raise Http404   
+                if (usr.password == contrasenaVieja) and (contrasenaNueva == confirmarContrasena):               
+                    usr.set_password(confirmarContrasena)
+                    usr.save()
+                    if rol =='jdd':
+                        return HttpResponseRedirect('/profilejdd')
+                    elif rol=='cc':
+                        return HttpResponseRedirect('/profilecc')
+                    elif rol == 'p':
+                        return HttpResponseRedirect('/profile')
+                    else:
+                        raise Http404   
         else:
             form=CambiarContrasena()
             return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
@@ -179,6 +182,32 @@ def editarperfil(request,rol,key):
         return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form, 'rol':rol,'pk':key},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
+
+
+def resetPasswordRequest(request):
+    if request:
+        try:
+            form = ResetPasswordRequestForm(request.POST)
+            notes = "Ingrese un nombre de usuario, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
+            if form.is_valid():
+                resetPasswordSendEmail(request)
+            else:
+                return render_to_response('resetPasswordRequest.html' ,{'form' : form, 'notes':notes} ,context_instance=RequestContext(request))
+        except Warning as w:
+            return render_to_response('resetPasswordRequest.html' ,{'form' : form, 'notes':notes,'error':w.__doc__} ,context_instance=RequestContext(request))
+    else:
+        return Http404
+
+def resetPasswordSendEmail(request):
+    if request and request.POST:
+        return HttpResponse(request.POST['username'])
+
+def resetPasswordCheckUrl(request):
+    pass
+
+def resetPasswordChangeIt(request):
+    pass
+
 
 ############
 # Profesor #
@@ -395,6 +424,8 @@ def getEmailList(request):
 @coordinatorOrbossRequired
 def getProfileInfo(request,key):
     try:
+        print request.user.username
+        print request.user.email
         if request.is_ajax() and request and request.method=='GET':
             usrprofile = Usuario.objects.filter(id=int(key)).values('usuario_id__username','usuario_id__email','usuario_id__first_name','usuario_id__last_name','telefono_celular','telefono_oficina','telefono_casa','fecha_ingreso','direccion','dedicacion','estatus','tipo_contrato__nombre')
             castedDates = [{ key : convertDatetimeToString(value) if isinstance(value,datetime.date) else value  for key,value in usrprofile[0].items()}]
@@ -437,12 +468,12 @@ def getScheduleByRequest(request,rol):
         if rol_pattern == 'cc':
             try:
                 centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
             except Exception, e:
                 raise e
         elif  rol_pattern == 'jdd':
             try:
-                center_schedule_list = HorarioSolicitado.objects.all().values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.all().values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
             except Exception, e:
                 raise e
         else:
@@ -464,6 +495,7 @@ def getScheduleByRequest(request,rol):
              'materia_solicitada':h['horario_solicitado_id'],
              'horario_solicitado':h['id'],
              'username':h['horario_solicitado__usuario__usuario_id__username'],
+			 'usuario':h['horario_solicitado__usuario__usuario_id__first_name']+' '+h['horario_solicitado__usuario__usuario_id__last_name'],
              'nombre':h['horario_solicitado__materia__materia__nombre'],
              'dia_semana':h['dia_semana'],
              'hora_inicio':convertDatetimeToString(h['hora_inicio']),
@@ -517,14 +549,14 @@ def getSubjectByRequest(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
             centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-            center_request_subject_list=MateriaSolicitada.objects.filter(usuario__centro=centro.pk).order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
+            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
             jsontemp = {}
             counter = 0
             names = []
             for e in center_request_subject_list:
-                if e['materia__materia__nombre'] not in names:
-                    jsontemp.update({counter:{'id':e['materia__materia__pk'],'nombre':e['materia__materia__nombre']}})
-                    names.append(e['materia__materia__nombre'])
+                if e['horario_solicitado__materia__materia__nombre'] not in names:
+                    jsontemp.update({counter:{'id':e['horario_solicitado__materia__materia__pk'],'nombre':e['horario_solicitado__materia__materia__nombre']}})
+                    names.append(e['horario_solicitado__materia__materia__nombre'])
                     counter+=1
             
             jsontemp.update({'length':counter})
@@ -571,14 +603,14 @@ def getUserByCenterAll(request):
 def getSubjectByRequestAll(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
-            center_request_subject_list=MateriaSolicitada.objects.all().order_by('materia__materia__nombre').values('materia__materia__pk','materia__materia__nombre')
+            center_request_subject_list=HorarioSolicitado.objects.all(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
             jsontemp = {}
             counter = 0
             names = []
             for e in center_request_subject_list:
-                if e['materia__materia__nombre'] not in names:
-                    jsontemp.update({counter:{'id':e['materia__materia__pk'],'nombre':e['materia__materia__nombre']}})
-                    names.append(e['materia__materia__nombre'])
+                if e['horario_solicitado__materia__materia__nombre'] not in names:
+                    jsontemp.update({counter:{'id':e['horario_solicitado__materia__materia__pk'],'nombre':e['horario_solicitado__materia__materia__nombre']}})
+                    names.append(e['horario_solicitado__materia__materia__nombre'])
                     counter+=1
             
             jsontemp.update({'length':counter})
