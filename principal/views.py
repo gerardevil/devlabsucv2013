@@ -16,14 +16,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
+from django.core.cache import cache
 from django.core import serializers
+from django.conf import settings
+from django.core import signing
 from django.http import Http404
 from principal.forms import *
-import datetime
-import json
-import os
+import os,re,json,datetime
+
 
 #Entity manager class' Unique instance of 
 m = entity.Manager()
@@ -189,6 +192,7 @@ def resetPasswordRequest(request):
             notes = "Ingrese un nombre de usuario, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
             if form.is_valid():
                 resetPasswordSendEmail(request)
+                return HttpResponseRedirect('/')
             else:
                 return render_to_response('resetPasswordRequest.html' ,{'form' : form, 'notes':notes} ,context_instance=RequestContext(request))
         except Warning as w:
@@ -198,14 +202,84 @@ def resetPasswordRequest(request):
 
 def resetPasswordSendEmail(request):
     if request and request.POST:
-        return HttpResponse(request.POST['username'])
+        usr = request.POST['username']        
+        profile = User.objects.get(username=usr)
+        currentURL = request.build_absolute_uri()
+        resetURL = currentURL[:[r.start() for r in re.finditer('/',currentURL)][2]]+'/reset/?token='
+        resetURL += signing.dumps(usr,salt=settings.HEAVEN_KEY)
+        
+        content = u"Hola "+profile.first_name+" "+profile.last_name+u",\n\nHemos recibido una solicitud de recuperacion de contraseña a tu nombre.\n\nUtiliza en siquiente link para recuperar tu contraseña :\n\n"
+        content += resetURL+u"\n\n\nGracias,\nSistema Automatizado de Planificacion Docente"
+        subject = u"[Sistema Automatizado de Planificacion Docente] - Solicitud de Recuperación de Contraseña"
+        reciever = profile.email
+        sender = "syslocalemail@domain.com"
 
-def resetPasswordCheckUrl(request):
-    pass
+        print "EMAIL TO SEND:"
+        print subject
+        print "------------------------------------"
+        print reciever
+        print "------------------------------------"
+        print content
+        print "*******************************************"
 
+        #TO DO : put send Email HERE sendEmail()
+        return HttpResponse(200)
+    else:
+        return Http404
+
+@never_cache
 def resetPasswordChangeIt(request):
-    pass
+    if request and request.method=='GET' and 'token' in request.GET:
+        if cache.get(request.GET['token']) == None:
+            try:
 
+                usr = signing.loads(request.GET['token'],salt=settings.HEAVEN_KEY,max_age=settings.RESET_PASSWORD_TIMEOUT)
+                form = ResetPasswordChangeForm(request.POST)
+                return render_to_response('resetPasswordChange.html' ,{'form' : form} ,context_instance=RequestContext(request))
+
+            except signing.BadSignature, b:
+
+                notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  posee problemas en su firma digital intente realizar el proceso de recuperaci&oacuten de contrase&ntildea una vez m&aacutes."
+                return render_to_response('resetPasswordErrors.html',{'notes':notes})
+
+            except signing.SignatureExpired, s:
+
+                notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha sido empleado para realizar el proceso de restauracion de contrase&ntildea, intente realizar el proceso de restauraci&oacuten una vez m&aacutes."
+                return render_to_response('resetPasswordErrors.html',{'notes':notes})
+
+        else:
+
+            notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha sido empleado para realizar el proceso de restauraci&oacuten de contrase&ntildea, intente realizar el proceso una vez m&aacutes."
+            return render_to_response('resetPasswordErrors.html',{'notes':notes})
+
+    elif request and request.method == 'POST' and 'token' in request.GET:
+        try:
+            form = ResetPasswordChangeForm(request.POST)
+            if form.is_valid():
+                if form.cleaned_data['password']==form.cleaned_data['password_confirm']:
+                    try:
+                        cedula = signing.loads(request.GET['token'],salt=settings.HEAVEN_KEY,max_age=settings.RESET_PASSWORD_TIMEOUT)
+                        usr = User.objects.get(username=cedula)
+                        usr.set_password(form.cleaned_data['password'])
+                        usr.save()
+                        cache.set(request.GET['token'],usr,settings.RESET_PASSWORD_TIMEOUT)
+                        return HttpResponseRedirect('/login')
+                    except signing.BadSignature, b:
+
+                        notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  posee problemas en su firma digital intente realizar el proceso de recuperaci&oacuten de contrase&ntildea una vez m&aacutes."
+                        return render_to_response('resetPasswordErrors.html',{'notes':notes})
+
+                    except signing.SignatureExpired, s:
+
+                        notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha sido empleado para realizar el proceso de restauracion de contrase&ntildea, intente realizar el proceso de restauraci&oacuten una vez m&aacutes."
+                        return render_to_response('resetPasswordErrors.html',{'notes':notes})
+                else:
+                    return render_to_response('resetPasswordChange.html' ,{'form' : form,'err':1} ,context_instance=RequestContext(request))
+                return render_to_response('resetPasswordChange.html' ,{'form' : form} ,context_instance=RequestContext(request))
+        except Warning as w:
+            return render_to_response('resetPasswordRequest.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
+    else:
+        return Http404 
 
 ############
 # Profesor #

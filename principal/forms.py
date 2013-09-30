@@ -24,7 +24,7 @@ class CustomUserForm(forms.Form):
 	telefono_celular = forms.CharField(error_messages={'required': 'Campo Obligatorio'},max_length=20L,label='Telefono Celular')
 	telefono_oficina = forms.CharField(error_messages={'required': 'Campo Obligatorio'},max_length=20L,label='Telefono Oficina')
 	telefono_casa = forms.CharField(required=False, max_length=20L,label = 'Telefono Casa')	
-	fecha_ingreso = forms.DateField(error_messages={'required': 'Campo Obligatorio','invalid':'Formato de Fecha aceptado: Dia/Mes/Año'},input_formats = ['%d/%m/%Y'])	
+	fecha_ingreso = forms.DateField(error_messages={'required': 'Campo Obligatorio','invalid':'Formato de Fecha aceptado: Dia/Mes/Año'},input_formats = ['%Y-%m-%d'])	
 	direccion = forms.CharField(required=False,max_length=500L)
 	dedicacion = forms.ChoiceField(error_messages={'required': 'Campo Obligatorio'}, choices = (('6 hrs','6 Horas'), ('8 hrs','8 Horas'), ('12 hrs','12 Horas'), ('20 hrs','20 Horas'), ('40 hrs','40 Horas'),('DE','Dedicacion Exclusiva')))
 	estatus = forms.ChoiceField(error_messages={'required': 'Campo Obligatorio'}, choices=[('A','Activo'),('I','Inactivo'),('ED','Emergencia Docente')])
@@ -161,6 +161,10 @@ class EditarMateriaO(forms.Form):
 
 class ResetPasswordRequestForm(forms.Form):
 	username = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, validators = [validateIntegerField,validateExistUser], min_value = 1, label = "Cédula")
+
+class ResetPasswordChangeForm(forms.Form):
+	password = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Nueva Contraseña')
+	password_confirm = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Confirmar Contraseña')
 
 
 class CambiarContrasena(forms.Form):

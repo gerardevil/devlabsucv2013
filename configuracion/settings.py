@@ -115,6 +115,19 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '2heu7&0@!phd)wy^apsp7gujg-k#m%uol!jx4=-laeto4@=5f&'
 
+# Using heaven key for reset process
+HEAVEN_KEY = '$*H@E-&%/A12$%&s(dfVEN(df-o!@KE!-Y*$'
+
+# Using 24hrs like timeot period for reset process
+RESET_PASSWORD_TIMEOUT = 24*60*60
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'reseturl',
+    }
+}
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -131,6 +144,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #Non default middleware
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',    
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'configuracion.urls'
