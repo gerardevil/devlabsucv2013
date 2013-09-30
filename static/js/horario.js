@@ -208,17 +208,24 @@ function insertarMateriaHorario(horario){
 	var horaIni = new Date('01/01/2012 '+horario.hora_inicio);
 	var horaFin = new Date('01/01/2012 '+horario.hora_fin);
 	
-	var dif = (horaFin.getTime()-horaIni.getTime())/1000/60/60;
-	
 	var id;
 	var celda;
 	var i = horaIni.getHours();
 	
+	if(horaFin.getHours() < horaIni.getHours()) horaFin.setHours(horaFin.getHours()+12);
+	
+	//console.log('horaIni: '+horaIni.getHours());
+	//console.log('horaFin: '+horaFin.getHours());
+	
+	var dif = (horaFin.getTime()-horaIni.getTime())/1000/60/60;
+	
+	//console.log(dif);
+	
 	while(dif>0){
 		id = horario.dia_semana.toLowerCase()+i;
 		celda = $('#'+id);
-		celda.append('<div class="materiaHorario materia'+horario.materia_id+' profesor'+horario.username+'">'+horario.nombre+'</div>');
-		
+		celda.append('<div class="materiaHorario sol'+horario.horario_solicitado+' materia'+horario.materia_id+' profesor'+horario.username+'">'+horario.nombre+'</div>');
+
 		if(celda.children().size() > 1){
 			celda.addClass('conflicto');
 		}
@@ -227,6 +234,17 @@ function insertarMateriaHorario(horario){
 		dif--;
 	}
 	
+	var html = '<h5>Profesor</h5>' + horario.usuario; 
+	html += '<h5>Horario</h5>' + horario.dia_semana + ' ' + horario.hora_inicio + ' - ' + horario.hora_fin;
+	
+	$('.sol'+horario.horario_solicitado).popover({
+		html:true,
+		title:'<h5>'+horario.nombre+'</h5>',
+		content:html,
+		animation:true,
+		trigger:'hover',
+		placement:'bottom'
+	 });
 	
 	
 }

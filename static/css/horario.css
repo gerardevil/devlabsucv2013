@@ -56,6 +56,14 @@ td.conflicto{
 
 .materiasDiv{ float:right; }
 
+.materiaHorario{
+	cursor:pointer;
+}
+
+.materiaHorario:hover{
+	border: 1px solid #E0E0E0;
+}
+
 
 
 
