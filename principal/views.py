@@ -135,23 +135,25 @@ def leer(request,modelo,key):
 def cambiarContrasena(request,rol, key):
     try:
         o = Usuario.objects.get(pk=key)
+        usr = User.objects.get(username=request.user)
+
         if request.method == 'POST':
             form=CambiarContrasena(request.POST)
             if form.is_valid():
                 contrasenaVieja = request.POST['contrasenaVieja']
                 contrasenaNueva = request.POST['contrasenaNueva']
                 confirmarContrasena = request.POST['confirmarContrasena']
-
-                #if User.objects.filter(username=username).exists() :
-
-                if rol =='jdd':
-                    return HttpResponseRedirect('/profilejdd')
-                elif rol=='cc':
-                    return HttpResponseRedirect('/profilecc')
-                elif rol == 'p':
-                    return HttpResponseRedirect('/profile')
-                else:
-                    raise Http404   
+                if (usr.password == contrasenaVieja) and (contrasenaNueva == confirmarContrasena):               
+                    usr.set_password(confirmarContrasena)
+                    usr.save()
+                    if rol =='jdd':
+                        return HttpResponseRedirect('/profilejdd')
+                    elif rol=='cc':
+                        return HttpResponseRedirect('/profilecc')
+                    elif rol == 'p':
+                        return HttpResponseRedirect('/profile')
+                    else:
+                        raise Http404   
         else:
             form=CambiarContrasena()
             return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
