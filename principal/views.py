@@ -210,22 +210,22 @@ def resetPasswordSendEmail(request):
         resetURL = currentURL[:[r.start() for r in re.finditer('/',currentURL)][2]]+'/reset/?token='
         resetURL += signing.dumps(usr,salt=settings.HEAVEN_KEY)
         
-        content = u"Hola "+profile.first_name+" "+profile.last_name+u",\n\nHemos recibido una solicitud de recuperacion de contraseña a tu nombre.\n\nUtiliza en siquiente link para recuperar tu contraseña :\n\n"
-        content += resetURL+u"\n\n\nGracias,\nSistema Automatizado de Planificacion Docente"
-        subject = u"[Sistema Automatizado de Planificacion Docente] - Solicitud de Recuperación de Contraseña"
-        reciever = profile.email
-        sender = "syslocalemail@domain.com"
+        #content = u"Hola "+profile.first_name+" "+profile.last_name+u",\n\nHemos recibido una solicitud de recuperacion de contraseña a tu nombre.\n\nUtiliza en siquiente link para recuperar tu contraseña :\n\n"
+        #content += resetURL+u"\n\n\nGracias,\nSistema Automatizado de Planificacion Docente"
+        #subject = u"[Sistema Automatizado de Planificacion Docente] - Solicitud de Recuperación de Contraseña"
+        #reciever = profile.email
+        #sender = "syslocalemail@domain.com"
 
-        print "EMAIL TO SEND:"
-        print subject
-        print "------------------------------------"
-        print reciever
-        print "------------------------------------"
-        print content
-        print "*******************************************"
+        #print "EMAIL TO SEND:"
+        #print subject
+        #print "------------------------------------"
+        #print reciever
+        #print "------------------------------------"
+        #print content
+        #print "*******************************************"
 
         #TO DO : put send Email HERE sendEmail()
-        return HttpResponse(200)
+        return HttpResponse(resetURL)
     else:
         return Http404
 
@@ -246,7 +246,7 @@ def resetPasswordChangeIt(request):
 
             except signing.SignatureExpired, s:
 
-                notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha sido empleado para realizar el proceso de restauracion de contrase&ntildea, intente realizar el proceso de restauraci&oacuten una vez m&aacutes."
+                notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha expirado, intente realizar el proceso de restauraci&oacuten una vez m&aacutes."
                 return render_to_response('resetPasswordErrors.html',{'notes':notes})
 
         else:
@@ -273,7 +273,7 @@ def resetPasswordChangeIt(request):
 
                     except signing.SignatureExpired, s:
 
-                        notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha sido empleado para realizar el proceso de restauracion de contrase&ntildea, intente realizar el proceso de restauraci&oacuten una vez m&aacutes."
+                        notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha expirado, intente realizar el proceso de restauraci&oacuten una vez m&aacutes."
                         return render_to_response('resetPasswordErrors.html',{'notes':notes})
                 else:
                     return render_to_response('resetPasswordChange.html' ,{'form' : form,'err':1} ,context_instance=RequestContext(request))
