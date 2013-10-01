@@ -216,7 +216,7 @@ def resetPasswordSendEmail(request):
         #reciever = profile.email
         #sender = ""        
         #TO DO : put send Email HERE sendEmail()
-        print 'This is the URL you must use for restore your pass: 'resetURL
+        print 'This is the URL you must use for restore your pass: '+resetURL
         return HttpResponse(status=200)
     else:
         return Http404
