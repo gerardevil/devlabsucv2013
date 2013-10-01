@@ -14,24 +14,13 @@
 
 
 {% block op_barra %}
-<li class="active">
-  <a href="/profilejdd"><i class="icon-home">
-    </i> Principal</a>
+<li class="active"> 
+	<a href="/profilejdd"><i class="icon-home"> </i> Principal</a> 
 </li>
-
-<li>
-  <a href="/editarperfil/jdd/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
-</li>
-
-<li>
-  <a href="/horario/jdd"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a>
-</li>
-
-<li>
-  <a href="/export"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a>
-</li>
-<li>
-    <a href="/cambiarContrasena/jdd/{{pk}}"><i class="icon-repeat"></i> Cambiar Contraseña</a>
+<li> <a href="/editarperfil/jdd/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a> </li>
+<li> <a href="/horario/jdd"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a> </li>
+<li> <a href="/export"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a> </li>
+<li> <a href="/cambiarContrasena/jdd/{{pk}}"><i class="icon-repeat"></i> Cambiar Contraseña</a>
 </li>
 {% endblock %}
 
@@ -39,7 +28,6 @@
 <link rel="stylesheet" href="{% static "css/accordion.css" %}" type="text/css" />
 <div class="tittleLabel">Listado de Centros</div>
 {{html|safe}}   
-
 {% endblock %}
 
 {% block scripts %}

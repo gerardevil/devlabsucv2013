@@ -13,41 +13,31 @@
 {% endblock %}
 
 {% block op_barra %}
-<li >
-  <a href="/profilecc"><i class="icon-home">
-    </i> Principal</a>
-</li>
-
+<li> <a href="/profilecc"><i class="icon-home"> </i> Principal</a> </li>
 <li class="active">
   <a href="/editarperfil/cc/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
 </li>
-
-<li>
-  <a href="/horario/cc"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a>
-</li>
-<li>
-    <a href="/cambiarContrasena/p/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a>
-</li>
+<li> <a href="/horario/cc"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a> </li>
+<li> <a href="/cambiarContrasena/p/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a> </li>
 {% endblock %}
 
 {% block contenido_vista %}
-<form method='POST'>
-	{% csrf_token %}
-	<table>
-	{{ form.as_p}}
-	</table>
-	</br>
-    <input class="btn btn-primary" type="submit" value="Terminar Edición" />
-</form>
+  <form method='POST'>
+  	{% csrf_token %}
+  	<table>
+  	{{ form.as_p}}
+  	</table>
+  	</br>
+      <input class="btn btn-primary" type="submit" value="Terminar Edición" />
+  </form>
 
-{% if error %}
-<div class="alert alert-error">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <h4>¡Error!</h4>
-    {{error}}
-</div>
-{% endif %}
-
+  {% if error %}
+  <div class="alert alert-error">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4>¡Error!</h4>
+      {{error}}
+  </div>
+  {% endif %}
 {% endblock %}
 
 {% block scripts %}
