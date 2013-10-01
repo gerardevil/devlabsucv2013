@@ -184,15 +184,14 @@ def editarperfil(request,rol,key):
     except Warning as w:
         return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
 
-'''
+
 def resetPasswordRequest(request):
     if request:
         try:
             form = ResetPasswordRequestForm(request.POST)
             notes = "Ingrese un nombre de usuario, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
             if form.is_valid():       
-                resetPasswordSendEmail(request)
-                return HttpResponseRedirect('/')
+                return resetPasswordSendEmail(request)
             else:
                 return render_to_response('resetPasswordRequest.html' ,{'form' : form, 'notes':notes} ,context_instance=RequestContext(request))
         except Warning as w:
@@ -206,7 +205,8 @@ def resetPasswordSendEmail(request):
         profile = User.objects.get(username=usr)
         currentURL = request.build_absolute_uri()
         resetURL = currentURL[:[r.start() for r in re.finditer('/',currentURL)][2]]+'/reset/?token='
-        resetURL += signing.dumps(usr,salt=settings.HEAVEN_KEY)
+        token = signing.dumps(usr,salt=settings.HEAVEN_KEY)
+        resetURL +=  token
         
         #content = u"Hola "+profile.first_name+" "+profile.last_name+u",\n\nHemos recibido una solicitud de recuperacion de contraseña a tu nombre.\n\nUtiliza en siquiente link para recuperar tu contraseña :\n\n"
         #content += resetURL+u"\n\n\nGracias,\nSistema Automatizado de Planificacion Docente"
@@ -214,15 +214,14 @@ def resetPasswordSendEmail(request):
         #reciever = profile.email
         #sender = ""        
         #TO DO : put send Email HERE sendEmail()
-        print resetURL
-        return HttpResponse(status=200)
+        OneTimeUseURL.objects.create(url=token)
+        return HttpResponse(resetURL,status=200)
     else:
         return Http404
 
-@never_cache
 def resetPasswordChangeIt(request):
     if request and request.method=='GET' and 'token' in request.GET:
-        if cache.get(request.GET['token']) == None:
+        if OneTimeUseURL.objects.filter(url=request.GET['token']).exists():
             try:
 
                 usr = signing.loads(request.GET['token'],salt=settings.HEAVEN_KEY,max_age=settings.RESET_PASSWORD_TIMEOUT)
@@ -241,21 +240,21 @@ def resetPasswordChangeIt(request):
 
         else:
 
-            notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha sido empleado para realizar el proceso de restauraci&oacuten de contrase&ntildea, intente realizar el proceso una vez m&aacutes."
+            notes = u"El siguiente url :  <font color='blue'><b>"+request.build_absolute_uri()+"</b></font>,  ya ha sido empleado para realizar el proceso de restauraci&oacuten de contrase&ntildea &oacute es incorrecto, intente realizar el proceso una vez m&aacutes."
             return render_to_response('resetPasswordErrors.html',{'notes':notes})
 
     elif request and request.method == 'POST' and 'token' in request.GET:
         try:
             form = ResetPasswordChangeForm(request.POST)
             if form.is_valid():
-                print 'is valid'
+                
                 if form.cleaned_data['password']==form.cleaned_data['password_confirm']:
                     try:
                         cedula = signing.loads(request.GET['token'],salt=settings.HEAVEN_KEY,max_age=settings.RESET_PASSWORD_TIMEOUT)
                         usr = User.objects.get(username=cedula)
                         usr.set_password(form.cleaned_data['password'])
                         usr.save()
-                        cache.set(request.GET['token'],usr,settings.RESET_PASSWORD_TIMEOUT)
+                        OneTimeUseURL.objects.filter(url=request.GET['token']).delete()
                         return HttpResponseRedirect('/login')
                     except signing.BadSignature, b:
 
@@ -273,7 +272,7 @@ def resetPasswordChangeIt(request):
             return render_to_response('resetPasswordRequest.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
     else:
         return Http404 
-'''
+
 
 ############
 # Profesor #

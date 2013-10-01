@@ -563,3 +563,23 @@ class UsuarioRol(models.Model):
 
 	def get_pk(self):
 		return self.pk
+
+
+class OneTimeUseURL(models.Model):
+	url = models.CharField(unique=True,max_length=255L)
+
+	class Meta:
+		db_table = 'reseturl'
+
+	def __unicode__(self):
+		return u'url | %s' % (self.url)
+
+	def toJson(self,minify=True):
+		retorno = {'url':self.url}
+		return retorno
+		
+	def toString(self):
+		return self.url
+
+	def get_pk(self):
+		return self.pk
