@@ -192,10 +192,9 @@ def resetPasswordRequest(request):
         try:
             form = ResetPasswordRequestForm(request.POST)
             notes = "Ingrese un nombre de usuario, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
-            if form.is_valid():                
-                return resetPasswordSendEmail(request)
-                #resetPasswordSendEmail(request)
-                #return HttpResponseRedirect('/')
+            if form.is_valid():       
+                resetPasswordSendEmail(request)
+                return HttpResponseRedirect('/')
             else:
                 return render_to_response('resetPasswordRequest.html' ,{'form' : form, 'notes':notes} ,context_instance=RequestContext(request))
         except Warning as w:
@@ -215,11 +214,10 @@ def resetPasswordSendEmail(request):
         #content += resetURL+u"\n\n\nGracias,\nSistema Automatizado de Planificacion Docente"
         #subject = u"[Sistema Automatizado de Planificacion Docente] - Solicitud de Recuperación de Contraseña"
         #reciever = profile.email
-        #sender = ""
-        
+        #sender = ""        
         #TO DO : put send Email HERE sendEmail()
-        
-        return HttpResponse(resetURL)
+        print resetURL
+        return HttpResponse(status=200)
     else:
         return Http404
 
