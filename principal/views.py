@@ -16,10 +16,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import never_cache
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
-from django.core.cache import cache
 from django.core import serializers
 from django.conf import settings
 from django.core import signing
@@ -186,17 +184,15 @@ def editarperfil(request,rol,key):
     except Warning as w:
         return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
 
-
+'''
 def resetPasswordRequest(request):
     if request:
         try:
             form = ResetPasswordRequestForm(request.POST)
             notes = "Ingrese un nombre de usuario, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
-            if form.is_valid(): 
-                response = HttpResponse()
-                response = resetPasswordSendEmail(request)
-                return HttpResponse(response['resetURL'])
-                #return HttpResponseRedirect('/')
+            if form.is_valid():       
+                resetPasswordSendEmail(request)
+                return HttpResponseRedirect('/')
             else:
                 return render_to_response('resetPasswordRequest.html' ,{'form' : form, 'notes':notes} ,context_instance=RequestContext(request))
         except Warning as w:
@@ -218,10 +214,8 @@ def resetPasswordSendEmail(request):
         #reciever = profile.email
         #sender = ""        
         #TO DO : put send Email HERE sendEmail()
-
-        response = HttpResponse()
-        response['resetURL'] = resetURL
-        return response
+        print resetURL
+        return HttpResponse(status=200)
     else:
         return Http404
 
@@ -279,6 +273,7 @@ def resetPasswordChangeIt(request):
             return render_to_response('resetPasswordRequest.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
     else:
         return Http404 
+'''
 
 ############
 # Profesor #
