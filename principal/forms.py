@@ -11,6 +11,7 @@ from principal.manager.formValidators import validateUniqueUser,validateIntegerF
 class LoginForm(forms.Form):
 	user = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, min_value = 1, label = "Usuario")
 	password = forms.CharField(error_messages={'required': 'Campo Obligatorio'}, widget=forms.PasswordInput(), label = 'Contraseña')
+	
 
 class CustomUserForm(forms.Form):
 	# Fields for User Django model
@@ -109,6 +110,7 @@ class AgregarMateriaEForm(forms.Form):
         horario_solicitado=ms,
         aula=self.cleaned_data['aula'])
 
+
 class EditarMateriaE(forms.Form):
     dia_semana = forms.ChoiceField(required=True,error_messages={'required': 'Campo Obligatorio'},choices = (('Lunes','Lunes'), ('Martes','Martes'), ('Miercoles','Miercoles'), ('Jueves','Jueves'), ('Viernes','Viernes') ))
     hora_inicio = forms.TimeField(required=True,error_messages={'required': 'Campo Obligatorio'})
@@ -159,19 +161,20 @@ class EditarMateriaO(forms.Form):
         #hs.aula = self.cleaned_data['aula']
         hs.save()
 
+
 class ResetPasswordRequestForm(forms.Form):
 	username = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, validators = [validateIntegerField,validateExistUser], min_value = 1, label = "Cédula")
 
+
 class ResetPasswordChangeForm(forms.Form):
-	password = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Nueva Contraseña')
-	password_confirm = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Confirmar Contraseña')
+	password = forms.CharField(required=True,error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Nueva Contraseña')
+	password_confirm = forms.CharField(required=True,error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Confirmar Contraseña')
 
 
 class CambiarContrasena(forms.Form):
 	contrasenaVieja = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña actual')
 	contrasenaNueva = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Contraseña nueva')
 	confirmarContrasena = forms.CharField(error_messages={'required':'Campo Obligatorio'}, widget=forms.PasswordInput(render_value = True), label = 'Confirmar contraseña')
-
 
 
 def get_object_form( type_id ):

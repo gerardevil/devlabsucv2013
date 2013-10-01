@@ -192,9 +192,10 @@ def resetPasswordRequest(request):
         try:
             form = ResetPasswordRequestForm(request.POST)
             notes = "Ingrese un nombre de usuario, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
-            if form.is_valid():
-                resetPasswordSendEmail(request)
-                return HttpResponseRedirect('/')
+            if form.is_valid():                
+                return resetPasswordSendEmail(request)
+                #resetPasswordSendEmail(request)
+                #return HttpResponseRedirect('/')
             else:
                 return render_to_response('resetPasswordRequest.html' ,{'form' : form, 'notes':notes} ,context_instance=RequestContext(request))
         except Warning as w:
@@ -214,17 +215,10 @@ def resetPasswordSendEmail(request):
         #content += resetURL+u"\n\n\nGracias,\nSistema Automatizado de Planificacion Docente"
         #subject = u"[Sistema Automatizado de Planificacion Docente] - Solicitud de Recuperación de Contraseña"
         #reciever = profile.email
-        #sender = "syslocalemail@domain.com"
-
-        #print "EMAIL TO SEND:"
-        #print subject
-        #print "------------------------------------"
-        #print reciever
-        #print "------------------------------------"
-        #print content
-        #print "*******************************************"
-
+        #sender = ""
+        
         #TO DO : put send Email HERE sendEmail()
+        
         return HttpResponse(resetURL)
     else:
         return Http404
@@ -258,6 +252,7 @@ def resetPasswordChangeIt(request):
         try:
             form = ResetPasswordChangeForm(request.POST)
             if form.is_valid():
+                print 'is valid'
                 if form.cleaned_data['password']==form.cleaned_data['password_confirm']:
                     try:
                         cedula = signing.loads(request.GET['token'],salt=settings.HEAVEN_KEY,max_age=settings.RESET_PASSWORD_TIMEOUT)
