@@ -497,8 +497,6 @@ def getEmailList(request):
 @coordinatorOrbossRequired
 def getProfileInfo(request,key):
     try:
-        print request.user.username
-        print request.user.email
         if request.is_ajax() and request and request.method=='GET':
             usrprofile = Usuario.objects.filter(id=int(key)).values('usuario_id__username','usuario_id__email','usuario_id__first_name','usuario_id__last_name','telefono_celular','telefono_oficina','telefono_casa','fecha_ingreso','direccion','dedicacion','estatus','tipo_contrato__nombre')
             castedDates = [{ key : convertDatetimeToString(value) if isinstance(value,datetime.date) else value  for key,value in usrprofile[0].items()}]
