@@ -136,14 +136,19 @@ def leer(request,modelo,key):
 def cambiarContrasena(request,rol, key):
     try:
         o = Usuario.objects.get(pk=key)
-        usr = User.objects.get(username=request.user)
-
+        usr = User.objects.get(username=request.user.username)
+        form=CambiarContrasena(request.POST)
         if request.method == 'POST':
-            form=CambiarContrasena(request.POST)
             if form.is_valid():
                 contrasenaVieja = request.POST['contrasenaVieja']
                 contrasenaNueva = request.POST['contrasenaNueva']
                 confirmarContrasena = request.POST['confirmarContrasena']
+                
+                print usr.password
+                print contrasenaVieja
+                print contrasenaNueva
+                print confirmarContrasena
+                
                 if (usr.password == contrasenaVieja) and (contrasenaNueva == confirmarContrasena):               
                     usr.set_password(confirmarContrasena)
                     usr.save()
@@ -154,9 +159,11 @@ def cambiarContrasena(request,rol, key):
                     elif rol == 'p':
                         return HttpResponseRedirect('/profile')
                     else:
-                        raise Http404   
+                        raise Http404 
+                else:
+                    return HttpResponse("Datos de contraseña invalidos")
+            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
         else:
-            form=CambiarContrasena()
             return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
