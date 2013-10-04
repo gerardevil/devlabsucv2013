@@ -64,7 +64,7 @@ def loginUser(request):
         else:
             return render_to_response('Login.html' ,{'err':1,'login_form' : login_form},context_instance=RequestContext(request))
     else:
-        login_form =  LoginForm()
+        login_form =  LoginForm(request.POST)
         return render_to_response('Login.html',{'login_form' : login_form},context_instance=RequestContext(request))
 
 # Logout view
