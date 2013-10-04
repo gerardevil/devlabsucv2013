@@ -102,6 +102,9 @@ STATICFILES_DIRS = (
     ('css', os.path.join(BASE_DIR, '..', 'static', 'css').replace('\\','/')),
     ('img', os.path.join(BASE_DIR, '..', 'static', 'img').replace('\\','/')),
     ('logos', os.path.join(BASE_DIR, '..', 'static', 'logos').replace('\\','/')),
+	('font', os.path.join(BASE_DIR, '..', 'static', 'font').replace('\\','/')),
+	('less', os.path.join(BASE_DIR, '..', 'static', 'less').replace('\\','/')),
+	('scss', os.path.join(BASE_DIR, '..', 'static', 'scss').replace('\\','/')),
 )
 
 # List of finder classes that know how to find static files in
@@ -195,7 +198,7 @@ LOGGING = {
 }
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'ejemplo@gmail.com'
-EMAIL_HOST_PASSWORD = '1234'
+EMAIL_HOST_USER = 'programdocenteucvciens@gmail.com'
+EMAIL_HOST_PASSWORD = '12Temporal34'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

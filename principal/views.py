@@ -26,6 +26,7 @@ from principal.forms import *
 import os,re,json,datetime
 
 
+
 #Entity manager class' Unique instance of 
 m = entity.Manager()
 

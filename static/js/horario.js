@@ -94,10 +94,10 @@ function cargarProfesores(){
 				html += '<button type="submit" class="btn btn-mini profesor" profesorId="profesor'+respuesta[i]['username']+'" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-eye-open"></i>';
 				html += '</button>';
-				html += '<button type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">';
+				html += '<button type="submit" class="btn btn-mini rechazar" profesorId="profesor'+respuesta[i]['username']+'" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-remove"></i>';
 				html += '</button>';		
-				html += '<button type="submit" class="btn btn-mini" style="margin-left:5px;float:right;">';
+				html += '<button type="submit" class="btn btn-mini aprobar" profesorId="profesor'+respuesta[i]['username']+'" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-ok"></i>';
 				html += '</button></td></tr>';
 				
@@ -120,6 +120,48 @@ function cargarProfesores(){
 					$(this).children().removeClass('icon-eye-open');
 					$(this).children().addClass('icon-eye-close');
 				}
+			
+			});
+			
+			$('.aprobar').click(function(){
+				var elem = $('.'+$(this).attr('profesorId'));
+
+				elem.each(function(){
+				
+					$(this).find('.icono').each(function(){
+						if($(this).hasClass('icon-ok')){
+							$(this).removeClass();
+							$(this).addClass('icono');
+						}else{
+							$(this).removeClass();
+							$(this).addClass('icono');
+							$(this).addClass('icon-ok');
+							$(this).css('color','green');
+						}
+					});
+					
+				});
+				
+			});
+			
+			$('.rechazar').click(function(){
+				var elem = $('.'+$(this).attr('profesorId'));
+				
+				elem.each(function(){
+				
+					$(this).find('.icono').each(function(){
+						if($(this).hasClass('icon-remove')){
+							$(this).removeClass();
+							$(this).addClass('icono');
+						}else{
+							$(this).removeClass();
+							$(this).addClass('icono');
+							$(this).addClass('icon-remove');
+							$(this).css('color','red');
+						}
+					});
+					
+				});
 			
 			});
 			
@@ -221,10 +263,18 @@ function insertarMateriaHorario(horario){
 	
 	//console.log(dif);
 	
+	var html = '';
+	
 	while(dif>0){
 		id = horario.dia_semana.toLowerCase()+i;
 		celda = $('#'+id);
-		celda.append('<div class="materiaHorario sol'+horario.horario_solicitado+' materia'+horario.materia_id+' profesor'+horario.username+'">'+horario.nombre+'</div>');
+		html = '<div class="materiaHorario sol'+horario.horario_solicitado+' materia'+horario.materia_id+' profesor'+horario.username+'">';
+		//html += '<i class="icono icon-ok" style="color:green;"></i>';
+		//html += '<i class="icono icon-remove" style="color:red;"></i>';
+		html += '<i class="icono"></i>';
+		html += horario.nombre;
+		html += '</div>';
+		celda.append(html);
 
 		if(celda.children().size() > 1){
 			celda.addClass('conflicto');
@@ -234,7 +284,7 @@ function insertarMateriaHorario(horario){
 		dif--;
 	}
 	
-	var html = '<h5>Profesor</h5>' + horario.usuario; 
+	html = '<h5>Profesor</h5>' + horario.usuario; 
 	html += '<h5>Horario</h5>' + horario.dia_semana + ' ' + horario.hora_inicio + ' - ' + horario.hora_fin;
 	
 	$('.sol'+horario.horario_solicitado).popover({

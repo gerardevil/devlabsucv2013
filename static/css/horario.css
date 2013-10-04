@@ -64,6 +64,10 @@ td.conflicto{
 	border: 1px solid #E0E0E0;
 }
 
-
+.materiaHorario .icono{
+    position: relative;
+	float: right;
+	top: 0px;
+}
 
 
