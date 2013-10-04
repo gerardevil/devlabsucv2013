@@ -9,7 +9,7 @@ from django.db.models.loading import get_app, get_models, get_model
 from principal.manager.formValidators import validateUniqueUser,validateIntegerField,validateExistUser
 
 class LoginForm(forms.Form):
-	user = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, min_value = 1, label = "Usuario")
+	user = forms.IntegerField(error_messages={'required': 'Campo Obligatorio','invalid': 'Este campo debe ser númerico'}, min_value = 1, label = "Cedula")
 	password = forms.CharField(error_messages={'required': 'Campo Obligatorio'}, widget=forms.PasswordInput(), label = 'Contraseña')
 	
 
