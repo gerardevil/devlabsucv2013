@@ -195,7 +195,7 @@ LOGGING = {
 }
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'ejemplo@gmail.com'
-EMAIL_HOST_PASSWORD = '1234'
+EMAIL_HOST_USER = 'programdocenteucvciens@gmail.com'
+EMAIL_HOST_PASSWORD = '12Temporal34'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.db.models.loading import get_app, get_models, get_model
 from django.contrib.contenttypes.models import ContentType 
+from django.core.mail import send_mass_mail
 
 class Manager:
 
@@ -49,3 +50,11 @@ class Manager:
 		o = model.objects.get(pk=key)
 		#Verificar si el objeto existe
 		return o
+		
+	def enviarMail(subject=[], email=[], to=[]):
+		if len(email) and len(to) and len(subject) and len(email)==len(to)==len(subject):
+			correo = (subject, email, '', to)
+			send_mass_mail((mail,),fail_silently=True)
+		else: 
+			return False
+		
