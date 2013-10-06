@@ -1,3 +1,5 @@
+#encoding:utf-8
+
 #entity.py
 
 from principal.forms import *
@@ -53,15 +55,25 @@ class Manager:
 		return o
 		
 	def enviarMail(self,contenido=[]):
+		failure = False
 		if len(contenido):
 			r = tuple()
 			for i in xrange(len(contenido)):
 				r = r.__add__((contenido[i],))
-			print r
 			try:
 				send_mass_mail(r,fail_silently=True)
-			except smtplib.SMTPException, s:raise s
-			return True
+				return not failure
+			except smtplib.SMTPException, s:
+				raise s
 		else: 
-			return False	
+			return failure
+
+	def makeMessage(self, subject=u'[Sistema Automatizado de Planificación Docente]', to=[], from_email='programdocenteucvciens@gmail.com', content='Sys: This is an automatically generated SMTP Test Message, please do not reply.'):
+		# format (subject, message, from_email, recipient_list)
+		if len(to):
+			officialcontent = u"Sistema Automatizado de Planificación Docente\n\n"			
+			officialcontent += content        	
+			officialcontent += u"\n\n\nAtentamente, \nSistema Automatizado de Planificación Docente."
+			return (subject,officialcontent,from_email,to)
+
 	

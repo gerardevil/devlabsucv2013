@@ -214,15 +214,15 @@ def resetPasswordSendEmail(request):
         resetURL = currentURL[:[r.start() for r in re.finditer('/',currentURL)][2]]+'/reset/?token='
         token = signing.dumps(usr,salt=settings.HEAVEN_KEY)
         resetURL +=  token
-        
-        #content = u"Hola "+profile.first_name+" "+profile.last_name+u",\n\nHemos recibido una solicitud de recuperacion de contraseña a tu nombre.\n\nUtiliza en siquiente link para recuperar tu contraseña :\n\n"
-        #content += resetURL+u"\n\n\nGracias,\nSistema Automatizado de Planificacion Docente"
-        #subject = u"[Sistema Automatizado de Planificacion Docente] - Solicitud de Recuperación de Contraseña"
-        #reciever = profile.email
-        #sender = ""        
-        #TO DO : put send Email HERE sendEmail()
+
+        content = u"Hola, "+profile.first_name+u" "+profile.last_name+u".\n"
+        content += u"Hemos recibido una solicitud de cambio de contraseña a tu nombre, "
+        content += u"emplea el siguiente link para acceder al proceso de restauración de contraseña:\n\n"
+        content += resetURL
+        m.enviarMail([m.makeMessage(to=[profile.email],content=content)])       
+
         OneTimeUseURL.objects.create(url=token)
-        return HttpResponse(resetURL,status=200)
+        return HttpResponseRedirect('/')
     else:
         return Http404
 
