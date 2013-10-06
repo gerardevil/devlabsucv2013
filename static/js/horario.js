@@ -1,21 +1,21 @@
 
 $(function(){
-
-	$(".nano").nanoScroller();
-	$(".submenu").addClass("hidden");
-	$(".pane").css("display","block");
-	$(".slider").css("display","block");
+	
 	$('#tablaProfesores tbody').html('<tr><td>Cargando...</td></tr>');
 	$('#tablaMaterias tbody').html('<tr><td>Cargando...</td></tr>');
 	cargarHorario();
 	cargarProfesores();
 	cargarMaterias();
+
+	$(".nano").nanoScroller({ preventPageScrolling: true });
+	$(".submenu").addClass("hidden");
+	$(".pane").css("display","block");
+	$(".slider").css("display","block");
 });
 
 
 
 function cargarHorario(){
-
 	$('#tablaHorario').hideLoading();
 	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
 	

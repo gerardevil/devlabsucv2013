@@ -26,7 +26,6 @@ from principal.forms import *
 import os,re,json,datetime
 
 
-
 #Entity manager class' Unique instance of 
 m = entity.Manager()
 
@@ -427,7 +426,7 @@ def profilecc(request):
         if request :
             usr = Usuario.objects.get(usuario_id = request.user.pk)
             usrcenter = Usuario.objects.filter(centro=usr.centro).order_by('usuario_id__first_name','usuario_id__last_name').values('id','usuario_id__first_name','usuario_id__last_name') 
-            return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk, 'usrlist':usrcenter})
+            return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk, 'usrlist':usrcenter},context_instance=RequestContext(request))
         else:
             raise Http404
     except Exception, e:
@@ -438,6 +437,7 @@ def profilecc(request):
 def profilejdd(request):
     try:
         if request :
+
             usr = Usuario.objects.get(usuario_id = request.user.pk)
             usrcenter = Usuario.objects.all().order_by('centro__nombre','usuario_id__first_name','usuario_id__last_name').values('id','centro__nombre','usuario_id__first_name','usuario_id__last_name') 
 
@@ -471,7 +471,7 @@ def profilejdd(request):
                     headingCount+=1
                 html+= trContent.replace('<name>',('name="'+newCenter+'Check"')).replace('<value>','value="'+str(u['id'])+'"').replace('<teacherName>',u['usuario_id__first_name']+' '+u['usuario_id__last_name']).replace('<uid>',str(u['id']))
             html+= endTbody+endTable+ 5*endDiv+buttonContact+endDiv
-            return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk,'html':html})
+            return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk,'html':html},context_instance=RequestContext(request))
         else:
             raise Http404
     except Exception, e:
@@ -513,7 +513,7 @@ def horario(request,rol):
     try:
         if request:
             usr = Usuario.objects.get(usuario_id = request.user.pk)
-            return render_to_response('HorarioPlanificacion.html',{'pk':usr.pk,'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]})
+            return render_to_response('HorarioPlanificacion.html',{'pk':usr.pk,'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]},context_instance=RequestContext(request))
         else:
             raise Http404            
     except Exception, e:
@@ -525,7 +525,7 @@ def export(request):
     try:
         if request :
             usr = Usuario.objects.get(usuario_id = request.user.pk)
-            return render_to_response("JD_exportar.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk})
+            return render_to_response("JD_exportar.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk},context_instance=RequestContext(request))
         else:
             raise Http404
     except Exception, e:

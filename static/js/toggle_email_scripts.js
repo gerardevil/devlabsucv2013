@@ -17,6 +17,8 @@ function isAnyCheckSelected()
         success: function(emails) {
             var to_temp= document.getElementById('to');
             to_temp.value=emails;
+            $('#modalContacto .modal-body #emailForm #asunto #matter').val("");
+            $('#modalContacto .modal-body #emailForm #contenido #content').val("");           
             $('#modalContacto').modal('show');
         },
         error: function(xhr, textStatus, errorThrown) {

@@ -15,7 +15,6 @@ urlpatterns = patterns('',
     url(r'^profilejdd$', 'principal.views.profilejdd', name='profilejdd'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
-	url(r'^mail/$', 'principal.views.enviarMail', name='enviarmail'),
 
     #Generic views:
     url(r'^admins$', 'principal.views.admins', name='administrador'),
