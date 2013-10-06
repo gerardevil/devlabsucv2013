@@ -16,6 +16,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.contenttypes.models import ContentType 
 from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.core import serializers
@@ -279,7 +280,32 @@ def resetPasswordChangeIt(request):
             return render_to_response('resetPasswordRequest.html' ,{'form' : form,'error':w.__doc__} ,context_instance=RequestContext(request))
     else:
         return Http404 
-	
+
+@login_required
+@csrf_protect
+def Contact(request):
+    if request.is_ajax() and request and request.method=='POST':
+        try:
+            to = request.POST['to'].split(';')
+            to.remove('')
+            content=  request.POST['message']
+            subject = request.POST['matter']
+
+            if (content and subject):
+                m.enviarMail([m.makeMessage(subject=subject,to=to,content=content)])
+            elif(subject):
+                m.enviarMail([m.makeMessage(subject=subject,to=to)])
+            elif(content):
+                m.enviarMail([m.makeMessage(to=to,content=content)])
+            else:
+                m.enviarMail([m.makeMessage(to=to)])
+                
+            return HttpResponse(status=200)
+        except Exception, e:
+            raise e
+    else:
+        raise Http404
+
 ############
 # Profesor #
 ############

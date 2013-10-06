@@ -99,6 +99,23 @@
     {% endif %}
 
 <!--</div>-->
+
+<!--Modal Eliminar-->
+    <div id="modal_eliminar" class="modal hide fade">
+        <div class="modal-header" id="modalEliminarHeader"></div>
+
+        <div class="modal-body" id="bodyModalEliminar"> 
+        <h5>¿Está seguro de que quiere eliminar este elemento?</h5>
+        </div>
+
+        <div class="modal-footer">
+            <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+
+            <a id="eliminar_obj" button="" class="btn btn-primary"  href="#">Borrar</a>
+        </div>
+    </div>      
+<!--Modal Eliminar-->
+
 {% endblock %}
 
 {% block scripts %}

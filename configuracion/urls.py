@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^profile$', 'principal.views.profile', name='profile'),
     url(r'^profilecc$', 'principal.views.profilecc', name='profilecc'),
     url(r'^profilejdd$', 'principal.views.profilejdd', name='profilejdd'),
+    url(r'^contact$', 'principal.views.Contact', name='contact'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 

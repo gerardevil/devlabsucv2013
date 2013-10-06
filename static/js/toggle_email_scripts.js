@@ -28,7 +28,6 @@ function isAnyCheckSelected()
   }
 }
 
-
 function getSelectedProfile(id)
 {
     $.ajax({
