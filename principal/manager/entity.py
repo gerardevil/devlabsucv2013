@@ -7,6 +7,7 @@ from django.template.context import RequestContext
 from django.db.models.loading import get_app, get_models, get_model
 from django.contrib.contenttypes.models import ContentType 
 from django.core.mail import send_mass_mail
+import smtplib
 
 class Manager:
 
@@ -51,10 +52,16 @@ class Manager:
 		#Verificar si el objeto existe
 		return o
 		
-	def enviarMail(subject=[], email=[], to=[]):
-		if len(email) and len(to) and len(subject) and len(email)==len(to)==len(subject):
-			correo = (subject, email, '', to)
-			send_mass_mail((mail,),fail_silently=True)
+	def enviarMail(self,contenido=[]):
+		if len(contenido):
+			r = tuple()
+			for i in xrange(len(contenido)):
+				r = r.__add__((contenido[i],))
+			print r
+			try:
+				send_mass_mail(r,fail_silently=True)
+			except smtplib.SMTPException, s:raise s
+			return True
 		else: 
-			return False
-		
+			return False	
+	

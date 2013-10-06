@@ -17,7 +17,7 @@
 
             <form method="POST">{% csrf_token %} 
     		<div class="control-group">
-                 {{login_form}}  
+                 {{login_form.as_p}}  
     		</div>
 
             <a id="forgot_password_link" href="resetrequest/" style="position:relative;font-size:small;">
