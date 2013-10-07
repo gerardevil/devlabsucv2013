@@ -286,8 +286,10 @@ def resetPasswordChangeIt(request):
 def Contact(request):
     if request.is_ajax() and request and request.method=='POST' and 'to' in request.POST and 'message' in request.POST and 'matter' in request.POST :
         try:
-            to = request.POST['to'].split(';')
-            to.remove('')
+            to = request.POST['to']
+            if ';' in to:
+                to = request.POST['to'].split(';')
+                to.remove('')
             content=  request.POST['message']
             subject = request.POST['matter']
 
