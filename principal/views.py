@@ -525,8 +525,7 @@ def getEmailList(request):
 def getEmailUnique(request):
     try:
         if request.is_ajax() and request and request.method=='GET' and 'user' in request.GET:
-            r = re.compile('profesor\d+')
-
+            r = re.compile('profesor[0-9]+$')
             if r.match(request.GET['user']) is not None:
                 username = request.GET['user'].split('profesor')
                 username.remove('')
