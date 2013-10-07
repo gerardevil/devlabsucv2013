@@ -146,7 +146,7 @@ function cargarProfesores(){
 			
 			$('.rechazar').click(function(){
 				var elem = $('.'+$(this).attr('profesorId'));
-				
+				var flag = false;
 				elem.each(function(){
 				
 					$(this).find('.icono').each(function(){
@@ -158,11 +158,40 @@ function cargarProfesores(){
 							$(this).addClass('icono');
 							$(this).addClass('icon-remove');
 							$(this).css('color','red');
+							if (!flag)
+								flag=true;
+						}
+					});					
+				});	
+				if(flag){
+					var conflictRequest = elem.parent( ".conflicto" ).children('.'+$(this).attr('profesorId'));
+					var timeperiods = conflictRequest.map(function() {return $(this).attr('timeperiod');});
+					var conflicts = new Array();
+					for(var i=0;i< timeperiods.length;++i)
+						if(conflicts.indexOf(timeperiods[i])<0)
+							conflicts.push(timeperiods[i]);
+
+					$.ajax({  
+						type: 'GET',  
+						url: '/getemailunique',
+						dataType: 'text',
+						data: {
+          					'user': $(this).attr('profesorId').toString(),
+        				},
+        				success: function(email){
+							var content = "";
+							if (conflicts.length)
+								content = "[!] El Sistema ha detectado conflicto en las siguientes propuestas:\n\n"+conflicts.join("\n");
+            				$('#modalContacto .modal-body #emailForm #asunto #matter').val("[Cambio de Estatus de Propuesta]");
+            				$('#modalContacto .modal-body #emailForm #destinatarios #to').val(email+";");//to format is allways {email;}
+           					$('#modalContacto .modal-body #emailForm #contenido #content').val(content);           
+            				$('#modalContacto').modal('show');							
+						},
+						error: function(xhr,errmsg,err){
+							console.error(xhr.status + ": " + xhr.responseText);
 						}
 					});
-					
-				});
-			
+				}
 			});
 			
 		 },
@@ -268,7 +297,7 @@ function insertarMateriaHorario(horario){
 	while(dif>0){
 		id = horario.dia_semana.toLowerCase()+i;
 		celda = $('#'+id);
-		html = '<div class="materiaHorario sol'+horario.horario_solicitado+' materia'+horario.materia_id+' profesor'+horario.username+'">';
+		html = '<div class="materiaHorario sol'+horario.horario_solicitado+' materia'+horario.materia_id+' profesor'+horario.username+'" timeperiod="'+horario.nombre+'-['+horario.dia_semana+']'+horario.hora_inicio+'-'+horario.hora_fin+'">';
 		//html += '<i class="icono icon-ok" style="color:green;"></i>';
 		//html += '<i class="icono icon-remove" style="color:red;"></i>';
 		html += '<i class="icono"></i>';

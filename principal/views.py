@@ -284,7 +284,7 @@ def resetPasswordChangeIt(request):
 @login_required
 @csrf_protect
 def Contact(request):
-    if request.is_ajax() and request and request.method=='POST':
+    if request.is_ajax() and request and request.method=='POST' and 'to' in request.POST and 'message' in request.POST and 'matter' in request.POST :
         try:
             to = request.POST['to'].split(';')
             to.remove('')
@@ -298,8 +298,7 @@ def Contact(request):
             elif(content):
                 m.enviarMail([m.makeMessage(to=to,content=content)])
             else:
-                m.enviarMail([m.makeMessage(to=to)])
-                
+                m.enviarMail([m.makeMessage(to=to)])                
             return HttpResponse(status=200)
         except Exception, e:
             raise e
@@ -514,6 +513,25 @@ def getEmailList(request):
                 if(f['usuario_id__email']!=''):
                     emails+=f['usuario_id__email']+';'
             return HttpResponse(emails)
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
+
+@login_required
+@coordinatorOrbossRequired
+def getEmailUnique(request):
+    try:
+        if request.is_ajax() and request and request.method=='GET' and 'user' in request.GET:
+            r = re.compile('profesor\d+')
+
+            if r.match(request.GET['user']) is not None:
+                username = request.GET['user'].split('profesor')
+                username.remove('')
+                return HttpResponse(User.objects.get(username=username[0]).email)
+            else:
+                print 'Expresion Mal Formada'
+                raise Http404
         else:
             raise Http404
     except Exception, e:
