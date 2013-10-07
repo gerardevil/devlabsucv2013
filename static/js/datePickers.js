@@ -6,7 +6,7 @@ $( ".datepicker" ).datepicker({'format' : 'yyyy-mm-dd'});
 
 
  $("input[id^='id_hora']" ).attr( "data-format", "hh:mm:ss" );
- $("input[id^='id_hora']").wrap("<div id='hora' class='input-append hora'/div>");
+ $("input[id^='id_hora']").wrap("<div id='hora' class='input-append hora'> </div>");
  $(".hora").append("<span class='add-on'><i data-time-icon='icon-time'></i></span>");
 
 
