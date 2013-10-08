@@ -1,3 +1,4 @@
+
 #encoding:utf-8
 
 #views.py
@@ -150,7 +151,7 @@ def cambiarContrasena(request,rol, key):
                 print contrasenaNueva
                 print confirmarContrasena
                 
-                if (usr.password == contrasenaVieja) and (contrasenaNueva == confirmarContrasena):               
+                if (check_password(contrasenaVieja, usr.password)) and (contrasenaNueva == confirmarContrasena):               
                     usr.set_password(confirmarContrasena)
                     usr.save()
                     if rol =='jdd':
