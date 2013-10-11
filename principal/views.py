@@ -751,7 +751,7 @@ def ChangeStatus(request):
                 data = request.POST['data']
                 castpks = [ int(e) for e in data.keys() ]
                 solicitudes = HorarioSolicitado.objects.select_for_update().filter(id__in = castpks)
-                for(i in xrange(len(solicitudes))):
+                for i in xrange(len(solicitudes)):
                     solicitudes[i].horario_solicitado.estatus = data[i]
                     solicitudes[i].save()
             return HttpResponse(status=200)
