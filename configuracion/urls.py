@@ -38,6 +38,7 @@ urlpatterns = patterns('',
     url(r'^getemaillist$', 'principal.views.getEmailList', name='getemaillist'),
     url(r'^getprofileinfo/(?P<key>\d+)$', 'principal.views.getProfileInfo', name='getprofileinfo'),
     url(r'^getemailunique$', 'principal.views.getEmailUnique', name='getemailunique'),
+    url(r'^changestatus$', 'principal.views.ChangeStatus', name='changestatus'),
 
     #Profesor views:
     #url(r'^horarios_materia/(?P<key>\d+)$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia

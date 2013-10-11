@@ -448,7 +448,7 @@ class MateriaOfertada(models.Model):
 		return self.pk
 		
 class MateriaSolicitada(models.Model):
-	estatus = models.CharField(max_length=1L,choices = (('A','Aceptada'),('R','Rechazada'),('P','Procesando'),('N','No Enviada')),editable=True,default='N')
+	estatus = models.CharField(max_length=1L,choices = (('AC','Aceptada'),('RC','Rechazada'),('P','Procesando'),('AJ','AceptadaJefe'),('PJ','ProcesandoJefe'),('N','No Enviada')),editable=True,default='N')
 	usuario = models.ForeignKey('Usuario')
 	materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
 
@@ -486,7 +486,7 @@ class HorarioSolicitado(models.Model):
 		db_table = 'horario_solicitado'
 
 	def __unicode__(self):
-		return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin), str(self.horario_solicitado), str(self.aula))
+		return u'dia: %s | inicio: %s | fin: %s | materia_solicitada: %s | aula: %s' % (self.dia_semana, convertDatetimeToString(self.hora_inicio), convertDatetimeToString(self.hora_fin), self.horario_solicitado.materia.materia.nombre, self.aula.aula_id)
 
 	def toJson(self,minify=True):
 		retorno = {
