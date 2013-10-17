@@ -10,6 +10,7 @@ from principal.manager.decorators import *
 from principal.manager import entity
 from principal.models import *
 import sys
+import csv
 
 # Imports for validation or any other thing bellow
 from principal.manager.converters import convertDatetimeToString
@@ -759,3 +760,13 @@ def ChangeStatus(request):
             raise Http404
     except Exception, e:
         raise e
+
+#Export CSV
+def programacionFormatoCSV(request):
+    #Creamos el objeto Httpresponse con la cabecera csv apropiada.
+    response = HttpResponse(mimeType='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=unruly.csv'
+
+    #Creamos un escritor csv usando httpResponse como "archivo"
+    writer = csv.writer(response)
+    writer.writerow['Nombre']
