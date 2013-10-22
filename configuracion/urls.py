@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^admins/modelos/(?P<modelo>[^/]+)/editar/(?P<key>\d+)$', 'principal.views.editar', name='editar'), #Edita un objeto
     url(r'^admins/modelos/(?P<modelo>[^/]+)/(?P<key>\d+)$', 'principal.views.leer', name='leer'), #Muestra todos los atributos de un objeto
     url(r'^admins/modelos/(?P<modelo>[^/]+)/crear$', 'principal.views.insertar', name='insertar'), # Permite insertar un Objeto
+    url(r'programacion/csv/','principal.views.programacionFormatoCSV',name='programacion_csv'),
 
     #Coordinador y Jefe de Departamento views:
     url(r'^horario/(?P<rol>[^/]+)$', 'principal.views.horario', name='horario'),
