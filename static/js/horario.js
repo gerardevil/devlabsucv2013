@@ -16,6 +16,10 @@ $(function(){
 
 
 function cargarHorario(){
+
+	$('.materiaHorario').remove();
+	$('#tablaHorario td').removeClass();
+	
 	$('#tablaHorario').hideLoading();
 	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
 	
@@ -85,21 +89,27 @@ function cargarProfesores(){
 		 success: function(respuesta){
 		 
 			var html = '';
+			$('#tablaProfesores tbody').html('');
 		 
 			for(i=0;i<respuesta.length;i++){
 			
-				html += '<tr><td>';
+				html = '<tr><td>';
 				html += respuesta[i]['name'];
 				html += '</td><td style="width:100px;">';		
-				html += '<button type="submit" class="btn btn-mini profesor" profesorId="profesor'+respuesta[i]['username']+'" style="margin-left:5px;float:right;">';
+				html += '<button id="botonP'+i+'" type="submit" class="btn btn-mini profesor" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-eye-open"></i>';
 				html += '</button>';
-				html += '<button type="submit" class="btn btn-mini rechazar" profesorId="profesor'+respuesta[i]['username']+'" style="margin-left:5px;float:right;">';
+				html += '<button id="botonR'+i+'" type="submit" class="btn btn-mini rechazar" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-remove"></i>';
 				html += '</button>';		
-				html += '<button type="submit" class="btn btn-mini aprobar" profesorId="profesor'+respuesta[i]['username']+'" style="margin-left:5px;float:right;">';
+				html += '<button id="botonA'+i+'" type="submit" class="btn btn-mini aprobar" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-ok"></i>';
 				html += '</button></td></tr>';
+				
+				$('#tablaProfesores tbody').append(html);
+				$('#botonP'+i).data('profesor',respuesta[i]['username']);
+				$('#botonR'+i).data('profesor',respuesta[i]['username']);
+				$('#botonA'+i).data('profesor',respuesta[i]['username']);
 				
 			}
 			
@@ -107,91 +117,124 @@ function cargarProfesores(){
 				html += '<tr><td>No hay profesores propuestos</td></tr>';
 			}
 			
-			$('#tablaProfesores tbody').html(html);
+			
 			
 			$('.profesor').click(function(){
-				var elem = $('.'+$(this).attr('profesorId'));
-				if(elem.hasClass('hidden')){
-					elem.removeClass('hidden');
-					$(this).children().removeClass('icon-eye-close');
-					$(this).children().addClass('icon-eye-open');
-				}else{
-					elem.addClass('hidden');
-					$(this).children().removeClass('icon-eye-open');
-					$(this).children().addClass('icon-eye-close');
-				}
+			
+				var boton = $(this);
+				
+				$('.materiaHorario').each(function(){
+				
+					if($(this).data('profesor') == boton.data('profesor')){
+					
+						var elem = $(this);
+					
+						if(elem.hasClass('hidden')){
+							elem.removeClass('hidden');
+							boton.children().removeClass('icon-eye-close');
+							boton.children().addClass('icon-eye-open');
+						}else{
+							elem.addClass('hidden');
+							boton.children().removeClass('icon-eye-open');
+							boton.children().addClass('icon-eye-close');
+						}
+					
+					}
+				
+				});
 			
 			});
 			
 			$('.aprobar').click(function(){
-				var elem = $('.'+$(this).attr('profesorId'));
-
-				elem.each(function(){
 				
-					$(this).find('.icono').each(function(){
-						if($(this).hasClass('icon-ok')){
-							$(this).removeClass();
-							$(this).addClass('icono');
-						}else{
-							$(this).removeClass();
-							$(this).addClass('icono');
-							$(this).addClass('icon-ok');
-							$(this).css('color','green');
-						}
-					});
+				var boton = $(this);
+				
+				$('.materiaHorario').each(function(){
+				
+					if($(this).data('profesor') == boton.data('profesor')){
 					
+						var elem = $(this).find('.icono');
+					
+						if(elem.hasClass('icon-ok')){
+							elem.removeClass();
+							elem.addClass('icono');
+							$(this).data('estatus','P');
+						}else{
+							elem.removeClass();
+							elem.addClass('icono');
+							elem.addClass('icon-ok');
+							elem.css('color','green');
+							$(this).data('estatus','AC');
+						}
+					
+					}
+				
 				});
 				
 			});
 			
 			$('.rechazar').click(function(){
-				var elem = $('.'+$(this).attr('profesorId'));
-				var flag = false;
-				elem.each(function(){
 				
-					$(this).find('.icono').each(function(){
-						if($(this).hasClass('icon-remove')){
-							$(this).removeClass();
-							$(this).addClass('icono');
+				var boton = $(this);
+				var flag = false;
+				var conflicts = new Array();
+				
+				$('.materiaHorario').each(function(){
+				
+					if($(this).data('profesor') == boton.data('profesor')){
+					
+						var elem = $(this).find('.icono');
+						
+					
+						if(elem.hasClass('icon-remove')){
+							elem.removeClass();
+							elem.addClass('icono');
+							$(this).data('estatus','P');
 						}else{
-							$(this).removeClass();
-							$(this).addClass('icono');
-							$(this).addClass('icon-remove');
-							$(this).css('color','red');
+							elem.removeClass();
+							elem.addClass('icono');
+							elem.addClass('icon-remove');
+							elem.css('color','red');
+							$(this).data('estatus','RC');
 							if (!flag)
 								flag=true;
 						}
-					});					
-				});	
+						
+						if($(this).parent().hasClass('conflicto')){
+							if(conflicts.indexOf($(this).data('timeperiod'))<0){
+								conflicts.push($(this).data('timeperiod'));
+							}
+						}
+						
+					}
+				
+				});
+				
 				if(flag){
-					var conflictRequest = elem.parent( ".conflicto" ).children('.'+$(this).attr('profesorId'));
-					var timeperiods = conflictRequest.map(function() {return $(this).attr('timeperiod');});
-					var conflicts = new Array();
-					for(var i=0;i< timeperiods.length;++i)
-						if(conflicts.indexOf(timeperiods[i])<0)
-							conflicts.push(timeperiods[i]);
 
 					$.ajax({  
 						type: 'GET',  
 						url: '/getemailunique',
 						dataType: 'text',
 						data: {
-          					'user': $(this).attr('profesorId').toString(),
-        				},
-        				success: function(email){
+							'user': 'profesor'+boton.data('profesor').toString(),
+						},
+						success: function(email){
 							var content = "";
 							if (conflicts.length)
 								content = "[!] El Sistema ha detectado conflicto en las siguientes propuestas:\n\n"+conflicts.join("\n");
-            				$('#modalContacto .modal-body #emailForm #asunto #matter').val("[Cambio de Estatus de Propuesta]");
-            				$('#modalContacto .modal-body #emailForm #destinatarios #to').val(email+";");//to format is allways {email;}
-           					$('#modalContacto .modal-body #emailForm #contenido #content').val(content);           
-            				$('#modalContacto').modal('show');							
+							$('#modalContacto .modal-body #emailForm #asunto #matter').val("[Cambio de Estatus de Propuesta]");
+							$('#modalContacto .modal-body #emailForm #destinatarios #to').val(email+";");//to format is allways {email;}
+							$('#modalContacto .modal-body #emailForm #contenido #content').val(content);           
+							$('#modalContacto').modal('show');							
 						},
 						error: function(xhr,errmsg,err){
 							console.error(xhr.status + ": " + xhr.responseText);
 						}
 					});
 				}
+
+				
 			});
 			
 		 },
@@ -231,15 +274,20 @@ function cargarMaterias(){
 		 success: function(respuesta){
 		 
 			var html = '';
+			
+			$('#tablaMaterias tbody').html('');
 		 
 			for(i=0;i<respuesta.length;i++){
 			
-				html += '<tr><td>';
+				html = '<tr><td>';
 				html += respuesta[i]['nombre'];
 				html += '</td><td style="width:30px;">';		
-				html += '<button type="submit" class="btn btn-mini materia" materiaId="materia'+respuesta[i]['id']+'" style="margin-left:5px;float:right;">';
+				html += '<button id="botonM'+i+'" type="submit" class="btn btn-mini materia" style="margin-left:5px;float:right;">';
 				html += '	<i class="icon-eye-open"></i>';
 				html += '</button></td></tr>';
+				
+				$('#tablaMaterias tbody').append(html);
+				$('#botonM'+i).data('materia',respuesta[i]['id']);
 				
 			}
 			
@@ -247,20 +295,31 @@ function cargarMaterias(){
 				html += '<tr><td>No hay materias propuestas</td></tr>';
 			}
 			
-			$('#tablaMaterias tbody').html(html);
+			
 			
 			$('.materia').click(function(){
-				var elem = $('.'+$(this).attr('materiaId'));
-				if(elem.hasClass('hidden')){
-					elem.removeClass('hidden');
-					$(this).children().removeClass('icon-eye-close');
-					$(this).children().addClass('icon-eye-open');
-				}else{
-					elem.addClass('hidden');
-					$(this).children().removeClass('icon-eye-open');
-					$(this).children().addClass('icon-eye-close');
-				}
-			
+
+				var boton = $(this);
+				
+				$('.materiaHorario').each(function(){
+				
+					if($(this).data('materia') == boton.data('materia')){
+					
+						var elem = $(this);
+					
+						if(elem.hasClass('hidden')){
+							elem.removeClass('hidden');
+							boton.children().removeClass('icon-eye-close');
+							boton.children().addClass('icon-eye-open');
+						}else{
+							elem.addClass('hidden');
+							boton.children().removeClass('icon-eye-open');
+							boton.children().addClass('icon-eye-close');
+						}
+					
+					}
+				
+				});
 			});
 		 },
 		 complete: function(){
@@ -293,37 +352,165 @@ function insertarMateriaHorario(horario){
 	//console.log(dif);
 	
 	var html = '';
+	var idMateriaHorario = $('.materiaHorario').size();
+	
 	
 	while(dif>0){
 		id = horario.dia_semana.toLowerCase()+i;
 		celda = $('#'+id);
-		html = '<div class="materiaHorario sol'+horario.horario_solicitado+' materia'+horario.materia_id+' profesor'+horario.username+'" timeperiod="'+horario.nombre+'-['+horario.dia_semana+']'+horario.hora_inicio+'-'+horario.hora_fin+'">';
-		//html += '<i class="icono icon-ok" style="color:green;"></i>';
-		//html += '<i class="icono icon-remove" style="color:red;"></i>';
-		html += '<i class="icono"></i>';
+		estatus = '';
+		html = '<div id="materia'+idMateriaHorario+'" class="materiaHorario">';
+		if(horario.estatus == 'AC'){
+			html += '<i class="icono icon-ok" style="color:green;"></i>';
+			estatus = 'Aceptada por Coordinador de Centro';
+		}else if(horario.estatus == 'RC'){
+			html += '<i class="icono icon-remove" style="color:red;"></i>';
+			estatus = 'Rechazada por Coordinador de Centro';
+		}else if(horario.estatus == 'AJ'){
+			html += '<i class="icono icon-ok" style="color:green;"></i>';
+			estatus = 'Aceptada por Jefe Departamento';
+		}else if(horario.estatus == 'RJ'){
+			html += '<i class="icono icon-remove" style="color:red;"></i>';
+			estatus = 'Rechazada por Jefe Departamento';
+		}else if(horario.estatus == 'PJ'){
+			html += '<i class="icono icon-ok" style="color:green;"></i>';
+			estatus = 'Procesando por Jefe Departamento';
+		}else if(horario.estatus == 'P'){
+			html += '<i class="icono"></i>';
+			estatus = 'Procesando';
+		}else{
+			html += '<i class="icono"></i>';
+		}
 		html += horario.nombre;
 		html += '</div>';
 		celda.append(html);
 
+		$('#materia'+idMateriaHorario).data('solicitud',horario.materia_solicitada);
+		$('#materia'+idMateriaHorario).data('materia',horario.materia_id);
+		$('#materia'+idMateriaHorario).data('profesor',horario.username);
+		$('#materia'+idMateriaHorario).data('estatus',horario.estatus);
+		$('#materia'+idMateriaHorario).data('timeperiod',horario.nombre+'-['+horario.dia_semana+']'+horario.hora_inicio+'-'+horario.hora_fin);
+		
 		if(celda.children().size() > 1){
 			celda.addClass('conflicto');
 		}
 		
+		html = '<h5>Profesor</h5>' + horario.usuario; 
+		html += '<h5>Horario</h5>' + horario.dia_semana + ' ' + horario.hora_inicio + ' - ' + horario.hora_fin;
+		
+		
+		
+		html += '<h5>Estatus</h5>' + estatus;
+		
+		$('#materia'+idMateriaHorario).popover({
+			html:true,
+			title:'<h5>'+horario.nombre+'</h5>',
+			content:html,
+			animation:true,
+			trigger:'hover',
+			placement:'bottom'
+		 });
+		 
+		
 		i++;
 		dif--;
+		idMateriaHorario++;
 	}
 	
-	html = '<h5>Profesor</h5>' + horario.usuario; 
-	html += '<h5>Horario</h5>' + horario.dia_semana + ' ' + horario.hora_inicio + ' - ' + horario.hora_fin;
-	
-	$('.sol'+horario.horario_solicitado).popover({
-		html:true,
-		title:'<h5>'+horario.nombre+'</h5>',
-		content:html,
-		animation:true,
-		trigger:'hover',
-		placement:'bottom'
-	 });
 	
 	
+	
+}
+
+function guardarHorario(){
+	
+	var datos = {};
+	var aux2 = new Array();
+	
+	$('.materiaHorario').each(function(index){
+		
+		if(aux2.indexOf($(this).data('solicitud')) < 0){
+			
+			datos[$(this).data('solicitud')]=$(this).data('estatus');
+			aux2.push($(this).data('solicitud'));
+		}
+	
+	});
+	
+	$('#tablaHorario').hideLoading();
+	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
+	
+	param = 'data='+JSON.stringify(datos);
+	
+	//alert(param);
+	
+	$.ajax({  
+		 type: 'POST',  
+		 url: '/changestatus',
+		 data: param,
+		 success: function(res){
+			var html = '<div class="alert alert-success" style="width:70%" >';
+			html += '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+			html += 'Horario de solicitudes guardado satisfactoriamente.</div>';
+			
+			$('#saveButton').parent().prepend(html);
+			
+			cargarHorario();
+			
+		 },
+		 complete: function(){
+			$('#tablaHorario').hideLoading();
+		 },
+		 error: function(xhr,errmsg,err){
+			console.error(xhr.status + ": " + xhr.responseText);
+		 }
+		});
+
+}
+
+
+
+function enviarHorario(){
+	
+	var datos = {};
+	var aux2 = new Array();
+	
+	$('.materiaHorario').each(function(index){
+		
+		if(aux2.indexOf($(this).data('solicitud')) < 0 && $(this).data('estatus')=='AC'){
+			
+			datos[$(this).data('solicitud')]='PJ';
+			aux2.push($(this).data('solicitud'));
+		}
+	
+	});
+	
+	$('#tablaHorario').hideLoading();
+	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
+	
+	param = 'data='+JSON.stringify(datos);
+	
+	//alert(param);
+	
+	$.ajax({  
+		 type: 'POST',  
+		 url: '/changestatus',
+		 data: param,
+		 success: function(res){
+			var html = '<div class="alert alert-success" style="width:70%" >';
+			html += '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+			html += 'Horario de solicitudes enviado al Jefe de Departamento.</div>';
+			
+			$('#saveButton').parent().prepend(html);
+			
+			cargarHorario();
+		 },
+		 complete: function(){
+			$('#tablaHorario').hideLoading();
+		 },
+		 error: function(xhr,errmsg,err){
+			console.error(xhr.status + ": " + xhr.responseText);
+		 }
+		});
+
 }

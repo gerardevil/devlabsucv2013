@@ -744,18 +744,25 @@ Cambio de estatus para las solicitudes, realiza el cambio de estatus de una list
 data: Es recibido en el POST, un json de la forma {id_solicitud:estatus}
 id_solicitud es el id del horario solicitado y estatus es nuevo estatus para esa solicitud
 '''
+'''
+Cambio de estatus para las solicitudes, realiza el cambio de estatus de una lista de solicitudes
+data: Es recibido en el POST, un json de la forma {id_solicitud:estatus}
+id_solicitud es el id del horario solicitado y estatus es nuevo estatus para esa solicitud
+'''
 @login_required
 def ChangeStatus(request):
     try:
-        if request and request.is_ajax() and request.method == POST and 'data' in request.POST:
+        if request and request.is_ajax() and request.method == 'POST' and 'data' in request.POST:
             if(len(request.POST['data'])):
-                data = request.POST['data']
-                castpks = [ int(e) for e in data.keys() ]
-                solicitudes = HorarioSolicitado.objects.select_for_update().filter(id__in = castpks)
-                for i in xrange(len(solicitudes)):
-                    solicitudes[i].horario_solicitado.estatus = data[i]
-                    solicitudes[i].save()
-            return HttpResponse(status=200)
+                data = json.loads(request.POST['data'])
+                materias = MateriaSolicitada.objects.select_for_update().filter(id__in = [ int(e) for e in data.keys() ])
+                for i in xrange(len(materias)):
+                    materias[i].estatus = data[str(materias[i].id)]
+                    materias[i].save()
+                
+                return HttpResponse(status=200)
+            else:
+                raise Http404
         else:
             raise Http404
     except Exception, e:

@@ -51,9 +51,13 @@ Coordinador(a)
 <link href="{% static "css/nanoscroller.css" %}" rel="stylesheet"> 
 
 <div id='saveButton' style='position:fixed; z-index:200;'>
-  <button onclick='' class="btn btn-primary" type="button" >
+  <button class="btn btn-primary" type="button" data-toggle="modal" href="#confirGuardar">
     <i class="icon-hdd icon-white"></i>
-    Guardar Cámbios
+    Guardar Cambios
+  </button>
+  <button class="btn btn-primary" type="button" data-toggle="modal" href="#confirEnviar">
+    <i class="icon-hdd icon-white"></i>
+    Enviar Propuesta
   </button>  
 </div>
 </br></br></br>
@@ -219,6 +223,54 @@ Coordinador(a)
         </div>
     </div>
 <!--Modal OK-->  
+
+<!--Modal confirGuardar-->  
+	<div id="confirGuardar" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3>
+                Guardar horario propuesto
+            </h3>
+        </div>
+        <div class="modal-body">
+            <p>
+                ¿Está seguro que desea guardar el horario propuesto?
+        </div>
+        <div class="modal-footer">
+
+            <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+
+            <a class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick='guardarHorario()' href="">Guardar</a>
+
+        </div>
+    </div>
+<!--Modal confirGuardar-->  
+
+<!--Modal confirEnviar-->  
+	<div id="confirEnviar" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3>
+                Enviar horario propuesto
+            </h3>
+        </div>
+        <div class="modal-body">
+            <p>
+                ¿Está seguro que desea enviar el horario propuesto al Jefe de Departamento?
+        </div>
+        <div class="modal-footer">
+
+            <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+
+            <a class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick='enviarHorario()' href="">Enviar</a>
+
+        </div>
+    </div>
+<!--Modal confirGuardar--> 
 
 {% endblock %}	
 
