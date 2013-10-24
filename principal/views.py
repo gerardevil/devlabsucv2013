@@ -771,9 +771,19 @@ def ChangeStatus(request):
 #Export CSV
 def programacionFormatoCSV(request):
     #Creamos el objeto Httpresponse con la cabecera csv apropiada.
-    response = HttpResponse(mimeType='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=unruly.csv'
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="programacion.csv"'
 
     #Creamos un escritor csv usando httpResponse como "archivo"
+    listaMaterias = Materia.objects.all()
     writer = csv.writer(response)
-    writer.writerow['Nombre']
+    writer.writerow(['Codigo', 'Nombre', 'Tipo de Materia'])
+
+    try:
+        #for (materia) in listaMaterias: 
+        #    writer.writerow([materia.codigo, materia.nombre, materia.tipo_materia])
+        #return response
+    except csv.error as e:
+        #sys.exit('file %s, line ')
+    
+
