@@ -744,11 +744,6 @@ Cambio de estatus para las solicitudes, realiza el cambio de estatus de una list
 data: Es recibido en el POST, un json de la forma {id_solicitud:estatus}
 id_solicitud es el id del horario solicitado y estatus es nuevo estatus para esa solicitud
 '''
-'''
-Cambio de estatus para las solicitudes, realiza el cambio de estatus de una lista de solicitudes
-data: Es recibido en el POST, un json de la forma {id_solicitud:estatus}
-id_solicitud es el id del horario solicitado y estatus es nuevo estatus para esa solicitud
-'''
 @login_required
 def ChangeStatus(request):
     try:
@@ -780,10 +775,12 @@ def programacionFormatoCSV(request):
     writer.writerow(['Codigo', 'Nombre', 'Tipo de Materia'])
 
     try:
+        pass
         #for (materia) in listaMaterias: 
         #    writer.writerow([materia.codigo, materia.nombre, materia.tipo_materia])
         #return response
     except csv.error as e:
+        pass
         #sys.exit('file %s, line ')
     
 
