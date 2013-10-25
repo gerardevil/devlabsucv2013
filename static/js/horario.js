@@ -415,11 +415,7 @@ function insertarMateriaHorario(horario){
 		i++;
 		dif--;
 		idMateriaHorario++;
-	}
-	
-	
-	
-	
+	}	
 }
 
 function guardarHorario(){
@@ -484,6 +480,8 @@ function enviarHorario(){
 		}
 	
 	});
+
+	datos['incompleteFlag'] = '1';
 	
 	$('#tablaHorario').hideLoading();
 	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
@@ -497,13 +495,14 @@ function enviarHorario(){
 		 url: '/changestatus',
 		 data: param,
 		 success: function(res){
+
+		 	cargarHorario();
+
 			var html = '<div class="alert alert-success" style="width:70%" >';
 			html += '<button type="button" class="close" data-dismiss="alert">&times;</button>';
 			html += 'Horario de solicitudes enviado al Jefe de Departamento.</div>';
 			
 			$('#saveButton').parent().prepend(html);
-			
-			cargarHorario();
 		 },
 		 complete: function(){
 			$('#tablaHorario').hideLoading();

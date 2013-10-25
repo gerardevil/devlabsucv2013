@@ -5,6 +5,7 @@
 
 # Imports for Objects and Managers bellow
 from django.db.models.loading import get_app, get_models, get_model
+from principal.manager.converters import translateStatus
 from django.contrib.auth.models import User
 from principal.manager.decorators import *
 from principal.manager import entity
@@ -583,15 +584,16 @@ def export(request):
 def getScheduleByRequest(request,rol):
     if request.is_ajax() and request and request.method=='GET' :
         rol_pattern = rol.lower()
+
         if rol_pattern == 'cc':
             try:
                 centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
             except Exception, e:
                 raise e
         elif  rol_pattern == 'jdd':
             try:
-                center_schedule_list = HorarioSolicitado.objects.all().values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
             except Exception, e:
                 raise e
         else:
@@ -601,7 +603,7 @@ def getScheduleByRequest(request,rol):
         Formato Posicional Json de Retorno:
         [0]materia_id, [1]materia_solicitada_id, [2]username ,
         [3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin,
-        [7]estatus
+        [7]estatus,[8]descripcion_estatus
         '''
         jsontmp = {}
         counter = 0
@@ -618,8 +620,9 @@ def getScheduleByRequest(request,rol):
              'dia_semana':h['dia_semana'],
              'hora_inicio':convertDatetimeToString(h['hora_inicio']),
              'hora_fin':convertDatetimeToString(h['hora_fin']),
-             'estatus': h['horario_solicitado__estatus']}
-                }
+             'estatus': h['horario_solicitado__estatus'],
+             'descripcion_estatus' : translateStatus(h['horario_solicitado__estatus']),}
+            }
             )
             counter +=1
 
@@ -660,14 +663,17 @@ def getUserByCenter(request):
         raise e
  
 
-'''Materias solicitadas por usuarios de un centro'''
+'''
+Materias solicitadas por usuarios de un centro
+que poseen estatus iguales a ['P','AC','RC','PJ','RJ','AJ']
+'''
 @login_required
 @coordinatorRequired
 def getSubjectByRequest(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
             centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
+            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
             jsontemp = {}
             counter = 0
             names = []
@@ -715,13 +721,16 @@ def getUserByCenterAll(request):
         raise e
 
 
-'''Todas las materias solicitadas de la escuela'''
+'''
+Todas las materias solicitadas de la escuela
+que posee estatus iguales a  ['PJ','AJ','RJ','AC']
+'''
 @login_required
 @bossRequired
 def getSubjectByRequestAll(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
-            center_request_subject_list=HorarioSolicitado.objects.all().order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
+            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
             jsontemp = {}
             counter = 0
             names = []
@@ -740,9 +749,10 @@ def getSubjectByRequestAll(request):
         raise e
 
 '''
-Cambio de estatus para las solicitudes, realiza el cambio de estatus de una lista de solicitudes
-data: Es recibido en el POST, un json de la forma {id_solicitud:estatus}
-id_solicitud es el id del horario solicitado y estatus es nuevo estatus para esa solicitud
+Cambio de estatus para las solicitudes, realiza el cambio de estatus de una 
+lista de solicitudes data: Es recibido en el POST, un json de la forma 
+{id_materia_solicitada:new_estatus} id_materia_solicitada es el id 
+de la materia solicitada y estatus es nuevo estatus para esa solicitud
 '''
 @login_required
 def ChangeStatus(request):
@@ -750,6 +760,16 @@ def ChangeStatus(request):
         if request and request.is_ajax() and request.method == 'POST' and 'data' in request.POST:
             if(len(request.POST['data'])):
                 data = json.loads(request.POST['data'])
+
+                if 'incompleteFlag' in data:
+                    incompleteFlag = data['incompleteFlag']
+                    del data['incompleteFlag']
+                    if int(incompleteFlag) == 1:
+                        pass
+                        '''
+                            TO DO : Implementar verificacion de envio incompleto
+                        '''
+
                 materias = MateriaSolicitada.objects.select_for_update().filter(id__in = [ int(e) for e in data.keys() ])
                 for i in xrange(len(materias)):
                     materias[i].estatus = data[str(materias[i].id)]
