@@ -807,7 +807,7 @@ def ChangeStatus(request):
                 materias = MateriaSolicitada.objects.select_for_update().filter(id__in = [ int(e) for e in data.keys() ])
                 for i in xrange(len(materias)):
                     materias[i].estatus = data[str(materias[i].id)]
-                    materias[i].incomplete_status = True if remaining > 0 else False;
+                    materias[i].incomplete_status = True if remaining or materias[i].incomplete_status > 0 else False;
                     materias[i].save()
                 
                 return HttpResponse(remaining,status=200)
