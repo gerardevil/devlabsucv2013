@@ -34,4 +34,4 @@ def translateStatus(status=''):
 	elif status == 'RJ' :
 		description = "Rechazado por Jefe de Departamento"
 
-	return '<b>'+description+'</b>'
+	return '<h6 style="color:#3399FF;">'+description+'</h6>'

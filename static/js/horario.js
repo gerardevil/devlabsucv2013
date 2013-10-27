@@ -67,7 +67,7 @@ function cargarHorario(){
 function cargarProfesores(){
 
 	$('#tablaProfesores').hideLoading();
-	$('#tablaProfesores').showLoading();
+	$('#tablaProfesores').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
 
 	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
 	{
@@ -252,7 +252,7 @@ function cargarProfesores(){
 function cargarMaterias(){
 
 	$('#tablaMaterias').hideLoading();
-	$('#tablaMaterias').showLoading();
+	$('#tablaMaterias').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
 
 	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
 	{
@@ -358,29 +358,20 @@ function insertarMateriaHorario(horario){
 	while(dif>0){
 		id = horario.dia_semana.toLowerCase()+i;
 		celda = $('#'+id);
-		estatus = '';
 		html = '<div id="materia'+idMateriaHorario+'" class="materiaHorario">';
-		if(horario.estatus == 'AC'){
-			html += '<i class="icono icon-ok" style="color:green;"></i>';
-			estatus = 'Aceptada por Coordinador de Centro';
-		}else if(horario.estatus == 'RC'){
-			html += '<i class="icono icon-remove" style="color:red;"></i>';
-			estatus = 'Rechazada por Coordinador de Centro';
-		}else if(horario.estatus == 'AJ'){
-			html += '<i class="icono icon-ok" style="color:green;"></i>';
-			estatus = 'Aceptada por Jefe Departamento';
-		}else if(horario.estatus == 'RJ'){
-			html += '<i class="icono icon-remove" style="color:red;"></i>';
-			estatus = 'Rechazada por Jefe Departamento';
-		}else if(horario.estatus == 'PJ'){
-			html += '<i class="icono icon-ok" style="color:green;"></i>';
-			estatus = 'Procesando por Jefe Departamento';
-		}else if(horario.estatus == 'P'){
-			html += '<i class="icono"></i>';
-			estatus = 'Procesando';
+
+		if(horario.estatus == 'AC' || horario.estatus == 'AJ'){
+			html += '<i class="icono icon-ok pull-right" style="color:green;"></i>';
+		}else if(horario.estatus == 'RC' || horario.estatus == 'RJ'){
+			html += '<i class="icono icon-remove pull-right" style="color:red;"></i>';
+		}else if(horario.estatus == 'PJ' || horario.estatus == 'P'){
+			html += '<i class="icono icon-time pull-right" style="color:#000000;"></i>';
 		}else{
-			html += '<i class="icono"></i>';
-		}
+			html += '<i class="icono icon-question-sign"></i>';}
+
+		if(horario.incompleto == 'I')
+			html += '<i class="icon-warning-sign pull-left" style="color:#F45000;" data-toggle="tooltip" title="Envio Incompleto de '+horario.centro+'"></i>';
+
 		html += horario.nombre;
 		html += '</div>';
 		celda.append(html);
@@ -397,10 +388,7 @@ function insertarMateriaHorario(horario){
 		
 		html = '<h5>Profesor</h5>' + horario.usuario; 
 		html += '<h5>Horario</h5>' + horario.dia_semana + ' ' + horario.hora_inicio + ' - ' + horario.hora_fin;
-		
-		
-		
-		html += '<h5>Estatus</h5>' + estatus;
+		html += '<h5>Estatus</h5>' + horario.descripcion_estatus;
 		
 		$('#materia'+idMateriaHorario).popover({
 			html:true,
@@ -429,9 +417,13 @@ function guardarHorario(){
 			
 			datos[$(this).data('solicitud')]=$(this).data('estatus');
 			aux2.push($(this).data('solicitud'));
-		}
-	
+		}	
 	});
+
+	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
+	{
+		datos["rol"]='cc';
+	}
 	
 	$('#tablaHorario').hideLoading();
 	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
@@ -445,14 +437,22 @@ function guardarHorario(){
 		 url: '/changestatus',
 		 data: param,
 		 success: function(res){
-			var html = '<div class="alert alert-success" style="width:70%" >';
+
+		 	cargarHorario();	
+		 	
+		 	var text = '<b>Horario de solicitudes guardado satisfactoriamente</b></br></br>'
+		 	var html = '<div class="alert alert-success" style="width:80%" >';
+
+		 	if(parseInt(res,10) > 0 )
+		 	{
+		 		html = '<div class="alert" style="width:80%" >';
+		 		text +=  '<b>Nota: </b>El sistema ha detectado que ('+res+') profesores aun no han enviado su solicitud'
+		 	}
+
 			html += '<button type="button" class="close" data-dismiss="alert">&times;</button>';
-			html += 'Horario de solicitudes guardado satisfactoriamente.</div>';
+			html += (text+'</div>');
 			
-			$('#saveButton').parent().prepend(html);
-			
-			cargarHorario();
-			
+			$('#saveButton').parent().prepend(html);		
 		 },
 		 complete: function(){
 			$('#tablaHorario').hideLoading();
@@ -477,12 +477,15 @@ function enviarHorario(){
 			
 			datos[$(this).data('solicitud')]='PJ';
 			aux2.push($(this).data('solicitud'));
-		}
-	
+		}	
 	});
 
-	datos['incompleteFlag'] = '1';
 	
+	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
+	{
+		datos["rol"]='cc';
+	}
+
 	$('#tablaHorario').hideLoading();
 	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
 	
@@ -494,13 +497,21 @@ function enviarHorario(){
 		 type: 'POST',  
 		 url: '/changestatus',
 		 data: param,
-		 success: function(res){
+		 success: function(res){		 	
 
 		 	cargarHorario();
 
-			var html = '<div class="alert alert-success" style="width:70%" >';
+		 	var text = '<b>Horario de solicitudes enviado al Jefe de Departamento</b></br></br>'
+		 	var html = '<div class="alert alert-success" style="width:80%" >';
+
+		 	if(parseInt(res,10) > 0 )
+		 	{
+		 		html = '<div class="alert" style="width:80%" >';
+		 		text +=  '<b>Nota: </b>El sistema ha detectado que ('+res+') profesores aun no han enviado su solicitud'
+		 	}
+
 			html += '<button type="button" class="close" data-dismiss="alert">&times;</button>';
-			html += 'Horario de solicitudes enviado al Jefe de Departamento.</div>';
+			html += (text+'</div>');
 			
 			$('#saveButton').parent().prepend(html);
 		 },
@@ -511,5 +522,51 @@ function enviarHorario(){
 			console.error(xhr.status + ": " + xhr.responseText);
 		 }
 		});
-
 }
+
+$( "#chartButton" ).click(function(event) {	
+	$.ajax({
+	    type: 'POST',
+	    url: '/chart',
+	    datatype: "json",
+	    success: function(respuesta){
+	    	var labelsA = new Array();
+	    	var remainingCountersA = new Array();
+	    	var max = -1;
+	    	//aux2.push($(this).data('solicitud'));
+	    	for(var i=0;i<respuesta.length;++i){
+				labelsA.push(respuesta[i].name);
+				remainingCountersA.push(respuesta[i].remaining);
+				if (respuesta[i].remaining > max)
+					max = respuesta[i].remaining;
+			}
+			var ctx = document.getElementById("ppxc").getContext("2d");
+			var data = {
+							labels : labelsA,
+							datasets : 
+							[
+								{
+									fillColor : "#5460F5",
+									strokeColor : "#FFFFFF",
+									data : remainingCountersA
+								},
+							]
+						}
+			var opt = {
+					scaleFontSize : 12,	
+					barValueSpacing : 15,
+					scaleOverride : true,
+					scaleSteps : max,
+					scaleStepWidth : 1,
+					scaleStartValue : 0,
+					scaleGridLineColor : "#C9CBD1",
+					scaleGridLineWidth : 1,	
+				}
+			new Chart(ctx).Bar(data,opt);
+			$("#incompleteCharts").modal('show');
+	    },
+	    error: function(xhr, textStatus, errorThrown) {
+	    	alert("Error : "+errorThrown+"\nStatus:"+textStatus+"\nxhr:"+xhr);
+	    }
+    });    
+});

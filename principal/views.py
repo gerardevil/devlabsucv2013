@@ -140,6 +140,7 @@ def leer(request,modelo,key):
 def cambiarContrasena(request,rol, key):
     try:
         o = Usuario.objects.get(pk=key)
+        roles = UsuarioRol.objects.filter(cedula=o)
         usr = User.objects.get(username=request.user.username)
         form=CambiarContrasena(request.POST)
         if request.method == 'POST':
@@ -147,11 +148,6 @@ def cambiarContrasena(request,rol, key):
                 contrasenaVieja = request.POST['contrasenaVieja']
                 contrasenaNueva = request.POST['contrasenaNueva']
                 confirmarContrasena = request.POST['confirmarContrasena']
-                
-                print usr.password
-                print contrasenaVieja
-                print contrasenaNueva
-                print confirmarContrasena
                 
                 if (check_password(contrasenaVieja, usr.password)) and (contrasenaNueva == confirmarContrasena):               
                     usr.set_password(confirmarContrasena)
@@ -166,17 +162,18 @@ def cambiarContrasena(request,rol, key):
                         raise Http404 
                 else:
                     return HttpResponse("Datos de contraseña invalidos")
-            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
+            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key, 'roles':roles},context_instance=RequestContext(request))
         else:
-            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key},context_instance=RequestContext(request))
+            return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key, 'roles':roles},context_instance=RequestContext(request))
     except Warning as w:
-        return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
+        return render_to_response('cambiarContrasena.html', {'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key, 'roles':roles, 'error':w.__doc__},context_instance=RequestContext(request))
 
 @login_required
 @validateInputCrudDataEdit
 def editarperfil(request,rol,key):
     try:
         o = Usuario.objects.get(pk=key)
+        roles = UsuarioRol.objects.filter(cedula=o)
         if request.method == 'POST':
             form = m.generarFormulario(request, 'usuario', o, 1)
             if form.is_valid():
@@ -191,9 +188,9 @@ def editarperfil(request,rol,key):
                     raise Http404
         else:
             form = m.generarFormulario(request, 'usuario', o, 2)
-        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form, 'rol':rol,'pk':key},context_instance=RequestContext(request))
+        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form, 'rol':rol,'pk':key, 'roles':roles},context_instance=RequestContext(request))
     except Warning as w:
-        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key,'error':w.__doc__},context_instance=RequestContext(request))
+        return render_to_response(str(rol)+'Editar.html' ,{'usuario':request.user.first_name+" "+request.user.last_name,'centro':o.centro.nombre,'form' : form,'rol':rol,'pk':key, 'roles':roles, 'error':w.__doc__},context_instance=RequestContext(request))
 
 
 def resetPasswordRequest(request):
@@ -432,17 +429,21 @@ def horarios_materia(request):
 
 @login_required
 def admins(request):
-    return render_to_response('Principal_Admin.html',{'opc':1})
+    usr = Usuario.objects.get(usuario_id = request.user.pk)
+    roles = UsuarioRol.objects.filter(cedula=usr)
+    return render_to_response('Principal_Admin.html',{'opc':1, 'roles':roles})
 
 @login_required
 def listarm(request):
     '''Metodo que lista todos los modelos'''
+    usr = Usuario.objects.get(usuario_id = request.user.pk)
+    roles = UsuarioRol.objects.filter(cedula=usr)
     clases_modelos = []
     apps = get_app('principal')
     for model in get_models(apps):
         mn = model._meta.verbose_name
         clases_modelos.append({'nombre': mn,'nombre_se': mn.replace(' ','')})
-    return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2})
+    return render_to_response('Principal_Admin.html',{'modelos':clases_modelos,'opc':2,'roles':roles})
 
 ######################################
 # Coordinador y Jefe de Departamento #
@@ -454,8 +455,9 @@ def profilecc(request):
     try:
         if request :
             usr = Usuario.objects.get(usuario_id = request.user.pk)
+            roles = UsuarioRol.objects.filter(cedula=usr)
             usrcenter = Usuario.objects.filter(centro=usr.centro).order_by('usuario_id__first_name','usuario_id__last_name').values('id','usuario_id__first_name','usuario_id__last_name') 
-            return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk, 'usrlist':usrcenter},context_instance=RequestContext(request))
+            return render_to_response("CC_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk, 'roles':roles, 'usrlist':usrcenter},context_instance=RequestContext(request))
         else:
             raise Http404
     except Exception, e:
@@ -466,8 +468,8 @@ def profilecc(request):
 def profilejdd(request):
     try:
         if request :
-
             usr = Usuario.objects.get(usuario_id = request.user.pk)
+            roles = UsuarioRol.objects.filter(cedula=usr)
             usrcenter = Usuario.objects.all().order_by('centro__nombre','usuario_id__first_name','usuario_id__last_name').values('id','centro__nombre','usuario_id__first_name','usuario_id__last_name') 
 
             newCenter = ''
@@ -500,7 +502,7 @@ def profilejdd(request):
                     headingCount+=1
                 html+= trContent.replace('<name>',('name="'+newCenter+'Check"')).replace('<value>','value="'+str(u['id'])+'"').replace('<teacherName>',u['usuario_id__first_name']+' '+u['usuario_id__last_name']).replace('<uid>',str(u['id']))
             html+= endTbody+endTable+ 5*endDiv+buttonContact+endDiv
-            return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk,'html':html},context_instance=RequestContext(request))
+            return render_to_response("JD_principal.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk, 'roles':roles, 'html':html},context_instance=RequestContext(request))
         else:
             raise Http404
     except Exception, e:
@@ -560,7 +562,8 @@ def horario(request,rol):
     try:
         if request:
             usr = Usuario.objects.get(usuario_id = request.user.pk)
-            return render_to_response('HorarioPlanificacion.html',{'pk':usr.pk,'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol,'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]},context_instance=RequestContext(request))
+            roles = UsuarioRol.objects.filter(cedula=usr)
+            return render_to_response('HorarioPlanificacion.html',{'pk':usr.pk,'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'rol':rol, 'roles':roles, 'listaHorarios': [7,8,9,10,11,12,1,2,3,4,5,6]},context_instance=RequestContext(request))
         else:
             raise Http404            
     except Exception, e:
@@ -572,7 +575,8 @@ def export(request):
     try:
         if request :
             usr = Usuario.objects.get(usuario_id = request.user.pk)
-            return render_to_response("JD_exportar.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk},context_instance=RequestContext(request))
+            roles = UsuarioRol.objects.filter(cedula=usr)
+            return render_to_response("JD_exportar.html",{'usuario':request.user.first_name+" "+request.user.last_name,'centro':usr.centro.nombre,'pk':usr.pk, 'roles':roles},context_instance=RequestContext(request))
         else:
             raise Http404
     except Exception, e:
@@ -588,12 +592,12 @@ def getScheduleByRequest(request,rol):
         if rol_pattern == 'cc':
             try:
                 centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus', 'horario_solicitado__incomplete_status', 'horario_solicitado__usuario__centro__nombre')
             except Exception, e:
                 raise e
         elif  rol_pattern == 'jdd':
             try:
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus', 'horario_solicitado__incomplete_status', 'horario_solicitado__usuario__centro__nombre')
             except Exception, e:
                 raise e
         else:
@@ -603,14 +607,15 @@ def getScheduleByRequest(request,rol):
         Formato Posicional Json de Retorno:
         [0]materia_id, [1]materia_solicitada_id, [2]username ,
         [3]nombre , [4]dia_seman, [5]hora_inicio, [6]hora_fin,
-        [7]estatus,[8]descripcion_estatus
+        [7]estatus,[8]descripcion_estatus, [9] incompleto , [10] centro
         '''
         jsontmp = {}
         counter = 0
         for h in center_schedule_list:
             jsontmp.update(
             {
-            counter:    {
+            counter:    
+             {
              'materia_id': h['horario_solicitado__materia__materia_id'],
              'materia_solicitada':h['horario_solicitado_id'],
              'horario_solicitado':h['id'],
@@ -621,7 +626,10 @@ def getScheduleByRequest(request,rol):
              'hora_inicio':convertDatetimeToString(h['hora_inicio']),
              'hora_fin':convertDatetimeToString(h['hora_fin']),
              'estatus': h['horario_solicitado__estatus'],
-             'descripcion_estatus' : translateStatus(h['horario_solicitado__estatus']),}
+             'descripcion_estatus' : translateStatus(h['horario_solicitado__estatus']),
+             'incompleto': 'I' if h['horario_solicitado__incomplete_status'] else '',
+             'centro': h['horario_solicitado__usuario__centro__nombre'],
+             }
             }
             )
             counter +=1
@@ -633,14 +641,17 @@ def getScheduleByRequest(request,rol):
         raise Http404;
 
 
-'''Usuarios que realizaron solicitudes de materias de un centro'''
+'''
+Usuarios que realizaron solicitudes de materias de un centro
+y que ademas el estatus de su solicitud este dentro de ['P','AC','RC','PJ','RJ','AJ']
+'''
 @login_required
 @coordinatorRequired
 def getUserByCenter(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
             centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
             name = []
             counter = 0
             jsontemp = {}
@@ -692,13 +703,16 @@ def getSubjectByRequest(request):
         raise e
 
 
-'''Todos los usuarios que realizaron solicitudes de materias'''
+'''
+Todos los usuarios que realizaron solicitudes de materias
+las cuales poseen uno de los siguientes estatus ['PJ','AJ','RJ','AC']
+'''
 @login_required
 @bossRequired
 def getUserByCenterAll(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
-            final_user_list = HorarioSolicitado.objects.all().order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
             name = []
             counter = 0
             jsontemp = {}
@@ -748,6 +762,26 @@ def getSubjectByRequestAll(request):
     except Exception, e:
         raise e
 
+@login_required
+@bossRequired
+def getChartData(request):
+    try:
+        if request and request.is_ajax() and request.method == 'POST':
+            centros = Centro.objects.all().values_list('nombre',flat=True)
+            remCounters = {}
+            i = 0
+            for c in centros:
+                remCounters.update({
+                    i:{'name':c,'remaining':len(HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro__nombre=c).filter(horario_solicitado__estatus__in=['N']).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct())}   
+                })
+                i+=1
+            remCounters.update({'length':i})
+            return HttpResponse(json.dumps(remCounters, sort_keys=True),content_type="application/json")       
+        else:
+            raise Http404
+    except Exception, e:
+        raise e
+
 '''
 Cambio de estatus para las solicitudes, realiza el cambio de estatus de una 
 lista de solicitudes data: Es recibido en el POST, un json de la forma 
@@ -760,22 +794,23 @@ def ChangeStatus(request):
         if request and request.is_ajax() and request.method == 'POST' and 'data' in request.POST:
             if(len(request.POST['data'])):
                 data = json.loads(request.POST['data'])
-
-                if 'incompleteFlag' in data:
-                    incompleteFlag = data['incompleteFlag']
-                    del data['incompleteFlag']
-                    if int(incompleteFlag) == 1:
-                        pass
-                        '''
-                            TO DO : Implementar verificacion de envio incompleto
-                        '''
+                remaining = 0
+                
+                # Si el CC envia su rol, entonces se calcula el numero de participante 
+                # que faltan por enviar su propuesta.
+                if 'rol' in data:
+                    if data['rol'].lower() == 'cc':
+                        del data['rol']
+                        centro = centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+                        remaining = len(HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['N']).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct())
 
                 materias = MateriaSolicitada.objects.select_for_update().filter(id__in = [ int(e) for e in data.keys() ])
                 for i in xrange(len(materias)):
                     materias[i].estatus = data[str(materias[i].id)]
+                    materias[i].incomplete_status = True if remaining > 0 else False;
                     materias[i].save()
                 
-                return HttpResponse(status=200)
+                return HttpResponse(remaining,status=200)
             else:
                 raise Http404
         else:

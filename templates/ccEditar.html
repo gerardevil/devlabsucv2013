@@ -8,8 +8,20 @@
 {% block centro %}{{centro}}{% endblock %}
 
 {% block lista_roles %}
-<a href="/profile">Profesor(a)</a>
-<a href="/profilejdd">Jefe(a) de Departamento </a>
+  {% for e in roles %}
+      {% ifequal e.rol.rol_id 'P' %} 
+          <a href="/profile">Profesor(a)</a> 
+      {% endifequal %}
+      {% ifequal e.rol.rol_id 'CC' %} 
+          <a href="/profilecc">Coordinador(a)</a> 
+      {% endifequal %}
+      {% ifequal e.rol.rol_id 'JDD' %} 
+          <a href="/profilejdd">Jefe(a) de Departamento</a> 
+      {% endifequal %}
+      {% ifequal e.rol.rol_id 'ADMIN' %} 
+          <a href="/admins">Administrador(a)</a> 
+      {% endifequal %}
+  {% endfor %}
 {% endblock %}
 
 {% block op_barra %}
@@ -18,7 +30,7 @@
   <a href="/editarperfil/cc/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a>
 </li>
 <li> <a href="/horario/cc"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a> </li>
-<li> <a href="/cambiarContrasena/p/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a> </li>
+<li> <a href="/cambiarContrasena/cc/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a> </li>
 {% endblock %}
 
 {% block contenido_vista %}

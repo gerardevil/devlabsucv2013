@@ -15,15 +15,20 @@ Coordinador(a)
 {% block centro %}{{centro}}{% endblock %}
 
 {% block lista_roles %}
-{% if rol == 'cc' %}
-<a href="/profile">Profesor(a)</a>
-<a href="/profilejdd">Jefe(a) de Departamento</a>
-{% endif%}
-
-{% if rol == 'jdd' %}
-<a href="/profile">Profesor(a)</a>
-<a href="/profilecc">Coodinador(a)</a>
-{% endif%}
+  {% for e in roles %}
+      {% ifequal e.rol.rol_id 'P' %} 
+          <a href="/profile">Profesor(a)</a> 
+      {% endifequal %}
+      {% ifequal e.rol.rol_id 'CC' %} 
+          <a href="/profilecc">Coordinador(a)</a> 
+      {% endifequal %}
+      {% ifequal e.rol.rol_id 'JDD' %} 
+          <a href="/profilejdd">Jefe(a) de Departamento</a> 
+      {% endifequal %}
+      {% ifequal e.rol.rol_id 'ADMIN' %} 
+          <a href="/admins">Administrador(a)</a> 
+      {% endifequal %}
+  {% endfor %}
 {% endblock %}
 
 {% block op_barra %}
@@ -34,14 +39,16 @@ Coordinador(a)
 		<a href="/horario/jdd"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a> 
 	</li>
 	<li> <a href="/export"><i class="icon-download-alt"></i>&nbsp;Exportar Planificacion</a> </li>
-	<li> <a href="/cambiarContrasena/p/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a> </li>
+	<li> <a href="/cambiarContrasena/jdd/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a> </li>
 	{% endif %}
 
 	{% if rol == 'cc' %}
 	<li> <a href="/profilecc"><i class="icon-home"> </i> Principal</a> </li>
 	<li> <a href="/editarperfil/cc/{{pk}}"><i class="icon-edit"></i>&nbsp;Editar Perfil</a> </li>
-	<li class="active"> <a href="/horario/cc"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a> </li>
-	<li> <a href="#"><i class=" icon-repeat"></i> Cambiar Contraseña</a> </li>
+	<li class="active"> 
+		<a href="/horario/cc"><i class="icon-calendar"></i>&nbsp;Horario de Solicitudes</a> </li>
+	<li> 
+	<li><a href="/cambiarContrasena/cc/{{pk}}"><i class=" icon-repeat"></i> Cambiar Contraseña</a></li>
 	{% endif %}
 {% endblock %}
 
@@ -50,19 +57,33 @@ Coordinador(a)
 <link href="{% static "css/showLoading.css" %}" rel="stylesheet">
 <link href="{% static "css/nanoscroller.css" %}" rel="stylesheet"> 
 
+
+
+<div id="schedule">
+
 <div id='saveButton' style='position:fixed; z-index:200;'>
-  <button class="btn btn-success" type="button" data-toggle="modal" href="#confirGuardar">
+
+  <button class="btn btn-primary" type="button" data-toggle="modal" href="#confirGuardar">
     <i class="icon-hdd icon-white"></i>
     Guardar Cambios
   </button>
-  <button class="btn btn-success" type="button" data-toggle="modal" href="#confirEnviar">
+
+{% if rol == 'cc' %}
+  <button class="btn btn-primary" type="button" data-toggle="modal" href="#confirEnviar">
     <i class="icon-hdd icon-white"></i>
     Enviar Propuesta
-  </button>  
+  </button> 
+{% endif %}
+
+{% if rol == 'jdd' %}
+  <button class="btn btn-primary" type="button" data-toggle="modal" id="chartButton">
+    <i class="icon-signal icon-white"></i>
+    Propuestas Incompletas
+  </button> 
+  {% endif %}
 </div>
 </br></br></br>
 
-<div id="schedule">
 <table class="horario table" id="tablaHorario">
 		<!--<caption> -->
 			<!--<b>Listado de Materias</b> -->
@@ -261,6 +282,7 @@ Coordinador(a)
         <div class="modal-body">
             <p>
                 ¿Está seguro que desea enviar el horario propuesto al Jefe de Departamento?
+            </p>
         </div>
         <div class="modal-footer">
 
@@ -270,7 +292,25 @@ Coordinador(a)
 
         </div>
     </div>
-<!--Modal confirGuardar--> 
+<!--Modal confirEliminar--> 
+
+<!--Modal Charts-->
+	<div id="incompleteCharts" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3>
+                Profesores Faltantes Por Centro
+            </h3>
+        </div>
+        <div class="modal-body">
+        	<center>
+            	<canvas id="ppxc" width="400" height="400"></canvas>
+            </center>
+        </div>
+    </div>
+<!--Modal Charts-->
 
 {% endblock %}	
 
@@ -279,4 +319,5 @@ Coordinador(a)
 	<script src="{% static "js/jquery.showLoading.min.js" %}"></script>
 	<script src="{% static "js/nanoScroller.js" %}"></script>
     <script src="{% static "js/contact.js" %}"></script> 
+    <script src="{% static "js/Chart.js" %}"></script>
 {% endblock %}

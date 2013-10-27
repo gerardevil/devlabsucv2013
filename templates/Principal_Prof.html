@@ -9,10 +9,17 @@
 {% block centro %}{{centro}}{% endblock %}
 
 {% block lista_roles %}
-{% for e in roles %}{% ifequal e.rol.rol_id 'CC' %} <a href="/profilecc">Coordinador(a)</a> {% endifequal %}{% endfor %}
-{% for e in roles %}{% ifequal e.rol.rol_id 'JDD' %} <a href="/profilejdd">Jefe(a) de Departamento</a> {% endifequal %}{% endfor %}
-{% for e in roles %}{% ifequal e.rol.rol_id 'ADMIN' %} <a href="/admins">Administrador</a> {% endifequal %}{% endfor %}
-
+    {% for e in roles %}
+        {% ifequal e.rol.rol_id 'CC' %} 
+            <a href="/profilecc">Coordinador(a)</a> 
+        {% endifequal %}
+        {% ifequal e.rol.rol_id 'JDD' %} 
+            <a href="/profilejdd">Jefe(a) de Departamento</a> 
+        {% endifequal %}
+        {% ifequal e.rol.rol_id 'ADMIN' %} 
+            <a href="/admins">Administrador</a> 
+        {% endifequal %}
+    {% endfor %}
 {% endblock %}
 
 {% block op_barra %}
