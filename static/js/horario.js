@@ -164,7 +164,17 @@ function cargarProfesores(){
 							elem.addClass('icono');
 							elem.addClass('icon-ok');
 							elem.css('color','green');
-							$(this).data('estatus','AC');
+
+							var status = 'P'
+
+							if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
+							{
+								status = 'AC';
+							}else if (~$('#rol_usuario').text().indexOf('Jefe(a) de Departamento'))
+							{
+								status = 'AJ';
+							}
+							$(this).data('estatus',status);
 						}
 					
 					}
@@ -195,7 +205,19 @@ function cargarProfesores(){
 							elem.addClass('icono');
 							elem.addClass('icon-remove');
 							elem.css('color','red');
-							$(this).data('estatus','RC');
+
+							var status = 'P'
+
+							if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
+							{
+								status = 'RC';
+							}else if (~$('#rol_usuario').text().indexOf('Jefe(a) de Departamento'))
+							{
+								status = 'RJ';
+							}
+							$(this).data('estatus',status);
+
+
 							if (!flag)
 								flag=true;
 						}
@@ -446,7 +468,7 @@ function guardarHorario(){
 		 	if(parseInt(res,10) > 0 )
 		 	{
 		 		html = '<div class="alert" style="width:80%" >';
-		 		text +=  '<b>Nota: </b>El sistema ha detectado que ('+res+') profesores aun no han enviado su solicitud'
+		 		text +=  '<b>Nota: </b>El sistema ha detectado que (  '+res+'  ) profesores aun no han enviado su solicitud'
 		 	}
 
 			html += '<button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -507,7 +529,7 @@ function enviarHorario(){
 		 	if(parseInt(res,10) > 0 )
 		 	{
 		 		html = '<div class="alert" style="width:80%" >';
-		 		text +=  '<b>Nota: </b>El sistema ha detectado que ('+res+') profesores aun no han enviado su solicitud'
+		 		text +=  '<b>Nota: </b>El sistema ha detectado que (  '+res+'  ) profesores aun no han enviado su solicitud'
 		 	}
 
 			html += '<button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -532,19 +554,38 @@ $( "#chartButton" ).click(function(event) {
 	    success: function(respuesta){
 	    	var labelsA = new Array();
 	    	var remainingCountersA = new Array();
+	    	var actives = new Array();
+	    	var inactives = new Array();
 	    	var max = -1;
 	    	//aux2.push($(this).data('solicitud'));
 	    	for(var i=0;i<respuesta.length;++i){
 				labelsA.push(respuesta[i].name);
 				remainingCountersA.push(respuesta[i].remaining);
-				if (respuesta[i].remaining > max)
-					max = respuesta[i].remaining;
+				actives.push(respuesta[i].actives);
+				inactives.push(respuesta[i].inactives);
 			}
+			var getMax ={max : function( array ){return Math.max.apply( Math, array ); } }
+			max = getMax.max([ getMax.max(remainingCountersA),getMax.max(actives),getMax.max(inactives)])
+			
+			console.log(remainingCountersA)
+			console.log(actives)
+			console.log(inactives)
+			
 			var ctx = document.getElementById("ppxc").getContext("2d");
 			var data = {
 							labels : labelsA,
 							datasets : 
 							[
+								{
+									fillColor : "#97E1DF",
+									strokeColor : "#FFFFFF",
+									data : inactives
+								},
+								{
+									fillColor : "#79BEF7",
+									strokeColor : "#FFFFFF",
+									data : actives
+								},
 								{
 									fillColor : "#5460F5",
 									strokeColor : "#FFFFFF",
@@ -554,7 +595,7 @@ $( "#chartButton" ).click(function(event) {
 						}
 			var opt = {
 					scaleFontSize : 12,	
-					barValueSpacing : 15,
+					barValueSpacing : 2,
 					scaleOverride : true,
 					scaleSteps : max,
 					scaleStepWidth : 1,

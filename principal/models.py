@@ -209,7 +209,7 @@ class Usuario(models.Model):
 	fecha_ingreso = models.DateField(blank=True)
 	direccion = models.TextField(max_length=1000L, blank=True)
 	dedicacion = models.CharField(max_length=6) 
-	estatus = models.CharField(max_length= 2)
+	estatus = models.CharField(max_length= 2L, choices = (('A','Activo'),('I','Inactivo'),('ED','Emergencia Docente')), default = 'A')
 	jerarquia_docente = models.ForeignKey(JerarquiaDocente)
 	tipo_contrato = models.ForeignKey(TipoContrato)
 	centro = models.ForeignKey(Centro)
@@ -452,7 +452,7 @@ class MateriaSolicitada(models.Model):
 	usuario = models.ForeignKey('Usuario')
 	materia = models.ForeignKey(MateriaOfertada, related_name='materiasolicitada_corresponde_materia')
 	incomplete_status = models.BooleanField(default=False)
-	
+
 	class Meta:
 		db_table = 'materia_solicitada'
 

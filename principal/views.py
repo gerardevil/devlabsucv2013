@@ -592,12 +592,12 @@ def getScheduleByRequest(request,rol):
         if rol_pattern == 'cc':
             try:
                 centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus', 'horario_solicitado__incomplete_status', 'horario_solicitado__usuario__centro__nombre')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus', 'horario_solicitado__incomplete_status', 'horario_solicitado__usuario__centro__nombre')
             except Exception, e:
                 raise e
         elif  rol_pattern == 'jdd':
             try:
-                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus', 'horario_solicitado__incomplete_status', 'horario_solicitado__usuario__centro__nombre')
+                center_schedule_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).values('hora_inicio','hora_fin', 'dia_semana','horario_solicitado__materia__materia__nombre','horario_solicitado__materia__materia_id','horario_solicitado_id','id', 'horario_solicitado__usuario__usuario_id__username', 'horario_solicitado__usuario__usuario_id__first_name', 'horario_solicitado__usuario__usuario_id__last_name', 'horario_solicitado__estatus', 'horario_solicitado__incomplete_status', 'horario_solicitado__usuario__centro__nombre')
             except Exception, e:
                 raise e
         else:
@@ -651,7 +651,7 @@ def getUserByCenter(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
             centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
             name = []
             counter = 0
             jsontemp = {}
@@ -684,7 +684,7 @@ def getSubjectByRequest(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
             centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
+            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['P','AC','RC','PJ','RJ','AJ']).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
             jsontemp = {}
             counter = 0
             names = []
@@ -712,7 +712,7 @@ las cuales poseen uno de los siguientes estatus ['PJ','AJ','RJ','AC']
 def getUserByCenterAll(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
-            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
+            final_user_list = HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).order_by('horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name','horario_solicitado__usuario__usuario_id__username').values('horario_solicitado__usuario__usuario_id__username','horario_solicitado__usuario__usuario_id__first_name','horario_solicitado__usuario__usuario_id__last_name')
             name = []
             counter = 0
             jsontemp = {}
@@ -744,7 +744,7 @@ que posee estatus iguales a  ['PJ','AJ','RJ','AC']
 def getSubjectByRequestAll(request):
     try:
         if request.is_ajax() and request and request.method=='GET' :
-            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
+            center_request_subject_list=HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__estatus__in=['PJ','AJ','RJ','AC']).order_by('horario_solicitado__materia__materia__nombre').values('horario_solicitado__materia__materia__pk','horario_solicitado__materia__materia__nombre')
             jsontemp = {}
             counter = 0
             names = []
@@ -771,8 +771,13 @@ def getChartData(request):
             remCounters = {}
             i = 0
             for c in centros:
+                countUsrs = Usuario.objects.filter(centro__nombre=c).filter(estatus='A').count()
+                countUsrsInactive = Usuario.objects.filter(centro__nombre=c).filter(estatus='I').count()
+                countActiveRequesters =  len (MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro__nombre=c).values_list('usuario__usuario_id__username',flat=True).distinct())
+                countNonSend = len(MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro__nombre=c).filter(estatus__in=['N','P','AC','RC']).values_list('usuario__usuario_id__username',flat=True).distinct()) 
+
                 remCounters.update({
-                    i:{'name':c,'remaining':len(HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro__nombre=c).filter(horario_solicitado__estatus__in=['N']).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct())}   
+                    i:{'name':c,'remaining': countNonSend + (countUsrs - countActiveRequesters),'actives':countUsrs,'inactives':countUsrsInactive,}   
                 })
                 i+=1
             remCounters.update({'length':i})
@@ -801,13 +806,16 @@ def ChangeStatus(request):
                 if 'rol' in data:
                     if data['rol'].lower() == 'cc':
                         del data['rol']
-                        centro = centro = Usuario.objects.get(usuario_id=request.user.pk).centro
-                        remaining = len(HorarioSolicitado.objects.filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['N']).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct())
+                        centro = Usuario.objects.get(usuario_id=request.user.pk).centro
+                        countUsrs = Usuario.objects.filter(centro=centro).filter(estatus='A').count()
+                        countActiveRequesters =  len (MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro=centro).values_list('usuario__usuario_id__username',flat=True).distinct())
+                        countNonSend = len(MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro=centro).filter(estatus__in=['N']).values_list('usuario__usuario_id__username',flat=True).distinct()) 
+                        remaining = countNonSend + ( countNonSend - countActiveRequesters )
 
                 materias = MateriaSolicitada.objects.select_for_update().filter(id__in = [ int(e) for e in data.keys() ])
                 for i in xrange(len(materias)):
                     materias[i].estatus = data[str(materias[i].id)]
-                    materias[i].incomplete_status = True if remaining or materias[i].incomplete_status > 0 else False;
+                    materias[i].incomplete_status = True if remaining or materias[i].incomplete_status > 0 else False
                     materias[i].save()
                 
                 return HttpResponse( remaining , status=200 )
