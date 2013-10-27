@@ -810,7 +810,7 @@ def ChangeStatus(request):
                     materias[i].incomplete_status = True if remaining or materias[i].incomplete_status > 0 else False;
                     materias[i].save()
                 
-                return HttpResponse(remaining,status=200)
+                return HttpResponse( remaining , status=200 )
             else:
                 raise Http404
         else:
