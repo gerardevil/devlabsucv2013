@@ -603,6 +603,8 @@ def getScheduleByRequest(request,rol):
         else:
             raise Http404
 
+        print center_schedule_list
+
         '''
         Formato Posicional Json de Retorno:
         [0]materia_id, [1]materia_solicitada_id, [2]username ,
@@ -810,7 +812,7 @@ def ChangeStatus(request):
                         countUsrs = Usuario.objects.filter(centro=centro).filter(estatus='A').count()
                         countActiveRequesters =  len (MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro=centro).values_list('usuario__usuario_id__username',flat=True).distinct())
                         countNonSend = len(MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro=centro).filter(estatus__in=['N']).values_list('usuario__usuario_id__username',flat=True).distinct()) 
-                        remaining = countNonSend + ( countNonSend - countActiveRequesters )
+                        remaining = countNonSend + ( countUsrs - countActiveRequesters )
 
                 materias = MateriaSolicitada.objects.select_for_update().filter(id__in = [ int(e) for e in data.keys() ])
                 for i in xrange(len(materias)):

@@ -443,9 +443,7 @@ function guardarHorario(){
 	});
 
 	if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
-	{
 		datos["rol"]='cc';
-	}
 	
 	$('#tablaHorario').hideLoading();
 	$('#tablaHorario').showLoading({'indicatorZIndex' : 101,'overlayZIndex': 100});
