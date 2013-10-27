@@ -197,7 +197,7 @@ def resetPasswordRequest(request):
     if request:
         try:
             form = ResetPasswordRequestForm(request.POST)
-            notes = "Ingrese un nombre de usuario, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
+            notes = "Ingrese su numero de documento de indentidad, posteriormente enviaremos instrucciones a la cuenta de correo electronico asociada para restaurar su contraseña."
             if form.is_valid():       
                 return resetPasswordSendEmail(request)
             else:
