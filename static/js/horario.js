@@ -495,7 +495,7 @@ function guardarHorario(){
 		 data: param,
 		 success: function(res){
 
-		 	//cargarHorario();	
+		 	cargarHorario();	
 		 	
 		 	var text = '<b>Horario de solicitudes guardado satisfactoriamente</b></br></br>'
 		 	var html = '<div class="alert alert-success" style="width:80%" >';
@@ -556,7 +556,7 @@ function enviarHorario(){
 		 data: param,
 		 success: function(res){		 	
 
-		 	//cargarHorario();
+		 	cargarHorario();
 
 		 	var text = '<b>Horario de solicitudes enviado al Jefe de Departamento</b></br></br>'
 		 	var html = '<div class="alert alert-success" style="width:80%" >';
