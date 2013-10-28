@@ -536,7 +536,6 @@ def getEmailUnique(request):
                 username.remove('')
                 return HttpResponse(User.objects.get(username=username[0]).email)
             else:
-                print 'Expresion Mal Formada'
                 raise Http404
         else:
             raise Http404
@@ -602,8 +601,6 @@ def getScheduleByRequest(request,rol):
                 raise e
         else:
             raise Http404
-
-        print center_schedule_list
 
         '''
         Formato Posicional Json de Retorno:
@@ -769,14 +766,14 @@ def getSubjectByRequestAll(request):
 def getChartData(request):
     try:
         if request and request.is_ajax() and request.method == 'POST':
-            centros = Centro.objects.all().values_list('nombre',flat=True)
+            centros = Centro.objects.all().values_list('nombre',flat=True).distinct()
             remCounters = {}
             i = 0
             for c in centros:
                 countUsrs = Usuario.objects.filter(centro__nombre=c).filter(estatus='A').count()
                 countUsrsInactive = Usuario.objects.filter(centro__nombre=c).filter(estatus='I').count()
-                countActiveRequesters =  len (MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro__nombre=c).values_list('usuario__usuario_id__username',flat=True).distinct())
-                countNonSend = len(MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro__nombre=c).filter(estatus__in=['N','P','AC','RC']).values_list('usuario__usuario_id__username',flat=True).distinct()) 
+                countActiveRequesters =  len (HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__usuario__centro__nombre=c).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct())
+                countNonSend = len(HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__usuario__centro__nombre=c).filter(horario_solicitado__estatus__in=['N','P','AC','RC']).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct()) 
 
                 remCounters.update({
                     i:{'name':c,'remaining': countNonSend + (countUsrs - countActiveRequesters),'actives':countUsrs,'inactives':countUsrsInactive,}   
@@ -810,8 +807,8 @@ def ChangeStatus(request):
                         del data['rol']
                         centro = Usuario.objects.get(usuario_id=request.user.pk).centro
                         countUsrs = Usuario.objects.filter(centro=centro).filter(estatus='A').count()
-                        countActiveRequesters =  len (MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro=centro).values_list('usuario__usuario_id__username',flat=True).distinct())
-                        countNonSend = len(MateriaSolicitada.objects.filter(usuario__estatus='A').filter(usuario__centro=centro).filter(estatus__in=['N']).values_list('usuario__usuario_id__username',flat=True).distinct()) 
+                        countActiveRequesters =  len (HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__usuario__centro=centro).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct())
+                        countNonSend = len(HorarioSolicitado.objects.filter(horario_solicitado__usuario__estatus='A').filter(horario_solicitado__usuario__centro=centro).filter(horario_solicitado__estatus__in=['N']).values_list('horario_solicitado__usuario__usuario_id__username',flat=True).distinct()) 
                         remaining = countNonSend + ( countUsrs - countActiveRequesters )
 
                 materias = MateriaSolicitada.objects.select_for_update().filter(id__in = [ int(e) for e in data.keys() ])
