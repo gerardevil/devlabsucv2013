@@ -184,9 +184,11 @@ function cargarProfesores(){
 							if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
 							{
 								status = 'AC';
+								elem.css('color','green');
 							}else if (~$('#rol_usuario').text().indexOf('Jefe(a) de Departamento'))
 							{
 								status = 'AJ';
+								elem.css('color','#3CFC32');
 							}
 							$(this).data('estatus',status);
 						}
@@ -238,9 +240,11 @@ function cargarProfesores(){
 							if ( ~$('#rol_usuario').text().indexOf('Coordinador(a)') )
 							{
 								status = 'RC';
+								elem.css('color','red');
 							}else if (~$('#rol_usuario').text().indexOf('Jefe(a) de Departamento'))
 							{
 								status = 'RJ';
+								elem.css('color','#FC7532');
 							}
 							$(this).data('estatus',status);
 
@@ -409,12 +413,18 @@ function insertarMateriaHorario(horario){
 		celda = $('#'+id);
 		html = '<div id="materia'+idMateriaHorario+'" class="materiaHorario">';
 
-		if(horario.estatus == 'AC' || horario.estatus == 'AJ'){
+		if(horario.estatus == 'AC'){
 			html += '<i class="icono icon-ok pull-right" style="color:green;"></i>';
-		}else if(horario.estatus == 'RC' || horario.estatus == 'RJ'){
+		}else if(horario.estatus == 'AJ'){
+			html += '<i class="icono icon-ok pull-right" style="color:#3CFC32;"></i>';
+		}else if(horario.estatus == 'RC'){
 			html += '<i class="icono icon-remove pull-right" style="color:red;"></i>';
-		}else if(horario.estatus == 'PJ' || horario.estatus == 'P'){
+		}else if(horario.estatus == 'RJ'){
+			html += '<i class="icono icon-remove pull-right" style="color:#FC7532;"></i>';
+		}else if(horario.estatus == 'P'){
 			html += '<i class="icono icon-time pull-right" style="color:#000000;"></i>';
+		}else if(horario.estatus == 'PJ'){
+			html += '<i class="icono icon-time pull-right" style="color:#006DCC;"></i>';
 		}else{
 			html += '<i class="icono icon-question-sign"></i>';}
 
