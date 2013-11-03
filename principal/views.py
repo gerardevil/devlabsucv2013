@@ -27,6 +27,7 @@ from django.conf import settings
 from django.core import signing
 from django.http import Http404
 from principal.forms import *
+from django.contrib import messages
 import os,re,json,datetime
 
 
@@ -320,6 +321,7 @@ def profile(request):
         centro = u.centro.toString()
         materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
         horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
+        cant_noenv = materiasS.filter(estatus='N').count()
 
         if request.method == 'POST':
             if ('cantidad_hor' in request.POST):
@@ -358,7 +360,7 @@ def profile(request):
         else:
             form = AgregarMateriaForm()
             form_e = AgregarMateriaEForm(ukey=u.pk)
-        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles,'pk':u.pk, 'centro':centro,'form' : form,'form_e':form_e, 'listaHorarios' : horariosS },context_instance=RequestContext(request))
+        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles,'pk':u.pk, 'centro':centro,'form' : form,'form_e':form_e, 'listaHorarios' : horariosS,'editar':cant_noenv},context_instance=RequestContext(request))
     except Warning as w:
         return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form': form,'form_e':form_e,'error':w.__doc__ , 'listaHorarios' : horariosS} ,context_instance=RequestContext(request))
 
@@ -416,11 +418,14 @@ def editar_propuesta(request,key):
 def enviar_propuesta(request):
     u = Usuario.objects.get(usuario_id=request.user)
     materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
+    cant_env = 0
     for mat in materiasS:
         if mat.estatus == 'N':
             mat.estatus = 'P'
             mat.save()
-    #resp = {msj:"Propuesta enviada al Coordinador(a) de Centro de manera exitosa"}
+            cant_env = cant_env + 1
+    if cant_env:
+        messages.info(request,"Propuesta enviada al Coordinador(a) de Centro de manera exitosa.",extra_tags="desactivar_ep")
     return HttpResponseRedirect("/profile")
 
 @login_required

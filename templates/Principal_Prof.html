@@ -57,22 +57,22 @@
                 <td>{{h.dia_semana}} {{h.hora_inicio}}-{{h.hora_fin}}</td>
                 <td>
                     {% if h.horario_solicitado.estatus == 'AC' %}
-                    <span class="label label-success">Aceptada por Coordinador</span>
+                    <span class="label label-success">Aceptada por Coordinador(a)</span>
                     {% else %}
                     {% if h.horario_solicitado.estatus == 'RC' %}
-                    <span class="label label-important">Rechazada por Coordinador</span>
+                    <span class="label label-important">Rechazada por Coordinador(a)</span>
                     {% else %}
                     {% if h.horario_solicitado.estatus == 'P' %}
-                    <span class="label label-warning">Procesando por Coordinador</span>
+                    <span class="label label-warning">Procesando por Coordinador(a)</span>
                     {% else %}
                     {% if h.horario_solicitado.estatus == 'AJ' %}
-                    <span class="label label-success">Aceptada por Jefe de Departamento</span>
+                    <span class="label label-success">Aceptada por Jefe(a) de Departamento</span>
                     {% else %}
                     {% if h.horario_solicitado.estatus == 'RJ' %}
-                    <span class="label label-important">Rechazada por Jefe de Departamento</span>
+                    <span class="label label-important">Rechazada por Jefe(a) de Departamento</span>
                     {% else %}
                     {% if h.horario_solicitado.estatus == 'PJ' %}
-                    <span class="label label-warning">Procesando por Jefe de Departamento</span>
+                    <span class="label label-warning">Procesando por Jefe(a) de Departamento</span>
                     {% else %}
                     {% if h.horario_solicitado.estatus == 'N' %}
                     <span class="label label-info">No enviada</span>
@@ -85,10 +85,8 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if h.horario_solicitado.estatus == 'R' or h.horario_solicitado.estatus == 'N' %}
-                        <a value="{{h.pk}}" data-toggle="modal" href="#confir_borrar" class="btn btn-mini bot_borrar" style="margin-left:50px" title="Eliminar horario solicitado"><i class="icon-trash"></i></a>
-                        <a href="/propuesta/editar/{{h.pk}}" class="btn btn-mini" style="margin-left:50px" title="Editar horario solicitado"><i class="icon-edit"></i></a>
-                    {% endif %}
+                <a value="{{h.pk}}" data-toggle="modal" {% if h.horario_solicitado.estatus == 'N' %}href="#confir_borrar"{% endif %} class="btn btn-mini bot_borrar {% if not h.horario_solicitado.estatus == 'N' %}disabled{% endif %}" style="margin-left:50px" title="Eliminar horario solicitado" ><i class="icon-trash" ></i></a>
+                <a {% if h.horario_solicitado.estatus == 'N' %}href="/propuesta/editar/{{h.pk}}"{% endif %} class="btn btn-mini {% if not h.horario_solicitado.estatus == 'N' %}disabled{% endif %}" style="margin-left:50px" title="Editar horario solicitado"><i class="icon-edit"></i></a>
                 </td>
             </tr>
             {% endfor %}
@@ -108,18 +106,26 @@
             {{error}}
         </div>
         {% endif %}
-
-        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria" title="Añade una materia Obligatoria, Obligatoria Optativa o Laboratorio">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" style="width:70%" >
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateria" {% if not editar %} disabled="true" {% endif %} title="Añade una materia Obligatoria, Obligatoria Optativa o Laboratorio">
             Agregar materia obligatoria
         </button>
-        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateriaE" title="Añade una materia Electiva o Complementaria">
+        <button class="btn btn-warning" data-toggle="modal" href="#agregarMateriaE" {% if not editar %} disabled="true" {% endif %} title="Añade una materia Electiva o Complementaria">
             Agregar materia electiva
         </button>
         <br>
         <br>
-        <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep" title="Envía la propuesta al Coordinador de Centro">
+        <button class="btn btn-warning" id="ep" data-toggle="modal" href="#confir_ep" {% if not editar %} disabled="true" {% endif %} title="Envía la propuesta al Coordinador de Centro">
             Enviar Propuesta
         </button>
+
         <br>
         <br>
     </div>
@@ -215,12 +221,11 @@
         </div>
         <div class="modal-body">
             <p>
-                ¿Está seguro que desea enviar la propuesta al Coordinador de Centro?
+                ¿Está seguro que desea enviar la propuesta al Coordinador(a) de Centro?
         </div>
         <div class="modal-footer">
 
             <a button="" class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</a>
-            <!--<a  class="btn btn-primary" id="enviarp" >Enviar</a>-->
             <a  class="btn btn-primary" href="profile/enviar_propuesta" >Enviar</a>
 
         </div>
