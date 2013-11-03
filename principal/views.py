@@ -327,7 +327,7 @@ def profile(request):
             if ('cantidad_hor' in request.POST):
                 form = AgregarMateriaForm(request.POST)
                 cant_hor = int(request.POST['cantidad_hor'])
-                form_e = AgregarMateriaEForm()
+                form_e = AgregarMateriaEForm(ukey=u.pk)
 
                 if form.is_valid() and cant_hor:
                     cse = MateriaSolicitada.objects.filter(estatus='N',usuario=u,materia=form.cleaned_data['materia']).count()
@@ -344,25 +344,25 @@ def profile(request):
                     form = AgregarMateriaForm()
                     materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
                     horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
-                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
+                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS,'editar':cant_noenv},context_instance=RequestContext(request))
                 else:
-                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form' : form,'form_e':form_e,'error':'El formulario no es valido', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
+                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form' : form,'form_e':form_e,'error':'El formulario no es valido', 'listaHorarios' : horariosS,'editar':cant_noenv},context_instance=RequestContext(request))
             else:
                 form = AgregarMateriaForm()
                 form_e = AgregarMateriaEForm(request.POST,ukey=u.pk)
                 if form_e.is_valid():
                     form_e.save()
                     form_e = AgregarMateriaEForm(ukey=u.pk)
-                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
+                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'info':'La materia ha sido agregada de manera exitosa', 'listaHorarios' : horariosS,'editar':cant_noenv},context_instance=RequestContext(request))
                 else:
                     form_e = AgregarMateriaEForm(ukey=u.pk)
-                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'error':'El formulario no es valido', 'listaHorarios' : horariosS},context_instance=RequestContext(request))
+                    return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form':form,'form_e':form_e,'error':'El formulario no es valido', 'listaHorarios' : horariosS,'editar':cant_noenv},context_instance=RequestContext(request))
         else:
             form = AgregarMateriaForm()
             form_e = AgregarMateriaEForm(ukey=u.pk)
         return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles,'pk':u.pk, 'centro':centro,'form' : form,'form_e':form_e, 'listaHorarios' : horariosS,'editar':cant_noenv},context_instance=RequestContext(request))
     except Warning as w:
-        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form': form,'form_e':form_e,'error':w.__doc__ , 'listaHorarios' : horariosS} ,context_instance=RequestContext(request))
+        return render_to_response('Principal_Prof.html' ,{'usuario':usr,'roles':roles, 'pk':u.pk, 'centro':centro,'form': form,'form_e':form_e,'error':w.__doc__ , 'listaHorarios' : horariosS,'editar':cant_noenv} ,context_instance=RequestContext(request))
 
 @login_required
 def borrar_propuesta(request,key):
