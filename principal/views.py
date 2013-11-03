@@ -365,7 +365,7 @@ def profile(request):
 @login_required
 def borrar_propuesta(request,key):
     hs = HorarioSolicitado.objects.get(pk=key)
-    if hs.horario_solicitado.estatus == 'N' or hs.horario_solicitado.estatus == 'R':
+    if hs.horario_solicitado.estatus == 'N':
         ms = hs.horario_solicitado
         hsc = HorarioSolicitado.objects.filter(horario_solicitado=ms).count()
         m.borrar('horario solicitado',key)
@@ -382,7 +382,7 @@ def editar_propuesta(request,key):
         usr = u.toString()
         centro = u.centro.toString()
         hs = HorarioSolicitado.objects.get(pk=key)
-        if hs.horario_solicitado.estatus == 'N' or hs.horario_solicitado.estatus == 'R':
+        if hs.horario_solicitado.estatus == 'N':
             materia = hs.horario_solicitado.materia.materia
             tipo_mat = materia.tipo_materia
             nm = materia.nombre
@@ -411,6 +411,16 @@ def editar_propuesta(request,key):
             return HttpResponseRedirect('/profile')
     except Warning as w:
         return render_to_response('EditarPropM_Prof.html' ,{'error':w.__doc__,'nombre_mat':nm},context_instance=RequestContext(request))
+
+@login_required
+def enviar_propuesta(request):
+    u = Usuario.objects.get(usuario_id=request.user)
+    materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
+    horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
+    #resp = {msj:"Propuesta enviada al Coordinador(a) de Centro de manera exitosa"}
+    for mat in materiasS:
+        mat.estatus = 'P'
+    return HttpResponseRedirect("/profile")
 
 @login_required
 def horarios_materia(request):

@@ -47,6 +47,7 @@ urlpatterns = patterns('',
     url(r'^horarios_materia$', 'principal.views.horarios_materia', name='horarios'), #Devuelve los horarios de una materia
     url(r'^propuesta/borrar/(?P<key>\d+)$', 'principal.views.borrar_propuesta', name='bpropuesta'), #Borra un horario de la propuesta
     url(r'^propuesta/editar/(?P<key>\d+)$', 'principal.views.editar_propuesta', name='epropuesta'), #Edita un horario de la propuesta
+    url(r'^profile/enviar_propuesta$', 'principal.views.enviar_propuesta', name='enviarpropuesta'),
 
     #URLs para templates sin backend
     url(r'^cambiarContrasena/(?P<rol>[^/]+)/(?P<key>\d+)$', 'principal.views.cambiarContrasena', name='cambiarContrasena'),
