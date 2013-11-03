@@ -416,10 +416,11 @@ def editar_propuesta(request,key):
 def enviar_propuesta(request):
     u = Usuario.objects.get(usuario_id=request.user)
     materiasS = MateriaSolicitada.objects.all().filter(usuario=u).order_by("id")
-    horariosS = HorarioSolicitado.objects.filter(horario_solicitado__in = materiasS).order_by("horario_solicitado")
-    #resp = {msj:"Propuesta enviada al Coordinador(a) de Centro de manera exitosa"}
     for mat in materiasS:
-        mat.estatus = 'P'
+        if mat.estatus == 'N':
+            mat.estatus = 'P'
+            mat.save()
+    #resp = {msj:"Propuesta enviada al Coordinador(a) de Centro de manera exitosa"}
     return HttpResponseRedirect("/profile")
 
 @login_required
